@@ -16,7 +16,7 @@ import CardAdmin from "@/components/cards/cardadmin";
 import AvatarIconV from "@/public/icons/AvatarIconV";
 import { ClockIcon } from "@/public/icons/ClockIcon";
 import { Button2 } from "@/components/buttons/Button2";
-import useUser from "@/hooks/useUser";
+import useSession from "@/hooks/useSession";
 import { pusherClient } from "@/utils/pusher";
 import toaster from "@/utils/toast_function";
 
@@ -45,7 +45,7 @@ const SideBarItem = ({ item, sidebaropen }, props) => {
 }
 
 export default function SidebarLayout({ children }, props) {
-    const { user } = useUser()
+    const { user } = useSession()
     const router = useRouter()
     const [showmenue, setshowMenue] = React.useState(false);
     const [shownotification, setShownotification] = React.useState(false);

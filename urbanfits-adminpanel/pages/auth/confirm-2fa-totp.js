@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import AuthPage from '.'
 import Button from '@/components/buttons/simple_btn'
 import Head from 'next/head'
-import useUser from '@/hooks/useUser'
+import useSession from '@/hooks/useSession'
 import toaster from '@/utils/toast_function'
 import AlertPage from '@/components/alertPage'
 import axios from 'axios'
@@ -10,7 +10,7 @@ import { useRouter } from 'next/router'
 import Error404 from '../404'
 
 export default function Login() {
-    const { user, updateUser } = useUser()
+    const { user, updateUser } = useSession()
     const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [totp, setTotp] = useState('')

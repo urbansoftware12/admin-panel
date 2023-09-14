@@ -3,13 +3,13 @@ import '@/styles/globals.css'
 import SidebarLayout from '@/components/sidebar-layout';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import useUser from '@/hooks/useUser';
+import useSession from '@/hooks/useSession';
 import LoadingBar from 'react-top-loading-bar'
 import { ToastContainer } from 'react-toastify'
 
 function App({ Component, pageProps }) {
   const [progress, setProgress] = useState(0)
-  const {user} = useUser()
+  const {user} = useSession()
   const router = useRouter()
   const adminRoles = ["administrator", "author", "editor"]
 

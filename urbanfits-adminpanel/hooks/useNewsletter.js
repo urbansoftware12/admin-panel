@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import useUser from './useUser';
+import useSession from './useSession';
 import toaster from "@/utils/toast_function";
 import axios from "axios";
 import jwt from 'jsonwebtoken';
@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 const useNewsletter = create(persist((set) => ({
     newsletterData: null,
     getNewsletterData: async () => {
-        const { user } = useUser.getState()
+        const { user } = useSession.getState()
         if (!user) return
 
         try {
@@ -23,7 +23,7 @@ const useNewsletter = create(persist((set) => ({
     },
 
     updateNewsletterData: async (valuesObj, sendRequest = true) => {
-        const { user } = useUser.getState()
+        const { user } = useSession.getState()
         if (sendRequest) {
             try {
                 const { data } = await axios.put(`${process.env.HOST}/api/newsletter/update?id=${user._id}`, valuesObj)

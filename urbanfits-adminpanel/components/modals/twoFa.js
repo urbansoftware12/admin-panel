@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react'
 import Button from '../buttons/simple_btn';
 import Image from 'next/image';
 import Spinner from '../loaders/spinner';
-import useUser from '@/hooks/useUser';
+import useSession from '@/hooks/useSession';
 import axios from 'axios';
 import toaster from '@/utils/toast_function';
 
 export default function TwoFa({ show, setMfaModa }) {
-    const { user, updateUser } = useUser()
+    const { user, updateUser } = useSession()
     const [qrUrl, setQrUrl] = useState(null)
     const [qrSecret, setQrSecret] = useState(null)
     const [totp, setTotp] = useState(null)

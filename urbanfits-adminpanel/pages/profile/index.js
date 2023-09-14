@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Button from "@/components/buttons/simple_btn";
 import { BasketIcon } from "@/public/sidebaricons/BasketIcon";
-import useUser from "@/hooks/useUser";
+import useSession from "@/hooks/useSession";
 import CustomTab from "@/components/CustomTabs/CustomTab";
 import uploadImage from '@/utils/uploadImage'
 import Spinner from '@/components/loaders/spinner'
@@ -18,7 +18,7 @@ const ProfilePic = "https://urban-fits.s3.eu-north-1.amazonaws.com/website-copyr
 
 
 export default function Profile({ children }) {
-  const { user, updateUser } = useUser()
+  const { user, updateUser } = useSession()
   const [authmodal, setAuthmodal] = useState(false);
   const [imgSpinner, setImgSpinner] = useState(null);
   const [pfp, setPfp] = useState(user.image && user.image !== '' ? user.image : ProfilePic);

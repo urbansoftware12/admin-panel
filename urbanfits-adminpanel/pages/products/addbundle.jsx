@@ -4,7 +4,7 @@ import Spinner from '@/components/loaders/spinner';
 import Button from "@/components/buttons/simple_btn";
 import Image from 'next/image';
 import Link from 'next/link';
-import useUser from '@/hooks/useUser';
+import useSession from '@/hooks/useSession';
 import useProduct from '@/hooks/useProduct';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -58,7 +58,7 @@ const BundleItem = (props) => {
 
 export default function CreateBundles() {
     const { selectedProducts } = useProduct()
-    const { user } = useUser()
+    const { user } = useSession()
     const [loading, setLoading] = useState(false)
 
     const validationSchema = Yup.object().shape({

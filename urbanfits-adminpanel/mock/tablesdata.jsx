@@ -19,46 +19,74 @@ import { Dots3Icon } from "@/public/icons/Dots3Icon";
 
 export const userListTableColumns = [
   {
-    accessor: "profile",
-    Header: <span className="select-none " >Profile</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
+    selector: row => row.avatar,
+    name: "Avatar",
+    cell: (row) => <span className='w-10 aspect-square rounded-lg overflow-hidden' >
+      <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={row.avatar || process.env.DEFAULT_PFP} />
+    </span>,
+    width: '10%',
+    sortable: true
   },
   {
-    accessor: "name",
-    Header: <span className="select-none " >Name</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
+    selector: row => row.name,
+    cell: row => <div className="w-full group relative flex justify-start">
+      <span className='w-full whitespace-nowrap truncate cursor-default'>
+        {row.name}
+        <Infotip>{row.fullname}</Infotip>
+      </span>
+    </div>,
+    name: "Name",
+    sortable: true,
   },
   {
-    accessor: "email",
-    Header: <span className="select-none " >Email</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
+    selector: row => row.email,
+    cell: row => <div className="w-full group relative flex justify-start">
+      <span className='w-full whitespace-nowrap truncate cursor-default'>
+        {row.email}
+        <Infotip>{row.email}</Infotip>
+      </span>
+    </div>,
+    name: "Email",
+    sortable: true,
   },
   {
-    accessor: "phone",
-    Header: <span className="select-none " >Phone</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
+    selector: row => row.phone,
+    name: "Phone no.",
+    cell: row => <div className="w-full group relative flex justify-start">
+      <span className='w-full whitespace-nowrap truncate cursor-default'>
+        {row.phone}
+        <Infotip>{row.phone}</Infotip>
+      </span>
+    </div>,
+    sortable: true,
   },
   {
-    accessor: "totalbuy",
-    Header: <span className="select-none " >Total Buy</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
+    selector: row => row.purchases,
+    name: "Total Purchases",
+    sortable: true,
   },
   {
-    accessor: "status",
-    Header: <span className="select-none " >Status</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
+    selector: row => row.status,
+    name: "Status",
+    sortable: true,
   },
   {
-    accessor: "joinon",
-    Header: <span className="select-none " >Join On</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
+    selector: row => row.joined_at,
+    cell: row => <div className="w-full group relative flex justify-start">
+      <span className='w-full whitespace-nowrap truncate cursor-default'>
+        {row.joined_at}
+      </span>
+      <Infotip positions="w-auto whitespace-nowrap right-5 -bottom-full">{row.joined_at}</Infotip>
+    </div>,
+    name: "Joined at",
+    sortable: true,
   },
   {
-    accessor: "action",
-    Header: <span className="select-none " >Action</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
-  },
-];
+    selector: row => row.actions,
+    name: "Action",
+    cell: (row) => <ActionButton infoLink={row.infoLink} handleInfo={row.handleInfo} options={row.actions} />
+  }
+]
 
 export const userListTableData = [
   {

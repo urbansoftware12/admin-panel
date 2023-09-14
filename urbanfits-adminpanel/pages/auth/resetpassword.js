@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Button from '@/components/buttons/simple_btn'
 import Tooltip from '@/components/tooltip'
 import toaster from '@/utils/toast_function'
-import useUser from '@/hooks/useUser'
+import useSession from '@/hooks/useSession'
 import axios from 'axios'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
@@ -12,7 +12,7 @@ import { useRouter } from 'next/router'
 
 export default function ForgotPassword() {
     const router = useRouter()
-    const { user } = useUser()
+    const { user } = useSession()
     const [loading, setLoading] = useState(false)
     const [otp, setOtp] = useState('')
     const [otpId, setOtpId] = useState(null)

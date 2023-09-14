@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import useUser from './useUser';
+import useSession from './useSession';
 import toaster from "@/utils/toast_function";
 import axios from "axios";
 
@@ -66,7 +66,7 @@ const useProduct = create((set, get) => ({
     },
 
     createProduct: async (productToCreate) => {
-        const { user } = useUser.getState()
+        const { user } = useSession.getState()
         if (!user) return
 
         set(() => ({
@@ -88,7 +88,7 @@ const useProduct = create((set, get) => ({
     },
 
     updateProduct: async (id, updatedProduct) => {
-        const { user } = useUser.getState()
+        const { user } = useSession.getState()
         if (!user) return
 
         set(() => ({
@@ -112,7 +112,7 @@ const useProduct = create((set, get) => ({
     },
 
     deleteProducts: async (productsToDelete) => {
-        const { user } = useUser.getState()
+        const { user } = useSession.getState()
         if (!user) return
 
         set(() => ({

@@ -8,7 +8,7 @@ import toaster from '@/utils/toast_function'
 import AlertPage from '@/components/alertPage'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import useUser from '@/hooks/useUser'
+import useSession from '@/hooks/useSession'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
 
@@ -18,7 +18,7 @@ export const metadata = {
 export default function Login() {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
-    const { user, updateUser } = useUser()
+    const { user, updateUser } = useSession()
     const [showPass, setShowPass] = useState(false)
 
     const passRef = useRef()

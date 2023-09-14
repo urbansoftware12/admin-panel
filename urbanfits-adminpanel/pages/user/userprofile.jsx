@@ -81,7 +81,7 @@ const userprofile = () => {
         <section className="col-span-2  border-r-[1px] border-r-slate-200 p-[40px] flex flex-col  font-[400]">
           <div className="flex flex-col items-center">
             <span className="w-[45px] h-[45px] rounded-[10px] ">
-              <Image width="45px" height="45px" src={ProfilePic} />
+              <Image width={150} height={150} src={ProfilePic} />
             </span>
             <p className="text-[14px] mt-[20px] ">John Deo</p>
             <p className="text-[14px]">John.example@gmail.com</p>
@@ -128,8 +128,8 @@ const userprofile = () => {
           <div className="flex gap-[62px] z-[-1] text-[16px] ">
             <p
               className={`${checked == 1
-                  ? "font-[500] border-b-4  border-b-[#f1d73e] "
-                  : "font-[300] "
+                ? "font-[500] border-b-4  border-b-[#f1d73e] "
+                : "font-[300] "
                 } z-50 px-[16px] pb-[10px] cursor-pointer `}
               onClick={() => handlemenueclick(1)}
             >
@@ -137,8 +137,8 @@ const userprofile = () => {
             </p>
             <p
               className={`${checked == 2
-                  ? "font-[500] border-b-4  border-b-[#f1d73e]"
-                  : "font-[300] "
+                ? "font-[500] border-b-4  border-b-[#f1d73e]"
+                : "font-[300] "
                 } z-50 px-[16px] pb-[10px] cursor-pointer`}
               onClick={() => handlemenueclick(2)}
             >

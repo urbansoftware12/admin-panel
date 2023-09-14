@@ -28,12 +28,13 @@ export default function allproducts() {
     });
 
     useEffect(() => {
-        const getCategories_and_Products = async () => {
+        const getCategoriesAndProducts = async () => {
             if (categories.length !== 0 && products.length !== 0) return
             if (categories.length === 0) await getCategories()
             if (products.length === 0) await getProducts()
         }
-        getCategories_and_Products()
+        getCategoriesAndProducts()
+        return () =>{}
     }, [])
 
     const onCategoryChange = async (e) => {

@@ -1,10 +1,10 @@
 import React from 'react'
-import useUser from '@/hooks/useUser';
+import useSession from '@/hooks/useSession';
 import Button from '../buttons/simple_btn';
 import { useCart } from 'react-use-cart';
 
 export default function Logout(props) {
-    const { logOut } = useUser()
+    const { logOut } = useSession()
     const { emptyCart } = useCart()
     if (props.show) return <div className={`w-full h-full font_urbanist fixed inset-0 z-[100] bg-gray-800/40 backdrop-blur flex justify-center items-center transition-all duration-500`}>
         <div className={`relative w-11/12 md:w-3/5 lg:w-[33rem] text-sm flex flex-col lg:flex-row bg-white rounded-2xl md:rounded-3xl overflow-hidden transition-all duration-500`}>
