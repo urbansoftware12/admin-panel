@@ -60,7 +60,7 @@ export default function UserProfile() {
         <section className="col-span-2  border-r-[1px] border-r-slate-200 p-[40px] flex flex-col  font-[400]">
           <div className="flex flex-col items-center">
             <span className="w-[45px] h-[45px] rounded-[10px] ">
-              <Image width={150} height={150} className="w-11 h-11 aspect-square" src={ProfilePic} />
+              <Image width={150} height={150} className="w-11 h-11 aspect-square" alt="user avatar" src={ProfilePic} />
             </span>
             <p className="text-[14px] mt-[20px] ">John Deo</p>
             <p className="text-[14px]">John.example@gmail.com</p>
@@ -81,7 +81,7 @@ export default function UserProfile() {
         <section className="col-span-2  border-r-[1px] border-r-slate-200 p-[40px] flex flex-col  font-[400]">
           <div className="flex flex-col items-center">
             <span className="w-[45px] h-[45px] rounded-[10px] ">
-              <Image width={150} height={150} src={ProfilePic} />
+              <Image width={150} height={150} alt="user avatar" src={ProfilePic} />
             </span>
             <p className="text-[14px] mt-[20px] ">John Deo</p>
             <p className="text-[14px]">John.example@gmail.com</p>
@@ -206,7 +206,7 @@ export default function UserProfile() {
 
                 <div className="flex flex-col gap-[20px] mt-[20px] ">
                   {[...Array(7)].map((e, i) => (
-                    <div className="flex justify-between items-center">
+                    <div key={i} className="flex justify-between items-center">
                       <div className="flex  gap-[20px]  ">
                         <div className="w-[50px] h-[50px] flex justify-center items-center bg_btn_gold_2  rounded-[10px] ">
                           <CartLIcon />

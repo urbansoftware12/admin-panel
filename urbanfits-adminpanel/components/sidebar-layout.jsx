@@ -35,7 +35,7 @@ const SideBarItem = ({ item, sidebaropen }, props) => {
             </div>
         </div>
         {item.subrows && sidebaropen ? item.subrows.map((subitem, index) => (
-            <div className={`flex items-center gap-2 mt-6 pl-6  ${expand ? "visible" : "hidden"} select-none`} >
+            <div key={index} className={`flex items-center gap-2 mt-6 pl-6  ${expand ? "visible" : "hidden"} select-none`} >
                 <Link key={index} href={subitem.navlink || '#'} className={` font_futura uppercase text-black cursor-pointer text-[12px] font-[500] font-[Futura LT Pro]  ${expand ? "visible" : "hidden"} `}>
                     {subitem.label}
                 </Link>
@@ -44,7 +44,7 @@ const SideBarItem = ({ item, sidebaropen }, props) => {
     </div>
 }
 
-export default function SidebarLayout({ children }, props) {
+export default function SidebarLayout({ children }) {
     const { user } = useSession()
     const router = useRouter()
     const [showmenue, setshowMenue] = React.useState(false);
@@ -172,7 +172,7 @@ export default function SidebarLayout({ children }, props) {
 
                 <div className='flex items-center'>
                     <span onClick={() => handlemenuclick("avatar")} className="w-10 border border-gray-400 aspect-square rounded-full overflow-hidden cursor-pointer" >
-                        <Image src={user.image} className="w-full h-full object-cover" width={80} height={80} />
+                        <Image src={user.image} className="w-full h-full object-cover" alt="user avatar" width={80} height={80} />
                     </span>
                     <div className={`duration-200 ${showmenue ? "visible" : "hidden"} absolute top-[89px] right-[154px] `} >
                         <CardAdmin classes="w-[150px] p-5" round="rounded-[15px]" >
@@ -238,8 +238,8 @@ export default function SidebarLayout({ children }, props) {
                                 </div>
                                 {notchecked == 1 &&
                                     <>
-                                        {[...Array(5)].map(() => (
-                                            <div className="flex items-center gap-[15px] my-[9px] " >
+                                        {[...Array(5)].map((i) => (
+                                            <div key={i} className="flex items-center gap-[15px] my-[9px] " >
                                                 <div className="bg-[#B9BBC1] w-[25px] h-[25px] flex items-center justify-center rounded-[50px] " >
                                                     <AvatarIconV fill="white" stroke="white" w="8" h="10" />
                                                 </div>
@@ -253,13 +253,12 @@ export default function SidebarLayout({ children }, props) {
                                 }
                                 {notchecked == 2 &&
                                     <>
-                                        {[...Array(5)].map(() => (
-
-                                            <div className="flex items-center gap-[15px] my-[9px] " >
+                                        {[...Array(5)].map((i) => (
+                                            <div key={i} className="flex items-center gap-[15px] my-[9px] " >
                                                 <div className="bg-[#B9BBC1] w-[25px] h-[25px] flex items-center justify-center rounded-[50px] " >
                                                     <AvatarIconV fill="white" stroke="white" w="8" h="10" />
                                                 </div>
-                                                <div  >
+                                                <div>
                                                     <p className=" text-[12px] font-[500] " >You Joined a Group</p>
                                                     <p className=" text-[10px] font-[300] flex gap-[5px] items-center "> <ClockIcon w="8" h="8" /> <p>Today</p></p>
                                                 </div>
@@ -271,9 +270,8 @@ export default function SidebarLayout({ children }, props) {
                                 }
                                 {notchecked == 3 &&
                                     <>
-                                        {[...Array(5)].map(() => (
-
-                                            <div className="flex items-center gap-[15px] my-[9px] " >
+                                        {[...Array(5)].map((i) => (
+                                            <div key={i} className="flex items-center gap-[15px] my-[9px] " >
                                                 <div className="bg-[#B9BBC1] w-[25px] h-[25px] flex items-center justify-center rounded-[50px] " >
                                                     <AvatarIconV fill="white" stroke="white" w="8" h="10" />
                                                 </div>

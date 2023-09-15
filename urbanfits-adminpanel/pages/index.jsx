@@ -22,7 +22,7 @@ import WalletIcon from '@/public/icons/WalletIcon'
 import { TruckLIcon } from '@/public/icons/TruckLIcon'
 import DollarCardIcon from '@/public/icons/DollarCardIcon'
 
-const index = () => {
+export default function Dashboard() {
   return <>
     <section className='grid grid-cols-4 gap-[27px] mt-[20px] ' >
       <div className='flex flex-col gap-[13px]' >
@@ -357,7 +357,7 @@ const index = () => {
                   ${i == 0 && "mt-[20px]"}
                  my-[15px] font-[400] `} >
                   <div className='flex gap-[15px] items-center ' >
-                    <Image src={pinkShoesAvatar} />
+                    <Image alt="product image" src={pinkShoesAvatar} />
                     <div>
                       <p className='font-[500] ' >Selena Wagner</p>
                       <p className='font-[400] ' >Statement belting with double turn lock hardware add swaggers to a simple</p>
@@ -382,5 +382,3 @@ const index = () => {
           </CardAdmin> */}
   </>
 }
-
-export default index

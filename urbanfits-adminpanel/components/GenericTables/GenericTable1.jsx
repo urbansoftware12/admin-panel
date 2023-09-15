@@ -161,10 +161,10 @@ const GenericTable1 = (props) => {
         <div className="tableWrap pb-20">
           <table {...getTableProps()}>
             <thead  >
-              {headerGroups.map(headerGroup => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map(column => (
-                    <th {...column.getHeaderProps(column.getSortByToggleProps(),
+              {headerGroups.map((headerGroup, i) => (
+                <tr key={i} {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column, i) => (
+                    <th key={i} {...column.getHeaderProps(column.getSortByToggleProps(),
                       { className: column.collapse ? 'collapse' : '', }
                     )}>
                       <span className="flex items-center gap-[5px] text-[15px] font-[400] text-black">
@@ -187,11 +187,11 @@ const GenericTable1 = (props) => {
               {page.map((row, i) => {
                 prepareRow(row)
                 return (
-                  <tr onClick={isrowclick && (() => handlerowclick(row.original?.transid))}
+                  <tr key={i} onClick={isrowclick && (() => handlerowclick(row.original?.transid))}
                     className={` ${i == 0 ? "" : props.border ? "border-t" : ""} text-sm `}
                     {...row.getRowProps()}  >
-                    {row.cells.map(cell => {
-                      return <td {...cell.getCellProps({
+                    {row.cells.map((cell, i) => {
+                      return <td key={i} {...cell.getCellProps({
                         className: cell.column.collapse ? 'collapse' : '',
                       })}>
                         {cell.render('Cell')}
