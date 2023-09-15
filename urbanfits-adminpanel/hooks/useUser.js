@@ -23,7 +23,7 @@ const useUser = create((set, get) => ({
         }
         set(() => ({ usersLoading: false }))
     },
-
+    
     updateUser: async (valuesObj, updateLocally = false) => {
         if (updateLocally) {
             const userData = jwt.decode(valuesObj)?._doc
