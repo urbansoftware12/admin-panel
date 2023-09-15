@@ -15,7 +15,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup'
 import Tooltip from '@/components/tooltips/tooltip'
 
-export default function productcategories() {
+export default function ProductCategories() {
     const { categories, getCategories, createCategory, updateCategory, deleteCategories, categLoading } = useCategories()
     const [selectedCategories, setSelectedCategories] = useState([])
     const [query, setQuery] = useState('')

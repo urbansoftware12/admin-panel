@@ -27,7 +27,7 @@ const BundleItem = (props) => {
         setFoundProduct(product)
     }
 
-    return <section className='w-full flex items-center' key={index}>
+    return <section className='w-full flex items-center' key={props.key}>
         <div className="w-1/2 flex items-center">
             <div className='relative w-4/5 my-4 flex flex-col' >
                 <input className={`w-full h-11 px-[10px] py-3 border border-gray-300 focus:border-yellow-700 hover:border-yellow-600 transition rounded-lg outline-none `}
@@ -128,6 +128,7 @@ export default function CreateBundles() {
             <form onSubmit={handleSubmit} onReset={handleReset}>
                 {values.products.map((product, index) => (
                     <BundleItem
+                        key={index}
                         index={index}
                         value={product.id}
                         errors={errors}

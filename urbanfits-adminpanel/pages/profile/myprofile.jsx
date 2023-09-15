@@ -6,7 +6,7 @@ import { InputSelect } from "@/components/InputSelect";
 import { useFormik } from "formik";
 import { myProfileSchema } from "@/mock/yupSchemas";
 
-export default function myprofile() {
+export default function MyProfile() {
 
     const initialValues = {
         name: "",
@@ -21,8 +21,6 @@ export default function myprofile() {
         state: "",
         country: "",
     }
-
-
     const { values, errors, handleBlur, handleChange, handleSubmit, touched } = useFormik({
         initialValues: initialValues,
         validationSchema: myProfileSchema

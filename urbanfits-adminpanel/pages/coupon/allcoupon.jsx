@@ -10,7 +10,7 @@ import { UpArrowIcon } from "@/public/icons/UpArrowIcon";
 import { TriangleIcon } from "@/public/icons/TriangleIcon";
 import { DownArrowIcon2 } from "@/public/icons/DownArrowIcon2";
 
-const allcoupon = () => {
+export default function Allcoupon() {
   const [checked, setChecked] = useState(1);
 
   const handlemenueclick = (id) => {
@@ -224,5 +224,3 @@ const allcoupon = () => {
     </div>
   </>
 };
-
-export default allcoupon;

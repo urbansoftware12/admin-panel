@@ -11,7 +11,7 @@ import { InputSelect } from "@/components/InputSelect";
 // import { MenueIcon } from '@/public/icons/MenueIcon'
 // import { WebIcon } from '@/public/icons/WebIcon'
 
-const shipping = () => {
+export default function Shipping() {
   const [checked, setChecked] = useState(1);
 
   const handlemenueclick = (id) => {
@@ -268,5 +268,3 @@ const shipping = () => {
     </CardAdmin>
   </div>
 };
-
-export default shipping;

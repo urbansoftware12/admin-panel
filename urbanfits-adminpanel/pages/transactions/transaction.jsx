@@ -6,7 +6,7 @@ import GenericTable1 from '@/components/GenericTables/GenericTable1';
 import { transactionTableColumns, transactionTableData } from '@/mock/tablesdata';
 import { RedirectIcon } from '@/public/icons/RedirectIcon';
 
-const transaction = () => {
+export default function Transaction() {
     const [selectedrowindex, setSelectedrowindex] = React.useState();
     const handlerowclick = (rowindex) => {
         setSelectedrowindex(rowindex);
@@ -78,5 +78,3 @@ const transaction = () => {
         </CardAdmin>
     </>
 }
-
-export default transaction

@@ -11,7 +11,7 @@ import CustomModal from "@/components/modals/CustomModal";
 import Image from "next/image";
 import QrCode from "@/public/QrCode.png";
 
-const authentication = () => {
+export default function Authentication() {
   const [sms, setSms] = React.useState(false);
   const [authmodal, setAuthmodal] = React.useState(false);
 
@@ -66,8 +66,8 @@ const authentication = () => {
                   <label className="switch w-[40px] h-[22.25px]  ">
                     <input
                       type="checkbox"
-                      // checked={authmodal}
-                      // onChange={toggleauthmodal}
+                    // checked={authmodal}
+                    // onChange={toggleauthmodal}
                     />
 
                     <span className="slider"></span>
@@ -101,7 +101,7 @@ const authentication = () => {
 
                     <div className="grid grid-cols-1 gap-[15px]" >
                       <p className="text-[14px] font-[500] " >Enter Google Authenticator Code</p>
-                      <InputText mt="mt-[0px]" placeholder="Enter the code to verify" width="w-[409.4px]"/>
+                      <InputText mt="mt-[0px]" placeholder="Enter the code to verify" width="w-[409.4px]" />
                       <Button2 width="w-[170px]" >
                         Confirm 2FA
                       </Button2>
@@ -191,5 +191,3 @@ const authentication = () => {
     </Profile>
   );
 };
-
-export default authentication;

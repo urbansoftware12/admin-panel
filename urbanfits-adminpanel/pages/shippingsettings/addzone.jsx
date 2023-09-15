@@ -9,7 +9,7 @@ import { RightArrowIcon } from "@/public/sidebaricons/RightArrowIcon";
 import CustomModal from "@/components/modals/CustomModal";
 import { InputSelect } from "@/components/InputSelect";
 
-const addzone = () => {
+export default function AddZone() {
   const [checked, setChecked] = useState(1);
   const handlemenueclick = (id) => {
     setChecked(id);
@@ -261,5 +261,3 @@ const addzone = () => {
     </div>
   </div>
 };
-
-export default addzone;

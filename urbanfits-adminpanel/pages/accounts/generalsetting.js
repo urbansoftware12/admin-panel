@@ -7,10 +7,9 @@ import { RightArrowIcon } from "@/public/sidebaricons/RightArrowIcon";
 import { useFormik } from "formik";
 import { generalSettingSchema } from "@/mock/yupSchemas";
 
-const generalsetting = () => {
+export default function Generalsetting() {
 
   const initialValues = {
-
     addressline1: "",
     addressline2: "",
     city: "",
@@ -19,14 +18,10 @@ const generalsetting = () => {
     postalcode: "",
 
   }
-
-
   const { values, errors, handleBlur, handleChange, handleSubmit, touched } = useFormik({
     initialValues: initialValues,
     validationSchema: generalSettingSchema
   })
-
-
 
   return <>
     <div className="font_futura">
@@ -343,5 +338,3 @@ const generalsetting = () => {
     </CardAdmin>
   </>
 };
-
-export default generalsetting;

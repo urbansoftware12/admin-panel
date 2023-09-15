@@ -18,7 +18,7 @@ import { FacebookIcon } from "@/public/icons/FacebookIcon";
 import { InstagramIcon } from "@/public/icons/InstagramIcon";
 const ProfilePic = "https://urban-fits.s3.eu-north-1.amazonaws.com/website-copyrights/default-pfp.jpg";
 
-const userprofile = () => {
+export default function UserProfile() {
   const [checked, setChecked] = useState(1);
 
   const handlemenueclick = (id) => {
@@ -266,5 +266,3 @@ const userprofile = () => {
     </CardAdmin>
   </>
 };
-
-export default userprofile;

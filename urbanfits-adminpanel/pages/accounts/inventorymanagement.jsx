@@ -9,7 +9,7 @@ import { useFormik } from "formik";
 import { inventeryManagementSchema } from "@/mock/yupSchemas";
 
 
-const inventorymanagement = () => {
+export default function Inventorymanagement() {
 
 
   const initialValues = {
@@ -140,5 +140,3 @@ const inventorymanagement = () => {
     </section>
   </>
 };
-
-export default inventorymanagement;

@@ -7,19 +7,19 @@ import { Button2 } from "@/components/buttons/Button2";
 import { useFormik } from "formik";
 import { changePasswordSchema } from "@/mock/yupSchemas";
 
-const changepassword = () => {
+export default function ChangePassword() {
 
   const initialValues = {
     oldpassword: "",
     newpassword: "",
     confirmnewpassword: "",
-    }
-     
+  }
 
-const {values, errors, handleBlur, handleChange, handleSubmit, touched } = useFormik({
-    initialValues:initialValues  , 
+
+  const { values, errors, handleBlur, handleChange, handleSubmit, touched } = useFormik({
+    initialValues: initialValues,
     validationSchema: changePasswordSchema
-})
+  })
 
 
 
@@ -34,12 +34,12 @@ const {values, errors, handleBlur, handleChange, handleSubmit, touched } = useFo
               placeholder="Old Password"
               type="password"
               name="oldpassword"
-                value={values.oldpassword}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={errors.oldpassword && touched.oldpassword?
-                    (errors.oldpassword): null
-                }
+              value={values.oldpassword}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={errors.oldpassword && touched.oldpassword ?
+                (errors.oldpassword) : null
+              }
             />
             <InputText
               label="New Password"
@@ -48,12 +48,12 @@ const {values, errors, handleBlur, handleChange, handleSubmit, touched } = useFo
               type="password"
 
               name="newpassword"
-                value={values.newpassword}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={errors.newpassword && touched.newpassword?
-                    (errors.newpassword): null
-                }
+              value={values.newpassword}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={errors.newpassword && touched.newpassword ?
+                (errors.newpassword) : null
+              }
             />
 
             <div>
@@ -73,27 +73,25 @@ const {values, errors, handleBlur, handleChange, handleSubmit, touched } = useFo
           </div>
 
           <div className=" flex flex-col mt-[97px]">
-            
-              <InputText
-                label="Confirm New Password"
-                width="  w-[100%]"
-                placeholder="Confirm New Password"
+
+            <InputText
+              label="Confirm New Password"
+              width="  w-[100%]"
+              placeholder="Confirm New Password"
               type="password"
 
-                name="confirmnewpassword"
-                value={values.confirmnewpassword}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={errors.confirmnewpassword && touched.confirmnewpassword?
-                    (errors.confirmnewpassword): null
-                }
-              />
-            
+              name="confirmnewpassword"
+              value={values.confirmnewpassword}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={errors.confirmnewpassword && touched.confirmnewpassword ?
+                (errors.confirmnewpassword) : null
+              }
+            />
+
           </div>
         </div>
       </CardAdmin>
     </Profile>
   );
 };
-
-export default changepassword;

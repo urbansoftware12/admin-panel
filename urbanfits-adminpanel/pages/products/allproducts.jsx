@@ -12,7 +12,7 @@ import useCategories from '@/hooks/useCategories';
 import useProduct from '@/hooks/useProduct';
 import { productListTableColumns } from '@/mock/tablesdata';
 
-export default function allproducts() {
+export default function AllProducts() {
     const { categories, getCategories, categLoading } = useCategories()
     const { products, getProducts, productLoading, totalProducts, deleteProducts, selectedProducts, setSelectedProducts, setProductInfo } = useProduct()
     const [categoryOption, setCategoryOption] = useState(false)

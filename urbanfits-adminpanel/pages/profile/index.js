@@ -40,7 +40,7 @@ export default function Profile({ children }) {
     <div className={` mt-[40px] flex items-center font_futura `}>
       <div className="w-36 h-36 rounded-2xl p-1 bg-gold border border-white flex justify-center items-center overflow-hidden">
         {imgSpinner}
-        <Image width={150} height={150} className="w-full h-full rounded-xl object-cover" src={pfp} />
+        <Image width={150} height={150} className="w-full h-full rounded-xl object-cover" alt="avatar" src={pfp} />
       </div>
       <div className="ml-[30px]">
         <p className=" text-[22px] mb-0  ">{user?.firstname}&nbsp;{user?.lastname}</p>
@@ -123,7 +123,7 @@ export default function Profile({ children }) {
         </p>
 
         <div className="flex items-center gap-[17px] " >
-          <Image width="150px" height="150px" src={QrCode} />
+          <Image width={200} height={200} alt="qr code" src={QrCode} />
 
           <div className="grid grid-cols-1 gap-[15px]" >
             <p className="text-[14px] font-[500] " >Enter Google Authenticator Code</p>

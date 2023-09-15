@@ -9,7 +9,7 @@ import CardAdmin from '@/components/cards/cardadmin'
 import GenericTable2 from '@/components/GenericTables/GenericTable2'
 import { invoiceTableColumns, invoiceTableData } from '@/mock/tablesdata'
 
-const invoice = () => {
+export default function Invoice() {
   return <>
     <div className="flex mt-[15px] justify-between items-center ">
       <div>
@@ -134,5 +134,3 @@ const invoice = () => {
     </CardAdmin>
   </>
 }
-
-export default invoice

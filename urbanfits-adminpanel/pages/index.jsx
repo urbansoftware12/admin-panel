@@ -325,7 +325,7 @@ const index = () => {
                   ${i == 0 && "mt-[20px]"}
                  my-[15px] font-[400] `} >
                   <div className='flex gap-[15px] items-center ' >
-                    <Image src={avatarYellow} />
+                    <Image src={avatarYellow} alt='user avatar' />
                     <div>
                       <p className='font-[400] ' >Selena Wagner</p>
                       <p className='font-[300] ' >@salina.io</p>
