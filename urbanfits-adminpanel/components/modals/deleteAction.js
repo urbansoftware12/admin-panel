@@ -18,7 +18,7 @@ export default function DeleteAction(props) {
                                 <div className="w-full space-y-3">
                                     <h2 className="text-black font_futura_medium text-base md:text-lg lg:text-xl">{props.heading}</h2>
                                     <p className='text-sm text-red-500'>{props.msg}</p>
-                                    <p className='text-sm '>Please type <span className='text-red-600' >"delete"</span> here to proceed.</p>
+                                    <p className='text-sm '>Please type <span className='text-red-600' >&quot;delete&quot;</span> here to proceed.</p>
                                 </div>
                                 <InputText
                                     autoComplete="off"

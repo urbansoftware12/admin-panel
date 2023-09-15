@@ -2,7 +2,7 @@ import React from "react";
 import CardAdmin from "@/components/cards/cardadmin";
 import { RightArrowIcon } from "@/public/sidebaricons/RightArrowIcon";
 import Button from "@/components/buttons/simple_btn";
-import GenericTable2 from "@/components/GenericTables/GenericTable2";
+// import GenericTable2 from "@/components/GenericTables/GenericTable2";
 import { orderProductDetailTableColumns, orderProductDetailTableData } from "@/mock/tablesdata";
 import { DaimondIcon } from "@/public/sidebaricons/DaimondIcon";
 import { CartIcon } from "@/public/sidebaricons/CartIcon";
@@ -13,7 +13,7 @@ import { GiftLIcon } from "@/public/icons/GiftLIcon";
 import { TruckLIcon } from "@/public/icons/TruckLIcon";
 import { PassengerLIcon } from "@/public/icons/PassengerLIcon";
 
-const orderdetails = () => {
+export default function OrderDetails() {
   return <>
     <div className="flex mt-[15px] justify-between items-center ">
       <div>
@@ -117,7 +117,7 @@ const orderdetails = () => {
 
         <div className="p-[40px] " >
 
-          <GenericTable2 columns={orderProductDetailTableColumns} data={orderProductDetailTableData} />
+          {/* <GenericTable2 columns={orderProductDetailTableColumns} data={orderProductDetailTableData} /> */}
 
 
           <div className=" text-[14px] flex items-center gap-[36px] mt-[30px] justify-end " >
@@ -208,6 +208,3 @@ const orderdetails = () => {
     </CardAdmin>
   </>
 };
-
-export default orderdetails;
-

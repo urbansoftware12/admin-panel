@@ -39,7 +39,7 @@ export default function ForgotPassword() {
                 const { data } = await axios.post(`${process.env.HOST}/api/user/forgotpassword`, values)
                 if (data.success && data.otp_id) {
                     setOtpId(data.otp_id)
-                    setResendOption(<span className='w-full flex justify-between items-center text-xs md:text-sm text-gray-400'> Didn't get the email? <button type='submit' className="border-b border-b-yellow-700">Resend Code</button></span>)
+                    setResendOption(<span className='w-full flex justify-between items-center text-xs md:text-sm text-gray-400'> Didn&apos;t get the email? <button type='submit' className="border-b border-b-yellow-700">Resend Code</button></span>)
                     toaster("success", data.msg)
                 }
                 else {

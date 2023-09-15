@@ -6,7 +6,7 @@ import DownloadIcon from '@/public/icons/DownloadIcon'
 import PrintIcon from '@/public/icons/PrintIcon'
 import ShareIcon from '@/public/icons/ShareIcon'
 import CardAdmin from '@/components/cards/cardadmin'
-import GenericTable2 from '@/components/GenericTables/GenericTable2'
+// import GenericTable2 from '@/components/GenericTables/GenericTable2'
 import { invoiceTableColumns, invoiceTableData } from '@/mock/tablesdata'
 
 export default function Invoice() {
@@ -112,7 +112,7 @@ export default function Invoice() {
 
 
 
-        <GenericTable2 columns={invoiceTableColumns} data={invoiceTableData} />
+        {/* <GenericTable2 columns={invoiceTableColumns} data={invoiceTableData} /> */}
 
         <div className='flex gap-[71px] justify-end ' >
           <div className='flex flex-col' >

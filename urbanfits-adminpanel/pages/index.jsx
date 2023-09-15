@@ -11,7 +11,7 @@ import { RefreshIcon } from '@/public/icons/RefreshIcon'
 import { Dots3Icon } from '@/public/icons/Dots3Icon'
 import DownStickArrowIcon from '@/public/icons/DownStickArrowIcon'
 import { recentOrdersTableColumns, recentOrdersTableData } from '@/mock/tablesdata'
-import GenericTable3 from '@/components/GenericTables/GenericTable3'
+// import GenericTable3 from '@/components/GenericTables/GenericTable3'
 import avatarYellow from '@/public/avatarYellow.png'
 import pinkShoesAvatar from '@/public/pinkShoesAvatar.png'
 import Image from 'next/image'
@@ -298,10 +298,10 @@ const index = () => {
             <p className='text-[22px] font-[500] mb-[10px] ' >Recent Orders</p>
           </div>
           <div className='px-[20px] ' >
-            <GenericTable3
+            {/* <GenericTable3
               data={recentOrdersTableData}
               columns={recentOrdersTableColumns}
-            />
+            /> */}
           </div>
 
         </div>

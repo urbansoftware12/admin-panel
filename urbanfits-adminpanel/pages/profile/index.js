@@ -71,11 +71,11 @@ export default function Profile({ children }) {
         >
           <div className="font_futura">
             <p className="text-[22px]  "> Two-Factor Authentication </p>
-            <p className="text-[14px] mt-[9px]   max-w-[1121px] ">
+            <p className="text-[14px] mt-[9px] max-w-[1121px]">
               Two-factor authentication is a method for protection your web
               account. When it is activated you need to enter not only your
               password, but also a special code. You can receive this code by in
-              mobile app. Even if third person will find your password, then can't
+              mobile app. Even if third person will find your password, then can&apos;t
               access with that code.
             </p>
 
