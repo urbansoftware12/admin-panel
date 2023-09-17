@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import Logout from "./modals/logout";
+import CardAdmin from "@/components/cards/cardadmin";
+import useSession from "@/hooks/useSession";
+import toaster from "@/utils/toast_function";
 import { useRouter } from "next/router";
 import logo_outlined from "@/public/icons/logo_outlined.svg";
 import { sidebarItems, SearchQueryData } from "@/mock/navData";
@@ -7,18 +12,13 @@ import { RightArrowIcon } from "@/public/sidebaricons/RightArrowIcon";
 import { DownArowSmallIcon } from "@/public/sidebaricons/DownArowSmallIcon";
 import { SettingIcon } from "@/public/sidebaricons/SettingIcon";
 import { BellIcon } from "@/public/sidebaricons/BellIcon";
-import Link from "next/link";
-import Error404 from "@/pages/404";
 import { SearchIcon } from "@/public/sidebaricons/SearchIcon";
 import { LocationIcon } from "@/public/sidebaricons/LocationIcon";
 import { CallIcon } from "@/public/sidebaricons/CallIcon";
-import CardAdmin from "@/components/cards/cardadmin";
 import AvatarIconV from "@/public/icons/AvatarIconV";
 import { ClockIcon } from "@/public/icons/ClockIcon";
 import { Button2 } from "@/components/buttons/Button2";
-import useSession from "@/hooks/useSession";
-import { pusherClient } from "@/utils/pusher";
-import toaster from "@/utils/toast_function";
+import { pusherClient, presenceInstance } from "@/utils/pusher";
 
 const SideBarItem = ({ item, sidebaropen }, props) => {
     const [expand, setExpand] = useState(false)
@@ -47,9 +47,10 @@ const SideBarItem = ({ item, sidebaropen }, props) => {
 export default function SidebarLayout({ children }) {
     const { user } = useSession()
     const router = useRouter()
-    const [showmenue, setshowMenue] = React.useState(false);
-    const [shownotification, setShownotification] = React.useState(false);
-    const [arrowmenue, setArrowmenu] = React.useState(false);
+    const [showmenue, setshowMenue] = useState(false);
+    const [shownotification, setShownotification] = useState(false);
+    const [arrowmenue, setArrowmenu] = useState(false);
+    const [logoutModal, setLogoutModal] = useState(false);
 
     useEffect(() => {
         const adminChannel = pusherClient.subscribe('admin-channel')
@@ -60,9 +61,13 @@ export default function SidebarLayout({ children }) {
             toaster("info", <span>{data.msg}<Link className="underline" href='#'>&nbsp;view orders</Link></span>, 'bottom-left')
         })
 
+        const pusherPresenceInst = presenceInstance(user)
+        const presenceChannel = pusherPresenceInst.subscribe('presence-urbanifts')
+
         return () => {
             adminChannel.unbind_all()
             pusherClient.unsubscribe('admin-channel')
+            presenceChannel.unsubscribe('presence-urbanifts')
         }
     }, [])
 
@@ -104,11 +109,12 @@ export default function SidebarLayout({ children }) {
     }
 
     if (router.pathname.includes("/auth")) return
-    if (!user || !user._id || user._id.length < 18) {
+    else if (!user || !user._id || user._id.length < 18) {
         router.push("/auth/login")
-        return <Error404 />
+        return null
     }
     else return <div className="flex-col bg-[#F4F4F4] overflow-x-hidden overflow-y-scroll font_futura ">
+        <Logout show={logoutModal} setLogout={setLogoutModal} />
         <div className={`fixed ${sidebaropen ? "w-[250px]" : "w-[80px]"} duration-300 ${sidebaropen && "rounded-r-[25px]"} bg-white h-screen`} >
             <div className="flex-col justify-between h-full">
                 <div className={`h-[12%] bg-gold ${sidebaropen && "rounded-tr-[25px]"} flex justify-center items-center`} >
@@ -128,19 +134,13 @@ export default function SidebarLayout({ children }) {
                         Shipping to: United Arab Emirates
                     </p>
                     <div className="flex items-center mt-[10px]">
-                        {" "}
-                        <span>
-                            <LocationIcon />
-                        </span>
+                        &nbsp;<LocationIcon />
                         <p className="font_futura text-[12px] font-[400] text-black  ml-[15.88px] ">
                             Urban Fits (UAE)
                         </p>
                     </div>
                     <div className="flex items-center mt-[10px]">
-                        {" "}
-                        <span>
-                            {" "}<CallIcon />{" "}
-                        </span>
+                        &nbsp;<CallIcon />
                         <p className="font_futura text-[12px] font-[400] text-black  ml-[15.88px] ">
                             +971 52 700 1997
                         </p>
@@ -179,7 +179,7 @@ export default function SidebarLayout({ children }) {
                             <div className="flex flex-col gap-3 text-sm" >
                                 <Link href="/profile/myprofile" className="group w-full flex flex-col" >My Profile<i className='h-0.5 w-0 group-hover:w-full bg-gold-land transition-all' /></Link>
                                 <Link href="/profile/authentication" className="group w-full flex flex-col">Settings<i className='h-0.5 w-0 group-hover:w-full bg-gold-land transition-all' /></Link>
-                                <button className="group flex flex-col text-left">Log out<i className='h-0.5 w-0 group-hover:w-full bg-gold-land transition-all' /></button>
+                                <button onClick={() => setLogoutModal(true)} className="group flex flex-col text-left">Log out<i className='h-0.5 w-0 group-hover:w-full bg-gold-land transition-all' /></button>
                             </div>
                         </CardAdmin>
                     </div>
@@ -330,14 +330,3 @@ export default function SidebarLayout({ children }) {
         </div>
     </div>
 }
-// export async function getServerSideProps(context) {
-//     const { user_id } = await context.query
-//     console.log(user_id)
-//     if (!user_id || user_id.length < 18) return {
-//         redirect: {
-//             destination: '/403',
-//             permanent: false,
-//         },
-//     };
-//     return { props: { user_id } }
-// }

@@ -16,6 +16,11 @@ module.exports = {
         '10px': '10px',
         '13px': '13px',
       },
+      letterSpacing: {
+        '1': '1.4px',
+        '2': '4.2px',
+        '3': '5.2px'
+      },
       colors: {
         'gotham-black': '#383838',
       },

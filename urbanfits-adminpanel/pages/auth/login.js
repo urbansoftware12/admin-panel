@@ -71,9 +71,9 @@ export default function Login() {
     return <>
         <Head><title>Urban Fits - Login</title></Head>
         <AuthPage loading={loading} mblNav="/auth/signup" mblNavName="Register">
-            <form className="w-full h-full lg:h-auto bg-white p-2 lg:p-0 font_urbanist text-base flex flex-col justify-between md:justify-around lg:block" onReset={handleReset} onSubmit={handleSubmit} >
+            <form className="w-full h-full lg:h-auto bg-white p-2 lg:p-0 font_futura text-base flex flex-col justify-between md:justify-around lg:block" onReset={handleReset} onSubmit={handleSubmit} >
                 <section className="w-full mb-6 md:mb-0">
-                    <h1 className="lg:hidden text-[22px] mb-5 text-left font_urbanist">Login</h1>
+                    <h1 className="lg:hidden text-[22px] mb-5 text-left font_futura">Login</h1>
                     <div className={`relative data_field lex items-center border-b ${touched.new_email && errors.new_email ? "border-red-500" : "focus:border-yellow-700 hover:border-yellow-600"} transition py-2 mb-4`}>
                         {touched.email && errors.email ? <Tooltip classes="form-error" content={errors.email} /> : null}
                         <input className="w-full outline-none border-none" name="email" id="email" value={values.email} onBlur={handleBlur} onChange={handleChange} placeholder='Username or Email' />
@@ -104,12 +104,7 @@ export default function Login() {
                             <Link href="/auth/resetpassword">Forgot Password?</Link>
                         </div>
                     </div>
-                    <Button loading={loading} my="my-4" classes='w-full' type="submit">Login</Button><div className="lg:hidden w-full flex justify-between items-center font_urbanist text-sm">
-                        <span className="w-2/5 h-px bg-gray-200"></span>
-                        login via
-                        <span className="w-2/5 h-px bg-gray-200"></span>
-                    </div>
-                    <Link href='/auth/signup' className='hidden lg:block underline text-xs md:text-sm'><h1 className='w-full text-center'>Create a New Account</h1></Link>
+                    <Button loading={loading} my="my-4" classes='w-full' type="submit">Login</Button>
                 </section>
             </form>
         </AuthPage>

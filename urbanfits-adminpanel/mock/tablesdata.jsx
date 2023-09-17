@@ -68,6 +68,7 @@ export const userListTableColumns = [
   {
     selector: row => row.status,
     name: "Status",
+    cell: row => <span style={{ background: row.status ? "#22c55e" : "#f3f4f6", color: row.status ? "white" : "black" }} className="text-xs bg-gray-100 text-white px-2 py-0.5 rounded-full">{row.status ? "Online" : "Offline"}</span>,
     sortable: true,
   },
   {

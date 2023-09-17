@@ -8,7 +8,7 @@ const useUser = create((set, get) => ({
     users: [],
     usersLoading: false,
 
-    getUsers: async (page) => {
+    getUsers: async (page=1) => {
         const { user } = useSession.getState()
         set(() => ({ usersLoading: true }))
         try {

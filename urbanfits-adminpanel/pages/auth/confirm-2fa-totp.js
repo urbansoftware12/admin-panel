@@ -36,9 +36,9 @@ export default function Login() {
     return <>
         <Head><title>Urban Fits - Confirm 2FA TOTP code</title></Head>
         <AuthPage loading={loading} mblNav="/auth/signup" mblNavName="Register">
-            <main className="w-full h-full lg:h-auto bg-white p-2 lg:p-0 font_urbanist text-base flex flex-col justify-between md:justify-around lg:block" >
+            <main className="w-full h-full lg:h-auto bg-white p-2 lg:p-0 font_futura text-base flex flex-col justify-between md:justify-around lg:block" >
                 <section className="w-full mb-6 md:mb-0">
-                    <h1 className="lg:hidden text-[22px] mb-5 text-left font_urbanist">Confirm 2FA code</h1>
+                    <h1 className="lg:hidden text-[22px] mb-5 text-left font_futura">Confirm 2FA code</h1>
                     <div className="relative data_field lex items-center border-b focus:border-yellow-700 hover:border-yellow-600 transition py-2 mb-4">
                         <input className="w-full outline-none border-none" type='number' name="totp" id="totp" value={totp} onChange={(e) => setTotp(e.target.value)} placeholder='Enter TOTP code' />
                     </div>

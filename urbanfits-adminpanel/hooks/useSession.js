@@ -58,7 +58,7 @@ const useSession = create(persist((set, get) => ({
             delete userData.password
             set(() => ({ user: userData }))
             toaster("success", data.msg)
-            window.location.href = '/'
+            window.location.href = '/auth/login'
         } catch (error) {
             console.log(error)
             toaster("error", error.response.data.msg)

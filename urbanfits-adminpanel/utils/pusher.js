@@ -13,4 +13,18 @@ const pusherClient = new PusherClient(process.env.PUSHER_KEY, {
     cluster: process.env.PUSHER_CLUSTER,
 });
 
-export { pusherServer, pusherClient }
+const presenceInstance = (user) => {
+    const instance = new PusherClient(process.env.PUSHER_KEY, {
+        cluster: process.env.PUSHER_CLUSTER,
+        authEndpoint: `${process.env.HOST}/api/pusher/auth`,
+        auth: {
+            params: {
+                user_id: user?._id,
+                email: user?.email
+            }
+        }
+    });
+    return instance
+}
+
+export { pusherServer, pusherClient, presenceInstance }

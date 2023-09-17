@@ -12,6 +12,7 @@ import toaster from "@/utils/toast_function";
 const Userlist = () => {
     const { users, getUsers, totalUsers, usersLoading } = useUser()
     const [query, setQuery] = useState('')
+    const [currentPage, setCurrentPage] = useState(1)
 
     useEffect(() => {
         if (!users.length) getUsers()
@@ -38,28 +39,34 @@ const Userlist = () => {
             <Button my="my-[0px]">Add User</Button>
         </div>
 
-        <CardAdmin classes="px-[40px] py-[42px] mt-[20px] ">
+        <CardAdmin classes="px-10 py-[42px] mt-5 ">
             <div className="flex justify-between">
-                <div className="flex items-center gap-[13px] " >
-                    <div className='flex flex-col'>
-                        <select name="category" className="w-48 h-10 px-3 border rounded-full outline-none bg-gray-50 text-black cursor-pointer" placeholder="Category">
-                            {/* {[{ _id: false, path: "All Products" }, ...categories]?.map((category) => ({ value: category._id, name: category.path }))
+                <div className="w-full flex items-center justify-between">
+                    <section className="flex items-center gap-4">
+                        <div className='flex flex-col'>
+                            <select name="category" className="w-48 h-10 px-3 border rounded-full outline-none bg-gray-50 text-black cursor-pointer" placeholder="Category">
+                                {/* {[{ _id: false, path: "All Products" }, ...categories]?.map((category) => ({ value: category._id, name: category.path }))
                                 .map((obj, index) => (
                                     <option key={index} value={obj.value}> {obj.name} </option>
                                 ))} */}
-                        </select>
-                    </div>
-                    <div className='w-64 h-10 py-2 px-5 gap-2 flex items-center bg-gray-50 border border-gray-300 rounded-full' >
-                        <SearchIcon />
-                        <input
-                            type="text"
-                            id="search"
-                            value={query}
-                            onChange={(e) => { setQuery(e.target.value) }}
-                            className="w-full h-4 flex items-center text-sm font_futuralt bg-transparent outline-none"
-                            placeholder="Search (ID or Name)..."
-                        />
-                    </div>
+                            </select>
+                        </div>
+                        <div className='w-64 h-10 py-2 px-5 gap-2 flex items-center bg-gray-50 border border-gray-300 rounded-full' >
+                            <SearchIcon />
+                            <input
+                                type="text"
+                                id="search"
+                                value={query}
+                                onChange={(e) => { setQuery(e.target.value) }}
+                                className="w-full h-4 flex items-center text-sm font_futuralt bg-transparent outline-none"
+                                placeholder="Search (ID or Name)..."
+                            />
+                        </div>
+                    </section>
+                    <Button my="my-0" disabled={usersLoading} fontSize="text-sm" onClick={() => getUsers(currentPage)}>
+                        Refresh&nbsp;&nbsp;
+                        <i className={`fa-solid fa-arrows-rotate ${usersLoading ? "fa-spin" : null}`}></i>
+                    </Button>
                 </div>
             </div>
             <DataTable
@@ -81,12 +88,9 @@ const Userlist = () => {
                 paginationServer
                 paginationDefaultPage={1}
                 paginationTotalRows={totalUsers}
-                paginationPerPage={50}
+                paginationPerPage={2}
                 paginationRowsPerPageOptions={[50]}
-                // onChangePage={(page) => getProducts(page, categoryOption)}
-                // selectableRows={selectable}
-                // onSelectedRowsChange={(state) => setSelectedProducts(state.selectedRows)}
-                // clearSelectedRows={selectable}
+                onChangePage={(page) => { getUsers(page); setCurrentPage(page) }}
                 progressPending={usersLoading}
                 progressComponent={<Spinner forBtn={true} variant="border-black" />}
                 highlightOnHover
@@ -101,7 +105,7 @@ const Userlist = () => {
                         email: user.email,
                         phone: user.phone_prefix ? user.phone_prefix + ' ' + user.phone_number : 'N/A',
                         purchases: user.purchases || 0,
-                        status: user.is_active ? "Online" : "Offline",
+                        status: user.is_active,
                         joined_at: user.createdAt,
                         handleInfo: () => { },
                         infoLink: "#",

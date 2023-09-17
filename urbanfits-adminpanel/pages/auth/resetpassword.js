@@ -78,13 +78,13 @@ export default function ForgotPassword() {
 
     return <>
         <AuthPage loading={loading} mblNav="/auth/login" mblNavName="Sign in" >
-            <form className="w-full h-full lg:h-auto bg-white p-2 lg:p-0 font_urbanist text-base flex flex-col justify-between md:justify-around items-center lg:justify-center" onReset={handleReset} onSubmit={handleSubmit} >
+            <form className="w-full h-full lg:h-auto bg-white p-2 lg:p-0 font_futura text-base flex flex-col justify-between md:justify-around items-center lg:justify-center" onReset={handleReset} onSubmit={handleSubmit} >
                 <section className="w-full mb-6 md:mb-0">
-                    <h1 className="lg:hidden text-[22px] mb-5 text-left font_urbanist">Forgot Password</h1>
+                    <h1 className="lg:hidden text-[22px] mb-5 text-left font_futura">Forgot Password</h1>
                     <div className={`relative data_field flex items-center border-b ${touched.email && errors.email ? "border-red-500" : "focus:border-yellow-700 hover:border-yellow-600"} transition py-2 mb-4`}>
                         {touched.email && errors.email ? <Tooltip classes="form-error" content={errors.email} /> : null}
                         <input className="w-full outline-none border-none" name="email" id="email" value={values.email} onBlur={handleBlur} onChange={handleChange} placeholder='Username or Email' />
-                        <button type='submit' className="font_urbanist_medium px-3 py-2 bg-gray-100 rounded-full text-sm whitespace-nowrap hover:text-white hover:bg-black transition-all">{otpId ? "Resend Code" : "Send Code"}</button>
+                        <button type='submit' className="font_futura_medium px-3 py-2 bg-gray-100 rounded-full text-sm whitespace-nowrap hover:text-white hover:bg-black transition-all">{otpId ? "Resend Code" : "Send Code"}</button>
                     </div>
                     <div className={`relative data_field flex items-center border-b ${touched.password && errors.password ? "border-red-500" : "focus:border-yellow-700 hover:border-yellow-600"} transition py-2 mb-4`}>
                         {touched.password && errors.password ? <Tooltip classes="form-error" content={errors.password} /> : null}
