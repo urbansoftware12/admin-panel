@@ -5,12 +5,14 @@ import CardAdmin from "@/components/cards/cardadmin";
 import Spinner from "@/components/loaders/spinner";
 import Button from "@/components/buttons/simple_btn";
 import { SearchIcon } from "@/public/sidebaricons/SearchIcon";
+import useSession from "@/hooks/useSession";
 import useUser from "@/hooks/useUser";
 import { userListTableColumns } from "@/mock/tablesdata";
 import toaster from "@/utils/toast_function";
 
 const Userlist = () => {
-    const { users, getUsers, totalUsers, usersLoading } = useUser()
+    const session = useSession()
+    const { users, getUsers, totalUsers, totalOnline, usersLoading } = useUser()
     const [query, setQuery] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
 
@@ -46,9 +48,9 @@ const Userlist = () => {
                         <div className='flex flex-col'>
                             <select name="category" className="w-48 h-10 px-3 border rounded-full outline-none bg-gray-50 text-black cursor-pointer" placeholder="Category">
                                 {/* {[{ _id: false, path: "All Products" }, ...categories]?.map((category) => ({ value: category._id, name: category.path }))
-                                .map((obj, index) => (
-                                    <option key={index} value={obj.value}> {obj.name} </option>
-                                ))} */}
+                                .map((obj, index) => ( */}
+                                <option key={1}>All users</option>
+                                {/* ))} */}
                             </select>
                         </div>
                         <div className='w-64 h-10 py-2 px-5 gap-2 flex items-center bg-gray-50 border border-gray-300 rounded-full' >
@@ -61,6 +63,11 @@ const Userlist = () => {
                                 className="w-full h-4 flex items-center text-sm font_futuralt bg-transparent outline-none"
                                 placeholder="Search (ID or Name)..."
                             />
+                        </div>
+                        <div className="h-10 p-[0.8px] text-sm bg-gold-land flex justify-center items-center rounded-full">
+                            <span className="w-full h-full px-5 flex justify-center items-center bg-white rounded-full">
+                                Total Online:&nbsp;{totalOnline}
+                            </span>
                         </div>
                     </section>
                     <Button my="my-0" disabled={usersLoading} fontSize="text-sm" onClick={() => getUsers(currentPage)}>
@@ -88,7 +95,7 @@ const Userlist = () => {
                 paginationServer
                 paginationDefaultPage={1}
                 paginationTotalRows={totalUsers}
-                paginationPerPage={2}
+                paginationPerPage={50}
                 paginationRowsPerPageOptions={[50]}
                 onChangePage={(page) => { getUsers(page); setCurrentPage(page) }}
                 progressPending={usersLoading}
@@ -108,11 +115,11 @@ const Userlist = () => {
                         status: user.is_active,
                         joined_at: user.createdAt,
                         handleInfo: () => { },
-                        infoLink: "#",
+                        infoLink: `/user/${user._id}?user_id=${session.user._id}`,
                         actions: [
                             {
                                 name: "View Profile",
-                                link: '/products/productinfo',
+                                link: `/user/${user._id}?user_id=${session.user._id}`,
                                 onClick: () => { }
                             },
                             {

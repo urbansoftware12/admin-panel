@@ -64,11 +64,11 @@ export default function SidebarLayout({ children }) {
         const pusherPresenceInst = presenceInstance(user)
         const presenceChannel = pusherPresenceInst.subscribe('presence-urbanifts')
 
-        return () => {
-            adminChannel.unbind_all()
-            pusherClient.unsubscribe('admin-channel')
-            presenceChannel.unsubscribe('presence-urbanifts')
-        }
+        // return () => {
+        //     adminChannel.unbind_all()
+        //     pusherClient.unsubscribe('admin-channel')
+        //     presenceChannel.unsubscribe('presence-urbanifts')
+        // }
     }, [])
 
     const handlemenuclick = (menu) => {
@@ -108,7 +108,7 @@ export default function SidebarLayout({ children }) {
         setResults(filteredResults)
     }
 
-    if (router.pathname.includes("/auth")) return
+    if (router.asPath.includes("/auth")) return
     else if (!user || !user._id || user._id.length < 18) {
         router.push("/auth/login")
         return null

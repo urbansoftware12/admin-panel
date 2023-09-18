@@ -25,7 +25,7 @@ function App({ Component, pageProps }) {
   return <>
     <LoadingBar color='linear-gradient(90deg, #FAE892 0%, #B3903E 70%)' height={4} waitingTime={0} loaderSpeed={200} shadow={true} progress={progress} onLoaderFinished={() => setProgress(0)} />
     <ToastContainer className="toast" />
-    {router.pathname.includes("/auth") ? <Component {...pageProps} /> :
+    {router.pathname.includes("/auth") || router.pathname.includes("/40") ? <Component {...pageProps} /> :
       <SidebarLayout>
         <Component {...pageProps} />
       </SidebarLayout>}

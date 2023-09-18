@@ -9,7 +9,7 @@ export const profileTabData = [
   },
   {
     label: "AUTHENTICATION",
-    navlink: "/profile/authentication",
+    navlink: "/profile/mfa",
   },
   {
     label: "SECURITY SETTINGS",
