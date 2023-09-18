@@ -36,24 +36,24 @@ export default function UserProfile({ userData }) {
         </div>
 
         <CardAdmin classes=" grid grid-cols-6 mt-[20px] ">
-            <section className="col-span-2  border-r-[1px] border-r-slate-200 p-[40px] flex flex-col  font-[400]">
+            <section className="col-span-2 border-r border-r-slate-200 p-[40px] flex flex-col  font-[400]">
                 <div className="flex flex-col items-center">
                     <span className="w-16 aspect-square rounded-xl overflow-hidden ">
-                        <Image width={2000} height={2000} className="w-full h-full aspect-square" alt="user avatar" src={userData.image || ProfilePic} />
+                        <Image width={2000} height={2000} className="w-full h-full object-cover object-center" alt="user avatar" src={userData.image || ProfilePic} />
                     </span>
-                    <p className="text-[14px] mt-[20px] ">{userData.firstname || null}&nbsp;{userData.lastname || userData.username}</p>
-                    <p className="text-[14px]">{userData.email}</p>
+                    <p className="text-sm mt-[20px] ">{userData.firstname || null}&nbsp;{userData.lastname || userData.username}</p>
+                    <p className="text-sm">{userData.email}</p>
                 </div>
 
-                <p className="text-[16px] mt-[60px] ">Contact Information</p>
-                <p className="text-[14px] mt-[30px] ">Email Address</p>
-                <p className="text-[12px] mt-[5px]  ">{userData.email}</p>
+                <p className="text-base mt-[60px] ">Contact Information</p>
+                <p className="text-sm mt-[30px] ">Email Address</p>
+                <p className="text-xs mt-[5px]  ">{userData.email}</p>
 
-                <p className="text-[14px] mt-[30px] ">Phone Number</p>
-                <p className="text-[12px] mt-[5px] ">{userData.phone_prefix || null}&nbsp;{userData.phone_number || "N/A"}</p>
+                <p className="text-sm mt-[30px] ">Phone Number</p>
+                <p className="text-xs mt-[5px] ">{userData.phone_prefix || null}&nbsp;{userData.phone_number || "N/A"}</p>
 
-                <p className="text-[14px] mt-[30px] ">Gender</p>
-                <p className="text-[12px] mt-[5px] ">{userData.gender || "N/A"}</p>
+                <p className="text-sm mt-[30px] ">Gender</p>
+                <p className="text-xs mt-[5px] ">{userData.gender || "N/A"}</p>
             </section>
             {/* {checked == 2 &&
                 <section className="col-span-2  border-r-[1px] border-r-slate-200 p-[40px] flex flex-col  font-[400]">
@@ -61,10 +61,10 @@ export default function UserProfile({ userData }) {
                         <span className="w-[45px] h-[45px] rounded-[10px] ">
                             <Image width={150} height={150} alt="user avatar" src={userData.image || ProfilePic} />
                         </span>
-                        <p className="text-[14px] mt-[20px] ">John Deo</p>
-                        <p className="text-[14px]">John.example@gmail.com</p>
+                        <p className="text-sm mt-[20px] ">John Deo</p>
+                        <p className="text-sm">John.example@gmail.com</p>
                         <Button classes="w-[150px]" my="my-[20px]"   > Follow </Button>
-                        <div className="grid grid-cols-3 gap-[35px] font-[400] text-[14px] " >
+                        <div className="grid grid-cols-3 gap-[35px] font-[400] text-sm " >
                             <div className="flex flex-col gap-[15px] " >
                                 <p> 1703 </p> <p> Friends</p>
                             </div>
@@ -81,17 +81,17 @@ export default function UserProfile({ userData }) {
                     <hr className="mt-[17px] " />
                     <div className=" flex flex-col items-center " >
                         <div>
-                            <p className="text-[16px] mt-[60px] ">Contact Information</p>
-                            <p className="text-[14px] mt-[20px] ">Email Address</p>
-                            <p className="text-[14px] mt-[10px]  ">John.example@gmail.com</p>
+                            <p className="text-base mt-[60px] ">Contact Information</p>
+                            <p className="text-sm mt-[20px] ">Email Address</p>
+                            <p className="text-sm mt-[10px]  ">John.example@gmail.com</p>
 
-                            <p className="text-[14px] mt-[20px] ">Phone Number</p>
-                            <p className="text-[14px] mt-[10px] ">+00 1234 5678 91</p>
+                            <p className="text-sm mt-[20px] ">Phone Number</p>
+                            <p className="text-sm mt-[10px] ">+00 1234 5678 91</p>
 
-                            <p className="text-[14px] mt-[20px] ">Birthday</p>
-                            <p className="text-[14px] mt-[10px] ">Dec 10, 1991</p>
+                            <p className="text-sm mt-[20px] ">Birthday</p>
+                            <p className="text-sm mt-[10px] ">Dec 10, 1991</p>
 
-                            <p className="text-[14px] mt-[20px] ">Social</p>
+                            <p className="text-sm mt-[20px] ">Social</p>
                             <div className="mt-[10px] flex gap-[28px] items-center  " >
                                 <TelegramIcon /> <TwitterIcon />  <FacebookIcon /> <InstagramIcon />
                             </div>
@@ -103,7 +103,7 @@ export default function UserProfile({ userData }) {
             {/*  */}
             <section className="col-span-4 p-10 !pt-0">
                 <div className="" >
-                    <div className="flex gap-[62px] z-[-1] text-[16px] ">
+                    <div className="flex gap-[62px] z-[-1] text-base ">
                         <button className={`w-20 px-4 flex flex-col justify-between items-center`} onClick={() => handlemenueclick(1)}>
                             Profile
                             <span className={`${checked == 1 && "w-full"} h-1 mt-3 bg-gold-land transition-all`} />
@@ -128,7 +128,7 @@ export default function UserProfile({ userData }) {
 
                                         <div className="flex flex-col justify-between">
                                             <p className="text-[22px] font-[500]">{userData.uf_points}</p>
-                                            <p className="text-[14px] font-[400] ">UF-points</p>
+                                            <p className="text-sm font-[400] ">UF-points</p>
                                         </div>
                                     </div>
                                 </CardAdmin>
@@ -140,7 +140,7 @@ export default function UserProfile({ userData }) {
 
                                         <div className="flex flex-col justify-between">
                                             <p className="text-[22px] font-[500]">{userData.purchases}</p>
-                                            <p className="text-[14px] font-[400] ">Bought</p>
+                                            <p className="text-sm font-[400] ">Bought</p>
                                         </div>
                                     </div>
                                 </CardAdmin>
@@ -152,7 +152,7 @@ export default function UserProfile({ userData }) {
 
                                         <div className="flex flex-col  justify-between">
                                             <p className="text-[22px] font-[500]">{0}</p>
-                                            <p className="text-[14px] font-[400] ">Vouchers</p>
+                                            <p className="text-sm font-[400] ">Vouchers</p>
                                         </div>
                                     </div>
                                 </CardAdmin>
@@ -180,12 +180,12 @@ export default function UserProfile({ userData }) {
                                                 </div>
 
                                                 <div className="flex flex-col  justify-between">
-                                                    <p className="text-[14px] font-[400]">New Order</p>
-                                                    <p className="text-[14px] font-[300] ">Bought</p>
+                                                    <p className="text-sm font-[400]">New Order</p>
+                                                    <p className="text-sm font-[300] ">Bought</p>
                                                 </div>
                                             </div>
 
-                                            <div className="font-[400] text-[14px] flex items-center gap-[5px] ">
+                                            <div className="font-[400] text-sm flex items-center gap-[5px] ">
                                                 <ClockIcon /> <p>10:00am</p>
                                             </div>
                                         </div>
