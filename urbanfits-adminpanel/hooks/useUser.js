@@ -35,24 +35,16 @@ const useUser = create((set, get) => ({
         } catch (error) { console.log(error) }
     },
 
-    updateUser: async (valuesObj, updateLocally = false) => {
-        if (updateLocally) {
-            const userData = jwt.decode(valuesObj)?._doc
-            console.log(userData)
-            delete userData.password
-            set(() => ({ user: userData }))
-        }
-        else {
-            try {
-                const { data } = await axios.put(`${process.env.HOST}/api/user/update?id=${get().user._id}`, valuesObj)
-                const userData = jwt.decode(data.payload)?._doc
-                delete userData.password
-                set(() => ({ user: userData }))
-                toaster("success", data.msg)
-            } catch (error) {
-                console.log(error)
-                toaster("error", error.response.data.msg)
-            }
+    updateUser: async (user_id, valuesObj) => {
+        const { user } = useSession.getState()
+        try {
+            const { data } = await axios.put(`${process.env.HOST}/api/user/update/via-admin?admin_id=${user._id}&user_id=${user_id}`, valuesObj)
+            toaster("success", data.msg)
+            console.log(data)
+            return data.user
+        } catch (error) {
+            console.log(error)
+            toaster("error", error.response.data.msg)
         }
     }
 }))
