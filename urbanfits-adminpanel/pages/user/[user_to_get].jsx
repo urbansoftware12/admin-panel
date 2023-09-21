@@ -99,6 +99,12 @@ export default function UserProfile(props) {
         }
     })
 
+    const getNotificIcon = (category)=>{
+        if(category=="account") return <AvatarSIcon />
+        if(category=="order") return <CartLIcon />
+        if(category=="reward") return <DiamondLIcon />
+    }
+
     const getNotifics = async () => {
         setNotificLoading(true)
         const notifics = await getUserNotifications(userData._id)
@@ -214,7 +220,7 @@ export default function UserProfile(props) {
                                     userNotifics.map((notific, i) => (
                                         <div key={i} className="w-full flex gap-x-4 items-center">
                                             <div className="w-[50px] h-[50px] flex justify-center items-center bg-gold rounded-[10px] ">
-                                                <CartLIcon />
+                                                {getNotificIcon(notific.category)}
                                             </div>
 
                                             <div className="flex-1 flex flex-col">
