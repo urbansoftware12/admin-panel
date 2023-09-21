@@ -115,11 +115,11 @@ const Userlist = () => {
                         status: user.is_active,
                         joined_at: user.createdAt,
                         handleInfo: () => { },
-                        infoLink: `/user/${user._id}?user_id=${session.user._id}`,
+                        infoLink: `/user/${user._id}?admin_id=${session.user._id}`,
                         actions: [
                             {
                                 name: "View Profile",
-                                link: `/user/${user._id}?user_id=${session.user._id}`,
+                                link: `/user/${user._id}?admin_id=${session.user._id}`,
                                 onClick: () => { }
                             },
                             {

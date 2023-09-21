@@ -58,17 +58,19 @@ export default function SidebarLayout({ children }) {
             toaster("info", <span>{data.msg}<Link className="underline" href='#'>&nbsp;view orders</Link></span>, 'bottom-left')
         })
         adminChannel.bind('new-signup', (data) => {
-            toaster("info", <span>{data.msg}<Link className="underline" href='#'>&nbsp;view orders</Link></span>, 'bottom-left')
+            toaster("info", <span>{data.msg}<Link className="underline" href={`/user/${data.user_id}?admin_id=${user._id}` || "#"}>&nbsp;view profile</Link></span>, 'bottom-left')
+        })
+        adminChannel.bind('login', (data) => {
+            toaster("info", <span>{data.msg}<Link className="underline" href={`/user/${data.user_id}?admin_id=${user._id}` || "#"}>&nbsp;view profile</Link></span>, 'bottom-left')
         })
 
         const pusherPresenceInst = presenceInstance(user)
         const presenceChannel = pusherPresenceInst.subscribe('presence-urbanifts')
 
-        // return () => {
-        //     adminChannel.unbind_all()
-        //     pusherClient.unsubscribe('admin-channel')
-        //     presenceChannel.unsubscribe('presence-urbanifts')
-        // }
+        return () => {
+            pusherClient.unsubscribe('admin-channel')
+            presenceChannel.unsubscribe('presence-urbanifts')
+        }
     }, [])
 
     const handlemenuclick = (menu) => {

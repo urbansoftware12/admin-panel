@@ -35,6 +35,16 @@ const useUser = create((set, get) => ({
         } catch (error) { console.log(error) }
     },
 
+    getUserNotifications: async (user_id) => {
+        try {
+            const { data } = await axios.get(`${process.env.HOST}/api/user/notifications/get?user_id=${user_id}`)
+            return data.notification_data.notifications
+        } catch (error) {
+            console.log(error)
+            toaster("error", "Error fetching notifications.")
+        }
+    },
+
     updateUser: async (user_id, valuesObj) => {
         const { user } = useSession.getState()
         try {

@@ -3,11 +3,10 @@ import CardAdmin from "@/components/cards/cardadmin";
 import Image from "next/image";
 import Button from "@/components/buttons/simple_btn";
 import Loader from "@/components/loaders/loader";
-import Spinner from "@/components/loaders/spinner";
+import BounceLoader from "@/components/loaders/bounceLoader";
 import { AvatarSIcon } from "@/public/icons/AvatarSIcon";
 import { CartLIcon } from "@/public/sidebaricons/CartLIcon";
 import { DiamondLIcon } from "@/public/icons/DiamondLIcon";
-import { RefreshIcon } from "@/public/icons/RefreshIcon";
 import { ClockIcon } from "@/public/icons/ClockIcon";
 import { InputText } from "@/components/InputText";
 import { InputSelect } from "@/components/InputSelect";
@@ -17,6 +16,7 @@ import * as Yup from 'yup'
 const ProfilePic = "https://urban-fits.s3.eu-north-1.amazonaws.com/website-copyrights/default-pfp.jpg";
 import useSession from "@/hooks/useSession";
 import useUser from "@/hooks/useUser";
+import timeAgo from "@/utils/timestamp_duration";
 import uploadImage from "@/utils/uploadImage";
 import axios from "axios";
 import mongoose from "mongoose";
@@ -24,11 +24,13 @@ import Link from "next/link";
 import toaster from "@/utils/toast_function";
 
 export default function UserProfile(props) {
-    const { updateUser } = useUser()
+    const { updateUser, getUserNotifications } = useUser()
     const admin = useSession()
     const [userData, setUserData] = useState(props.userData);
+    const [userNotifics, setUserNotifics] = useState([]);
     const [checked, setChecked] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [notificLoading, setNotificLoading] = useState(false);
 
     const handlemenueclick = (id) => {
         setChecked(id);
@@ -97,6 +99,15 @@ export default function UserProfile(props) {
         }
     })
 
+    const getNotifics = async () => {
+        setNotificLoading(true)
+        const notifics = await getUserNotifications(userData._id)
+        setUserNotifics(notifics)
+        setNotificLoading(false)
+    }
+    useEffect(() => {
+        getNotifics()
+    }, [])
 
     return <>
         {loading ? <Loader /> : null}
@@ -151,8 +162,8 @@ export default function UserProfile(props) {
                 </div>
                 <hr className="h-px border-none bg-gray-200 translate-y-[-1px]" />
 
-                <div className={`w-[200%] flex transition-all duration-700 ${checked==1? null: "-translate-x-1/2"}`}>
-                    <section className={`w-1/2 ${checked == 2? "opacity-0":''} transition-all duration-500`}>
+                <div className={`w-[200%] flex transition-all duration-700 ${checked == 1 ? null : "-translate-x-1/2"}`}>
+                    <section className={`w-1/2 ${checked == 2 ? "opacity-0" : ''} transition-all duration-500`}>
                         <div className="mt-10 grid grid-cols-3 gap-10">
                             <CardAdmin classes="px-5 py-[25px] ">
                                 <div className="flex gap-5">
@@ -192,34 +203,35 @@ export default function UserProfile(props) {
                         <CardAdmin classes=" p-[30px] mt-[40px] ">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-[22px]">Latest Notifications</h3>
-                                <RefreshIcon />
+                                <button className={`fa-solid fa-arrows-rotate ${notificLoading ? "fa-spin" : null}`} type="button" onClick={getNotifics}></button>
                             </div>
 
                             <hr className="mt-10" />
 
-                            <div className="flex flex-col gap-10 mt-10">
-                                {[...Array(7)].map((e, i) => (
-                                    <div key={i} className="flex justify-between items-center">
-                                        <div className="flex gap-5">
+                            <div className="flex flex-col gap-y-7 mt-10 transition-all duration-300">
+                                {notificLoading ? <div className="flex justify-center"><BounceLoader /></div> : null}
+                                {!userNotifics ? <div className="w-full text-center h-40">No notifications to show :/</div> :
+                                    userNotifics.map((notific, i) => (
+                                        <div key={i} className="w-full flex gap-x-4 items-center">
                                             <div className="w-[50px] h-[50px] flex justify-center items-center bg-gold rounded-[10px] ">
                                                 <CartLIcon />
                                             </div>
 
-                                            <div className="flex flex-col justify-between">
-                                                <p className="text-sm">New Order</p>
-                                                <p className="text-sm">Bought</p>
+                                            <div className="flex-1 flex flex-col">
+                                                <div className="mb-2 flex justify-between">
+                                                    <h3 className="text-base">{notific.heading}</h3>
+                                                    <div className="text-[10px] flex items-center gap-1">
+                                                        <i className="fa-regular fa-clock" /> <p>{timeAgo(notific.timestamp)}</p>
+                                                    </div>
+                                                </div>
+                                                <p className="text-sm">{notific.message}</p>
                                             </div>
                                         </div>
-
-                                        <div className="font-[400] text-sm flex items-center gap-[5px] ">
-                                            <ClockIcon /> <p>10:00am</p>
-                                        </div>
-                                    </div>
-                                ))}
+                                    ))}
                             </div>
                         </CardAdmin>
                     </section>
-                    <CardAdmin classes={`w-1/2 p-[30px] mt-10 ${checked == 1? "opacity-0":''} transition-all duration-500`}>
+                    <CardAdmin classes={`w-1/2 p-[30px] mt-10 ${checked == 1 ? "opacity-0" : ''} transition-all duration-500`}>
                         <section className="grid grid-cols-1 gap-5">
                             <form className="grid grid-cols-1 gap-5" onSubmit={handleSubmit} onReset={handleReset}>
                                 <div className="w-full flex gap-5 items-center">
@@ -275,15 +287,15 @@ export default function UserProfile(props) {
     </>
 };
 export async function getServerSideProps(context) {
-    const { user_id, user_to_get } = await context.query
-    if (!user_id || !user_to_get || !mongoose.Types.ObjectId.isValid(user_id) || !mongoose.Types.ObjectId.isValid(user_to_get)) return {
+    const { admin_id, user_to_get } = await context.query
+    if (!admin_id || !user_to_get || !mongoose.Types.ObjectId.isValid(admin_id) || !mongoose.Types.ObjectId.isValid(user_to_get)) return {
         redirect: {
             destination: '/404',
             permanent: false,
         },
     };
     try {
-        const { data } = await axios.get(`${process.env.HOST}/api/user/get/byid?user_to_get=${user_to_get}&user_id=${user_id}`)
+        const { data } = await axios.get(`${process.env.HOST}/api/user/get/byid?user_to_get=${user_to_get}&admin_id=${admin_id}`)
         return { props: { userData: data.user } }
     }
     catch (error) {
