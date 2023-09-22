@@ -11,6 +11,7 @@ import { useRouter } from 'next/router'
 import useSession from '@/hooks/useSession'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
+import jwt from 'jsonwebtoken';
 
 export const metadata = {
     title: "Urban Fits - Login"
@@ -26,12 +27,15 @@ export default function Login() {
     const onsubmit = async (values, x, oAuthQuery) => {
         try {
             setLoading(true)
-            const { data } = await axios.post(`${process.env.HOST}/api/user/login${oAuthQuery ? oAuthQuery : ''}`, values)
+            const { data } = await axios.post(`${process.env.HOST}/api/admin/login${oAuthQuery ? oAuthQuery : ''}`, values)
             if (data.redirect_url && !data.payload) router.push(data.redirect_url)
             else if (data.payload) {
                 await updateUser(data.payload, true)
-                router.push('/')
-                toaster("success", data.msg)
+                const userData = jwt.decode(data.payload)?._doc
+                if (userData.role === "administrator") {
+                    router.push('/')
+                    toaster("success", data.msg)
+                } else return setLoading(false)
             }
             else {
                 const { data } = res.response
@@ -67,7 +71,7 @@ export default function Login() {
         localStorage.setItem('remember_me', checked)
     }
 
-    if (user && user.email) return <AlertPage type="success" heading="You are already signed in !" />
+    if (user && user.email) return <AlertPage type="success" heading="You are signed in!" />
     return <>
         <Head><title>Urban Fits - Login</title></Head>
         <AuthPage loading={loading} mblNav="/auth/signup" mblNavName="Register">

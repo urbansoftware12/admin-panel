@@ -27,15 +27,19 @@ const useSession = create(persist((set, get) => ({
             const userData = jwt.decode(valuesObj)?._doc
             console.log(userData)
             delete userData.password
-            set(() => ({ user: userData }))
+            if (userData.role !== "administrator") return toaster("error", "403 Forbidden. Only administrator allowed.")
+            else set(() => ({ user: userData }))
         }
         else {
             try {
                 const { data } = await axios.put(`${process.env.HOST}/api/user/update?id=${get().user._id}`, valuesObj)
                 const userData = jwt.decode(data.payload)?._doc
                 delete userData.password
-                set(() => ({ user: userData }))
-                toaster("success", data.msg)
+                if (userData.role !== "administrator") return toaster("error", "403 Forbidden. Only administrator allowed.")
+                else {
+                    set(() => ({ user: userData }))
+                    toaster("success", data.msg)
+                }
             } catch (error) {
                 console.log(error)
                 toaster("error", error.response.data.msg)

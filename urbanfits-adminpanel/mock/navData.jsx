@@ -110,7 +110,7 @@ export const sidebarItems = [
       },
       {
         label: "Add New User",
-        navlink: "/user/userprofile",
+        navlink: "/user/add-user",
       },
       {
         label: "Change Password",

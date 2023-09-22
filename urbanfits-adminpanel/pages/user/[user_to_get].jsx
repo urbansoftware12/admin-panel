@@ -42,6 +42,8 @@ export default function UserProfile(props) {
         email: Yup.string().email().required('Please enter your email address'),
         firstname: Yup.string().min(2).required("Please enter your First name"),
         lastname: Yup.string().min(2).required("Please enter your Last name"),
+        gender: Yup.string().min(2).required("Please enter your Last name"),
+        role: Yup.string().oneOf(['administrator', 'customer'], 'Invalid role. 2 Available roles: administrator, customer').required("Please select a user role."),
         phone_prefix: Yup.string().required('Phone prefix is required to save'),
         phone_number: Yup.string().min(6, 'Phone number can be a minimum of 6 digits').max(14, 'Phone number can be a maximum of 14 digits').required('Phone number is required to save')
     })
@@ -50,6 +52,8 @@ export default function UserProfile(props) {
             image: userData.image || '',
             firstname: userData.firstname || '',
             lastname: userData.lastname || '',
+            gender: userData.gender || '',
+            role: userData.role || 'customer',
             username: userData.username || '',
             email: userData.email || '',
             phone_prefix: userData.phone_prefix || 'Select Country Code',
@@ -99,10 +103,10 @@ export default function UserProfile(props) {
         }
     })
 
-    const getNotificIcon = (category)=>{
-        if(category=="account") return <AvatarSIcon />
-        if(category=="order") return <CartLIcon />
-        if(category=="reward") return <DiamondLIcon />
+    const getNotificIcon = (category) => {
+        if (category == "account") return <AvatarSIcon />
+        if (category == "order") return <CartLIcon />
+        if (category == "reward") return <DiamondLIcon />
     }
 
     const getNotifics = async () => {
@@ -255,6 +259,20 @@ export default function UserProfile(props) {
                                     <InputText label="Last Name" placeholder="Last Name" name="lastname" value={values.lastname} onChange={handleChange} onBlur={handleBlur} error={errors.lastname && touched.lastname ? (errors.lastname) : null} />
                                 </div>
 
+                                <div className="grid grid-cols-2 gap-[100px]">
+                                    <InputSelect defaultValue="Select gender" value={values.gender} onChange={handleChange} name="gender" label="Gender" error={errors.gender && touched.gender ? errors.gender : null}>
+                                        <option disabled>Select gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </InputSelect>
+                                    <InputSelect defaultValue="customer" value={values.role} onChange={handleChange} name="role" label="User Role" error={errors.role && touched.role ? errors.role : null}>
+                                        <option disabled>Select role</option>
+                                        <option value="administrator">Administrator</option>
+                                        <option value="customer">Customer</option>
+                                    </InputSelect>
+                                </div>
+
                                 <div className="grid grid-cols-1">
                                     <InputText label="User Name" placeholder="Last Name" name="username" value={values.username} onChange={handleChange} onBlur={handleBlur} error={errors.username && touched.username ? (errors.username) : null} />
                                     <p className="mt-2 font_futura_light text-sm">Username must be unique with no spaces.</p>
@@ -262,6 +280,7 @@ export default function UserProfile(props) {
                                 <InputText label="Email" placeholder="example@domain.com" name="email" value={values.email} onChange={handleChange} onBlur={handleBlur} error={errors.email && touched.email ? errors.email : null} />
                                 <div className="grid grid-cols-2 gap-[100px]  ">
                                     <InputSelect defaultValue="Select country code" value={values.phone_prefix} onChange={handleChange} name="phone_prefix" label="Phone Prefix" error={errors.phone_prefix && touched.phone_prefix ? errors.phone_prefix : null}>
+                                        <option disabled>Select phone prefix</option>
                                         {countryCodes.map((item) => {
                                             if (!item.code) return <option disabled>{item.name}</option>
                                             return <option value={item.code}>{item.name} {item.code}</option>

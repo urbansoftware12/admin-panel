@@ -20,7 +20,7 @@ export default function Login() {
         console.log(user_id)
         setLoading(true)
         try {
-            const { data } = await axios.get(`${process.env.HOST}/api/2fa/verify-totp?user_id=${user_id}&totp_code=${totp}`)
+            const { data } = await axios.get(`${process.env.HOST}/api/admin/verify-totp?user_id=${user_id}&totp_code=${totp}`)
             await updateUser(data.payload, true)
             router.push('/')
             toaster("success", data.msg)
