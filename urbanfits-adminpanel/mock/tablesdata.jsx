@@ -1046,7 +1046,7 @@ export const productListTableColumns = [
     selector: row => row.product,
     name: "Product",
     cell: (row) => <span className='w-12 aspect-square rounded-lg overflow-hidden' >
-      <Image className='w-full h-full object-cover' width={50} height={50} alt={row.name} src={row.product} />
+      <Image className='w-full h-full object-cover' width={250} height={250} alt={row.name} src={row.product} />
     </span>,
     sortable: true,
     width: '10%'

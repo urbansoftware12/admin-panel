@@ -45,7 +45,7 @@ const SideBarItem = ({ item, sidebaropen }, props) => {
 }
 
 export default function SidebarLayout({ children }) {
-    const { user } = useSession()
+    const { admin } = useSession()
     const router = useRouter()
     const [showmenue, setshowMenue] = useState(false);
     const [shownotification, setShownotification] = useState(false);
@@ -58,13 +58,13 @@ export default function SidebarLayout({ children }) {
             toaster("info", <span>{data.msg}<Link className="underline" href='#'>&nbsp;view orders</Link></span>, 'bottom-left')
         })
         adminChannel.bind('new-signup', (data) => {
-            toaster("info", <span>{data.msg}<Link className="underline" href={`/user/${data.user_id}?admin_id=${user._id}` || "#"}>&nbsp;view profile</Link></span>, 'bottom-left')
+            toaster("info", <span>{data.msg}<Link className="underline" href={`/user/${data.user_id}?admin_id=${admin._id}` || "#"}>&nbsp;view profile</Link></span>, 'bottom-left')
         })
         adminChannel.bind('login', (data) => {
-            toaster("info", <span>{data.msg}<Link className="underline" href={`/user/${data.user_id}?admin_id=${user._id}` || "#"}>&nbsp;view profile</Link></span>, 'bottom-left')
+            toaster("info", <span>{data.msg}<Link className="underline" href={`/user/${data.user_id}?admin_id=${admin._id}` || "#"}>&nbsp;view profile</Link></span>, 'bottom-left')
         })
 
-        const pusherPresenceInst = presenceInstance(user)
+        const pusherPresenceInst = presenceInstance(admin)
         const presenceChannel = pusherPresenceInst.subscribe('presence-urbanifts')
 
         return () => {
@@ -111,7 +111,7 @@ export default function SidebarLayout({ children }) {
     }
 
     if (router.asPath.includes("/auth")) return
-    else if (!user || !user._id || user._id.length < 18) {
+    else if (!admin || !admin._id || admin._id.length < 18) {
         router.push("/auth/login")
         return null
     }
@@ -174,7 +174,7 @@ export default function SidebarLayout({ children }) {
 
                 <div className='flex items-center'>
                     <span onClick={() => handlemenuclick("avatar")} className="w-10 border border-gray-400 aspect-square rounded-full overflow-hidden cursor-pointer" >
-                        <Image src={user.image} className="w-full h-full object-cover" alt="user avatar" width={80} height={80} />
+                        <Image src={admin.image} className="w-full h-full object-cover" alt="user avatar" width={80} height={80} />
                     </span>
                     <div className={`duration-200 ${showmenue ? "visible" : "hidden"} absolute top-[89px] right-[154px] `} >
                         <CardAdmin classes="w-[150px] p-5" round="rounded-[15px]" >
@@ -295,18 +295,14 @@ export default function SidebarLayout({ children }) {
                             </div>
                         </CardAdmin>
                     </div>
-                    <span>
-                        <SettingIcon />
-                    </span>
                 </div>
             </div>
             <hr className={`mt-[20px]`} />
             {/* ////////////////////////////Children START //////////////////////////////////////////////////////// */}
-
             {query == '' ? children :
                 <div className="w-full mt-10 p-5 flex flex-col gap-y-4">
                     {results.map((result, index) => {
-                        return <Link key={index} href={result.navlink || ''} className="group font_futura flex justify-between items-center bg-white p-3 rounded-xl hover:rounded-md shadow-lg transition-all duration-500 overflow-hidden">
+                        return <Link key={index} onClick={() => setQuery('')} href={result.navlink || ''} className="group font_futura flex justify-between items-center bg-white p-3 rounded-xl hover:rounded-md shadow-lg transition-all duration-500 overflow-hidden">
                             <div className="h-full">
                                 <h2 className="text-lg mb-2 group-hover:translate-y-1/2 group-hover:text-xl transition-all duration-500">{result.label}</h2>
                                 <p className="text-sm group-hover:translate-y-20 transition-all duration-500">{result.navlink}</p>
@@ -316,12 +312,10 @@ export default function SidebarLayout({ children }) {
                     })}
                 </div>
             }
-
             {/* ///////////////////////////////Children END///////////////////////////////////////////////////// */}
         </div>
-        {/* footer */}
-        <div className={`text-center text-[12px] mb-[40px] flex justify-center 
-      ${sidebaropen ? "w-[120%]" : "w-[105%]"}   `} >
+        <div className={`text-center text-xs mb-10 flex justify-center 
+      ${sidebaropen ? "w-[120%]" : "w-[105%]"}`} >
             <p>
                 Urban Fits L.L.C., Company Reg. Number - 2447 LLC 2023, Registered
                 Office Address - 500 4th St NW Suite 102 PMB 1958 Albuquerque, NM

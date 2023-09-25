@@ -7,7 +7,7 @@ import axios from 'axios';
 import toaster from '@/utils/toast_function';
 
 export default function TwoFa({ show, setMfaModa }) {
-    const { user, updateUser } = useSession()
+    const { admin, updateAdmin } = useSession()
     const [qrUrl, setQrUrl] = useState(null)
     const [qrSecret, setQrSecret] = useState(null)
     const [totp, setTotp] = useState(null)
@@ -17,7 +17,7 @@ export default function TwoFa({ show, setMfaModa }) {
             if (qrUrl && qrSecret) return
             setLoading(true)
             try {
-                const { data } = await axios.get(`${process.env.HOST}/api/2fa/get-qr-code?user_id=${user._id}`)
+                const { data } = await axios.get(`${process.env.HOST}/api/2fa/get-qr-code?user_id=${admin._id}`)
                 if (data.qrSecret && data.qrCodeUrl) {
                     setQrUrl(data.qrCodeUrl)
                     setQrSecret(data.qrSecret)
@@ -36,11 +36,11 @@ export default function TwoFa({ show, setMfaModa }) {
         try {
             if (!totp || totp === '') return toaster("error", "Please enter the TOTP code from Google Authenticator.")
             const { data } = await axios.post(`${process.env.HOST}/api/2fa/create-user-2fa`, {
-                user_id: user._id,
+                user_id: admin._id,
                 qr_secret: qrSecret,
                 totp_code: totp
             })
-            await updateUser(data.payload, true)
+            await updateAdmin(data.payload, true)
             toaster("success", data.msg)
             setMfaModa(false)
         } catch (error) {

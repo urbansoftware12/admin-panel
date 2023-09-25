@@ -1,5 +1,6 @@
 import React from "react";
 import CardAdmin from "@/components/cards/cardadmin";
+import countryCodes from "@/mock/countryCodes";
 import { InputText } from "@/components/InputText";
 import { QuestionIcon } from "@/public/icons/QuestionIcon";
 import { InputSelect } from "@/components/InputSelect";
@@ -59,7 +60,7 @@ export default function Generalsetting() {
 
         <div className="grid grid-cols-2 gap-[40px] ">
           <div className="flex flex-col gap-[20px]  ">
-            <InputText
+            {/* <InputText
               label="Address Line 1"
               width="  w-[100%]"
               placeholder=" "
@@ -98,11 +99,11 @@ export default function Generalsetting() {
               error={errors.postalcode && touched.postalcode ?
                 (errors.postalcode) : null
               }
-            />
+            /> */}
           </div>
           <div>
             <div className="flex flex-col gap-[20px]  ">
-              <InputText
+              {/* <InputText
                 label="Address Line 2"
                 width="  w-[100%]"
                 placeholder=" "
@@ -114,15 +115,15 @@ export default function Generalsetting() {
                 error={errors.addressline2 && touched.addressline2 ?
                   (errors.addressline2) : null
                 }
-              />
+              /> */}
 
-              <InputSelect
-                label="Country / State"
-                width="  w-[100%]"
-                placeholder=" "
-                postlabel={<QuestionIcon />}
-                options={["United States", "Palestine"]}
-              />
+              <InputSelect defaultValue="Select country code" value={values.phone_prefix} onChange={handleChange} name="phone_prefix" label="Phone Prefix" error={errors.phone_prefix && touched.phone_prefix ? errors.phone_prefix : null}>
+                <option disabled>Select phone prefix</option>
+                {countryCodes.map((item) => {
+                  if (!item.code) return <option disabled>{item.name}</option>
+                  return <option value={item.code}>{item.name} {item.code}</option>
+                })}
+              </InputSelect>
             </div>
           </div>
         </div>
@@ -133,7 +134,7 @@ export default function Generalsetting() {
 
         <div className="grid grid-cols-2 gap-[40px] ">
           <div className="flex flex-col gap-[20px]">
-            <InputSelect
+            {/* <InputSelect
               label="Selling Location"
               width="  w-[100%]"
               placeholder=" "
@@ -146,10 +147,10 @@ export default function Generalsetting() {
               placeholder=" "
               postlabel={<QuestionIcon />}
               options={["Country / Region", "United States", "Palestine"]}
-            />
+            /> */}
           </div>
           <div className="flex flex-col gap-[20px]">
-            <InputSelect
+            {/* <InputSelect
               label="Shipping Location"
               width="  w-[100%]"
               placeholder=" "
@@ -159,7 +160,7 @@ export default function Generalsetting() {
                 "United States",
                 "Palestine",
               ]}
-            />
+            /> */}
           </div>
         </div>
 
@@ -171,14 +172,14 @@ export default function Generalsetting() {
 
           <div className="flex flex-col gap-[42.5px] ">
             <div className="flex gap-[5px]  ">
-              <span className="mt-[0px]">
+              <span className="mt-0">
                 <input type="checkbox" />
               </span>
               <div className="flex flex-col gap-[10.5px] ">
-                <p className="text-[14px] font-[400] ">
+                <p className="text-sm">
                   Enable Tax rates and calculations
                 </p>
-                <p className="text-[12px] font-[400] ">
+                <p className="text-xs">
                   Rates will be configurable and taxes will be calculated
                   during checkout.
                 </p>
@@ -186,28 +187,28 @@ export default function Generalsetting() {
             </div>
 
             <div className="flex gap-[5px]  ">
-              <span className="mt-[0px]">
+              <span className="mt-0">
                 <input type="checkbox" />
               </span>
               <div className="flex flex-col gap-[10.5px] ">
-                <p className="text-[14px] font-[400] ">
+                <p className="text-sm">
                   Enable the use of Coupon codes
                 </p>
-                <p className="text-[12px] font-[400] ">
+                <p className="text-xs">
                   Coupons can be applied from the cart and checkout pages.
                 </p>
               </div>
             </div>
 
             <div className="flex gap-[5px]  ">
-              <span className="mt-[0px]">
+              <span className="mt-0">
                 <input type="checkbox" />
               </span>
               <div className="flex flex-col gap-[10.5px] ">
-                <p className="text-[14px] font-[400] ">
+                <p className="text-sm">
                   Coupons can be applied from the cart and checkout pages.
                 </p>
-                <p className="text-[12px] font-[400] ">
+                <p className="text-xs">
                   When applying multiple coupons, apply the first coupon to
                   the full price and second coupon to the discounted price and
                   so on.
@@ -226,15 +227,15 @@ export default function Generalsetting() {
 
         <div className="grid grid-cols-2 gap-[40px] mt-[30px] ">
           <div className="flex flex-col gap-[20px]">
-            <InputSelect
+            {/* <InputSelect
               label="Currency"
               width="  w-[100%]"
               placeholder=" "
               postlabel={<QuestionIcon />}
               options={["ADE", "United States Dollars ($)", "pkr"]}
-            />
+            /> */}
             <div className="flex gap-[22.5px] ">
-              <InputText
+              {/* <InputText
                 label="Thousand Separator"
                 width="  w-[100%]"
                 placeholder=" "
@@ -251,24 +252,24 @@ export default function Generalsetting() {
                 width="  w-[100%]"
                 placeholder=" "
                 postlabel={<QuestionIcon />}
-              />
+              /> */}
             </div>
           </div>
           <div>
-            <InputSelect
+            {/* <InputSelect
               label="Currency Position"
               width="  w-[100%]"
               placeholder=" "
               postlabel={<QuestionIcon />}
               options={["left", "pkr"]}
-            />
+            /> */}
           </div>
         </div>
 
         <section>
           <p className="text-[22px] font-[500] mt-[60px] ">Meaurments</p>
           <div className="grid grid-cols-2 gap-[40px] ">
-            <InputSelect
+            {/* <InputSelect
               label="Weight unit"
               width="  w-[100%]"
               placeholder=" "
@@ -281,7 +282,7 @@ export default function Generalsetting() {
               placeholder=" "
               postlabel={<QuestionIcon />}
               options={["cm", "m"]}
-            />
+            /> */}
           </div>
         </section>
 
@@ -296,7 +297,7 @@ export default function Generalsetting() {
             <div className="flex flex-col gap-[40px] ">
               <div>
                 <div className="flex gap-[5px]  ">
-                  <span className="mt-[0px]">
+                  <span className="mt-0">
                     <input type="checkbox" />
                   </span>
                   <p className="text-[14px] font-[400] ">
@@ -304,7 +305,7 @@ export default function Generalsetting() {
                   </p>
                 </div>
                 <div className="flex gap-[5px] mt-[20px] ">
-                  <span className="mt-[0px]">
+                  <span className="mt-0">
                     <input type="checkbox" />
                   </span>
                   <p className="text-[14px] font-[400] ">
@@ -315,18 +316,18 @@ export default function Generalsetting() {
 
               <div>
                 <div className="flex gap-[5px]  ">
-                  <span className="mt-[0px]">
+                  <span className="mt-0">
                     <input type="checkbox" />
                   </span>
-                  <p className="text-[14px] font-[400] ">
+                  <p className="text-sm">
                     Enable star rating on reviews
                   </p>
                 </div>
                 <div className="flex gap-[5px] mt-[20px] ">
-                  <span className="mt-[0px]">
+                  <span className="mt-0">
                     <input type="checkbox" />
                   </span>
-                  <p className="text-[14px] font-[400] ">
+                  <p className="text-sm">
                     Star rating should be required
                   </p>
                 </div>

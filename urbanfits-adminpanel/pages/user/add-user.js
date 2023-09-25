@@ -6,9 +6,9 @@ import Loader from "@/components/loaders/loader";
 import { InputText } from "@/components/InputText";
 import { InputSelect } from "@/components/InputSelect";
 import countryCodes from "@/mock/countryCodes";
+import { useRouter } from "next/router";
 import { useFormik } from 'formik';
 import * as Yup from 'yup'
-import useSession from "@/hooks/useSession";
 import useUser from "@/hooks/useUser";
 import uploadImage from "@/utils/uploadImage";
 import axios from "axios";
@@ -18,6 +18,7 @@ import toaster from "@/utils/toast_function";
 
 export default function AddUser() {
     const { updateUser } = useUser()
+    const router = useRouter()
     const [pfp, setPfp] = useState(process.env.DEFAULT_PFP);
     const [otpId, setotpId] = useState(null);
     const [otp, setOtp] = useState(null);
@@ -25,7 +26,7 @@ export default function AddUser() {
     const isOtpValid = mongoose.Types.ObjectId.isValid(otpId)
 
     const validatedSchema = Yup.object({
-        image: Yup.object().nullable(0),
+        image: Yup.object().nullable(),
         username: Yup.string().min(5, 'Username must be at least 5 characters long').max(24, 'Username cannot exceed 24 characters').matches(/^[A-Za-z0-9_]+$/, 'Username must contain only letters, numbers, and underscores').notOneOf([' ', '-'], 'Username should not contain any spaces or hyphen symbols').required('Username is required'),
         email: Yup.string().email().required('Please enter your email address'),
         firstname: Yup.string().min(2),
@@ -39,7 +40,7 @@ export default function AddUser() {
     })
     const { values, errors, touched, handleBlur, handleChange, handleReset, handleSubmit, setFieldValue, setValues } = useFormik({
         initialValues: {
-            image: '',
+            image: null,
             firstname: '',
             lastname: '',
             gender: 'Select gender',
@@ -54,7 +55,6 @@ export default function AddUser() {
         validationSchema: validatedSchema,
         onSubmit: async (values) => {
             try {
-                console.log(values)
                 setLoading(true)
                 const { data } = await axios.post(`${process.env.HOST}/api/user/signup`, { ...values, accept_policies: true, image: undefined })
                 if (data.redirect_url && data.otp_id) {
@@ -73,17 +73,18 @@ export default function AddUser() {
 
     const onVerifyClick = async () => {
         if (!otp || !isOtpValid) return toaster("error", "Something went wrong, please try creating user again.")
-        console.log(otpId)
         setLoading(true)
         try {
             const { data } = await axios.post(`${process.env.HOST}/api/user/signup/callback`, {
                 otp_id: otpId,
                 otp
             })
-            const imgUrl = await uploadImage(values.image, data.user_id, 'user-profiles/')
-            await updateUser(data.user_id, { image: imgUrl })
+            if (values.image) {
+                const imgUrl = await uploadImage(values.image, data.user_id, 'user-profiles/')
+                await updateUser(data.user_id, { image: imgUrl })
+            }
             toaster("success", "User created successfully.")
-            handleReset()
+            router.push('/user/userlist')
         } catch (error) {
             console.log(error)
             toaster("error", error.response.data.msg)

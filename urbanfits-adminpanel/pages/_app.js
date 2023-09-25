@@ -9,13 +9,13 @@ import { ToastContainer } from 'react-toastify'
 
 function App({ Component, pageProps }) {
   const [progress, setProgress] = useState(0)
-  const { user, logOut } = useSession()
+  const { admin, logOut } = useSession()
   const router = useRouter()
   const adminRoles = ["administrator", "author", "editor"]
 
   useEffect(() => {
-    if (!user || !user._id) router.push("/auth/login")
-    else if (!adminRoles.includes(user.role)) logOut()
+    if (!admin || !admin._id) router.push("/auth/login")
+    else if (!adminRoles.includes(admin.role)) logOut()
   }, [])
   useEffect(() => {
     router.events.on("routeChangeStart", () => setProgress(77))

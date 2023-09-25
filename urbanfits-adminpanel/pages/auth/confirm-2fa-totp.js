@@ -10,7 +10,7 @@ import { useRouter } from 'next/router'
 import Error404 from '../404'
 
 export default function Login() {
-    const { user, updateUser } = useSession()
+    const { admin, updateAdmin } = useSession()
     const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [totp, setTotp] = useState('')
@@ -21,7 +21,7 @@ export default function Login() {
         setLoading(true)
         try {
             const { data } = await axios.get(`${process.env.HOST}/api/admin/verify-totp?user_id=${user_id}&totp_code=${totp}`)
-            await updateUser(data.payload, true)
+            await updateAdmin(data.payload, true)
             router.push('/')
             toaster("success", data.msg)
         } catch (error) {
@@ -32,7 +32,7 @@ export default function Login() {
     }
 
     if (!router.query.user_id || router.query.user_id.length < 18) return <Error404 />
-    if (user && user.email) return <AlertPage type="success" heading="You are already signed in !" />
+    if (admin && admin.email) return <AlertPage type="success" heading="You are already signed in !" />
     return <>
         <Head><title>Urban Fits - Confirm 2FA TOTP code</title></Head>
         <AuthPage loading={loading} mblNav="/auth/signup" mblNavName="Register">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CardAdmin from "@/components/cards/cardadmin";
+import DeleteAction from "@/components/modals/deleteAction";
 import Image from "next/image";
 import Button from "@/components/buttons/simple_btn";
 import Loader from "@/components/loaders/loader";
@@ -7,13 +8,13 @@ import BounceLoader from "@/components/loaders/bounceLoader";
 import { AvatarSIcon } from "@/public/icons/AvatarSIcon";
 import { CartLIcon } from "@/public/sidebaricons/CartLIcon";
 import { DiamondLIcon } from "@/public/icons/DiamondLIcon";
-import { ClockIcon } from "@/public/icons/ClockIcon";
 import { InputText } from "@/components/InputText";
 import { InputSelect } from "@/components/InputSelect";
 import countryCodes from "@/mock/countryCodes";
 import { useFormik } from 'formik';
 import * as Yup from 'yup'
 const ProfilePic = "https://urban-fits.s3.eu-north-1.amazonaws.com/website-copyrights/default-pfp.jpg";
+import { useRouter } from "next/router";
 import useSession from "@/hooks/useSession";
 import useUser from "@/hooks/useUser";
 import timeAgo from "@/utils/timestamp_duration";
@@ -24,12 +25,14 @@ import Link from "next/link";
 import toaster from "@/utils/toast_function";
 
 export default function UserProfile(props) {
-    const { updateUser, getUserNotifications } = useUser()
+    const { updateUser, getUserNotifications, resetUser2fa, usersLoading, deleteUsers } = useUser()
+    const router = useRouter()
     const admin = useSession()
     const [userData, setUserData] = useState(props.userData);
     const [userNotifics, setUserNotifics] = useState([]);
     const [checked, setChecked] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [deleteModal, setDeleteModal] = useState(false);
     const [notificLoading, setNotificLoading] = useState(false);
 
     const handlemenueclick = (id) => {
@@ -40,9 +43,9 @@ export default function UserProfile(props) {
         image: Yup.object().nullable(0),
         username: Yup.string().min(5, 'Username must be at least 5 characters long').max(24, 'Username cannot exceed 24 characters').matches(/^[A-Za-z0-9_]+$/, 'Username must contain only letters, numbers, and underscores').notOneOf([' ', '-'], 'Username should not contain any spaces or hyphen symbols').required('Username is required'),
         email: Yup.string().email().required('Please enter your email address'),
-        firstname: Yup.string().min(2).required("Please enter your First name"),
-        lastname: Yup.string().min(2).required("Please enter your Last name"),
-        gender: Yup.string().min(2).required("Please enter your Last name"),
+        firstname: Yup.string().min(2),
+        lastname: Yup.string().min(2),
+        gender: Yup.string().min(2),
         role: Yup.string().oneOf(['administrator', 'customer'], 'Invalid role. 2 Available roles: administrator, customer').required("Please select a user role."),
         phone_prefix: Yup.string().required('Phone prefix is required to save'),
         phone_number: Yup.string().min(6, 'Phone number can be a minimum of 6 digits').max(14, 'Phone number can be a maximum of 14 digits').required('Phone number is required to save')
@@ -61,7 +64,6 @@ export default function UserProfile(props) {
         },
         validationSchema: validatedSchema,
         onSubmit: async (values) => {
-            console.log(values)
             setLoading(true)
             let imgUrl = null;
             if (values.image && values.image.name) {
@@ -120,9 +122,16 @@ export default function UserProfile(props) {
     }, [])
 
     return <>
-        {loading ? <Loader /> : null}
-        <div className="mt-[15px] ">
-            <p className="font_futura not-italic text-[22px]  font-medium text-black capitalize">{userData.firstname || userData.username}&apos;s Profile</p>
+        {loading || usersLoading ? <Loader /> : null}
+        <DeleteAction
+            show={deleteModal}
+            heading={`Delete ${userData.firstname || userData.username}'s Account`}
+            msg={`This is an irreversible action, the specified user ${userData.firstname || userData.username}'s account along with there all information of orders history, UF points balance and history etc will be deleted permanently. There will be no backup available.`}
+            setDeleteModal={setDeleteModal}
+            onTakeAction={() => { deleteUsers([userData._id]); router.push('/user/userlist') }}
+        />
+        <div className="mt-[15px]">
+            <p className="font_futura not-italic text-[22px]  font-medium text-black">{userData.firstname || userData.username}'s Profile</p>
             <section className="flex justify-between items-center">
                 <div className="flex items-center mt-4 font_futura text-sm gap-x-3">
                     <Link href="/">Home</Link> <i className="fa-solid fa-chevron-right" />
@@ -158,6 +167,11 @@ export default function UserProfile(props) {
                     {userData._id.slice(0, 14)}••••••••••&nbsp;&nbsp;<i className="fa-regular fa-copy" />
                     <span className="absolute -top-7 left-1/2 -translate-x-1/2 translate-y-7 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 px-2 py-0.5 rounded-lg text-[10px] bg-gray-700 text-white transition-all duration-300">Copy</span>
                 </button>
+                <div className="w-full p-4 mt-10 border border-red-600 rounded-xl">
+                    <h5 className="mb-4 text-sm">User Deletion</h5>
+                    <p className="mb-3 text-xs text-red-500"><span className="text-xs text-black">Note:</span> All {userData.firstname || userData.username}'s account data along with their Orders and UF balance and history will be deleted permanently.</p>
+                    <button onClick={() => setDeleteModal(true)} className="w-full py-3 flex justify-center bg-red-600 text-white text-xs rounded-lg">Delete This User</button>
+                </div>
             </section>
             <section className="col-span-4 p-10 !pt-0 overflow-hidden">
                 <div className="flex gap-[62px] z-[-1] text-base ">
@@ -292,6 +306,27 @@ export default function UserProfile(props) {
                                     <Button type="submit" classes="w-full md:w-1/4" font='font_urbanist_medium'>Save</Button>
                                 </div>
                             </form>
+
+                            <div className="w-full mt-4 flex justify-between items-center font_urbanist text-sm">
+                                <span className="w-2/5 h-px bg-gray-400"></span>
+                                Security
+                                <span className="w-2/5 h-px bg-gray-400"></span>
+                            </div>
+                            {userData.two_fa_activation_date ? <div className="w-full min-h-[80px] p-4 border rounded-xl">
+                                <div className="w-full flex items-center">
+                                    Enable / Disable 2FA<label className="switch w-[45px] mx-4 md:w-11 h-6"><input type="checkbox" name='active_by_phone' checked={userData.two_fa_enabled || false} value={userData.two_fa_enabled} onChange={async () => {
+                                        const newUserData = await updateUser(userData._id, { two_fa_enabled: !userData.two_fa_enabled })
+                                        setUserData(newUserData)
+                                    }} /><span className="slider"></span></label>
+                                </div>
+                                <div className="w-full mt-7 flex items-center gap-x-4">
+                                    <button onClick={async () => {
+                                        const newUserData = await resetUser2fa(userData._id)
+                                        setUserData(newUserData)
+                                    }} className="px-5 py-2 border border-red-600 rounded-full">Reset User's 2FA</button>
+                                    <p className="flex-1 text-xs">Note: By resetting, user's 2FA key will be removed and user will have to register again to secure their account.</p>
+                                </div>
+                            </div> : <div className="w-full min-h-[80px] p-4 flex justify-center items-center text-sm border rounded-xl">This user haven't registered for 2FA.</div>}
 
                             <div className="w-full mt-4 flex justify-between items-center font_urbanist text-sm">
                                 <span className="w-1/3 h-px bg-gray-400"></span>

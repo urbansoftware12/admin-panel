@@ -19,7 +19,7 @@ export const metadata = {
 export default function Login() {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
-    const { user, updateUser } = useSession()
+    const { admin, updateAdmin } = useSession()
     const [showPass, setShowPass] = useState(false)
 
     const passRef = useRef()
@@ -30,7 +30,7 @@ export default function Login() {
             const { data } = await axios.post(`${process.env.HOST}/api/admin/login${oAuthQuery ? oAuthQuery : ''}`, values)
             if (data.redirect_url && !data.payload) router.push(data.redirect_url)
             else if (data.payload) {
-                await updateUser(data.payload, true)
+                await updateAdmin(data.payload, true)
                 const userData = jwt.decode(data.payload)?._doc
                 if (userData.role === "administrator") {
                     router.push('/')
@@ -71,7 +71,7 @@ export default function Login() {
         localStorage.setItem('remember_me', checked)
     }
 
-    if (user && user.email) return <AlertPage type="success" heading="You are signed in!" />
+    if (admin && admin.email) return <AlertPage type="success" heading="You are signed in!" />
     return <>
         <Head><title>Urban Fits - Login</title></Head>
         <AuthPage loading={loading} mblNav="/auth/signup" mblNavName="Register">

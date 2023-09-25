@@ -9,14 +9,14 @@ const useCategories = create((set, get) => ({
     categLoading: false,
 
     getCategories: async () => {
-        const { user } = useSession.getState()
-        if (!user) return
+        const { admin } = useSession.getState()
+        if (!admin) return
 
         set(() => ({
             categLoading: true
         }))
         try {
-            const { data } = await axios.get(`${process.env.HOST}/api/categories/get?id=${user._id}`)
+            const { data } = await axios.get(`${process.env.HOST}/api/categories/get?id=${admin._id}`)
             set(() => (
                 { categories: data.categories }
             ))
@@ -30,14 +30,14 @@ const useCategories = create((set, get) => ({
     },
 
     createCategory: async (category) => {
-        const { user } = useSession.getState()
-        if (!user || user.role === "customer") return
+        const { admin } = useSession.getState()
+        if (!admin || admin.role === "customer") return
 
         set(() => ({
             categLoading: true
         }))
         try {
-            const { data } = await axios.post(`${process.env.HOST}/api/categories/create?id=${user._id}`, category)
+            const { data } = await axios.post(`${process.env.HOST}/api/categories/create?id=${admin._id}`, category)
             set(() => (
                 { categories: data.categories }
             ))
@@ -52,14 +52,14 @@ const useCategories = create((set, get) => ({
     },
 
     updateCategory: async (update) => {
-        const { user } = useSession.getState()
-        if (!user || user.role === "customer") return
+        const { admin } = useSession.getState()
+        if (!admin || admin.role === "customer") return
 
         set(() => ({
             categLoading: true
         }))
         try {
-            const { data } = await axios.put(`${process.env.HOST}/api/categories/update?id=${user._id}`, update)
+            const { data } = await axios.put(`${process.env.HOST}/api/categories/update?id=${admin._id}`, update)
             set(() => (
                 { categories: data.categories }
             ))
@@ -74,14 +74,14 @@ const useCategories = create((set, get) => ({
     },
 
     deleteCategories: async (categoriesToDelete) => {
-        const { user } = useSession.getState()
-        if (!user || user.role === "customer") return
+        const { admin } = useSession.getState()
+        if (!admin || admin.role === "customer") return
 
         set(() => ({
             categLoading: true
         }))
         try {
-            const { data } = await axios.put(`${process.env.HOST}/api/categories/delete?id=${user._id}`, { categories: categoriesToDelete })
+            const { data } = await axios.put(`${process.env.HOST}/api/categories/delete?id=${admin._id}`, { categories: categoriesToDelete })
             set(() => (
                 { categories: data.categories }
             ))

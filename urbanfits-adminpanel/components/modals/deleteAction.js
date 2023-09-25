@@ -29,10 +29,10 @@ export default function DeleteAction(props) {
                                 />
                                 <div className="w-full mt-7 flex flex-col gap-y-2">
                                     <button onClick={() => { props.setDeleteModal(null); setActionValue('') }} className="w-full flex justify-center items-center bg-gray-100 border border-gray-200 rounded-xl hover:shadow-md py-3">Cancel</button>
-                                    <button disabled={actionValue !== "delete"} onClick={() => {
-                                        props.onTakeAction();
-                                        setActionValue('');
+                                    <button disabled={actionValue !== "delete"} onClick={async () => {
                                         props.setDeleteModal(null)
+                                        setActionValue('');
+                                        await props.onTakeAction();
                                     }} className={`${actionValue !== "delete" ? "opacity-70 pointer-events-none" : null} w-full flex justify-center items-center bg-gold-land text-white border rounded-xl hover:shadow-md py-3`}>Delete</button>
                                 </div>
                             </section></>

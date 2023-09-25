@@ -8,6 +8,7 @@ import Button from "@/components/buttons/simple_btn";
 import LinkBtn from '@/components/buttons/link_btn';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { CSVLink } from "react-csv";
 import useCategories from '@/hooks/useCategories';
 import useProduct from '@/hooks/useProduct';
 import { productListTableColumns } from '@/mock/tablesdata';
@@ -18,6 +19,7 @@ export default function AllProducts() {
     const [categoryOption, setCategoryOption] = useState(false)
     const [deleteModal, setDeleteModal] = useState(null)
     const [query, setQuery] = useState('')
+    const [actionsTip, setActionsTip] = useState(false)
     const [selectable, setSelectable] = useState(false)
     const filteredProducts = products.filter((item) => {
         if (query !== '') {
@@ -27,6 +29,24 @@ export default function AllProducts() {
         else return true
     });
 
+    const CsvHeaders = [
+        { label: 'Product Name', key: 'name' },
+        { label: 'Price', key: 'price' },
+        { label: 'Sale Price', key: 'sale_price' },
+        { label: 'In Stock', key: 'stock' },
+        { label: 'Status', key: 'status' },
+        { label: 'Bundle Items', key: 'bundle_items' },
+        { label: 'Categories', key: 'categories' }
+    ];
+    const CsvData = selectedProducts.map(product => {
+        return {
+            ...product,
+            bundle_items: product.bundle_items?.join(", ") || "N/A",
+            categories: product.categories?.map(category => category._id).join(", ")
+        }
+    })
+    console.log(selectedProducts)
+
     useEffect(() => {
         const getCategoriesAndProducts = async () => {
             if (categories.length !== 0 && products.length !== 0) return
@@ -34,7 +54,7 @@ export default function AllProducts() {
             if (products.length === 0) await getProducts()
         }
         getCategoriesAndProducts()
-        return () =>{}
+        return () => { }
     }, [])
 
     const onCategoryChange = async (e) => {
@@ -97,7 +117,26 @@ export default function AllProducts() {
                         />
                     </div>
                 </div>
-                <div className='flex gap-x-2'>
+                <section className='flex gap-x-4'>
+                    <div className="relative z-40 h-10 p-px text-sm bg-gold-land flex justify-center items-center rounded-lg">
+                        <button onClick={() => setActionsTip(!actionsTip)} className="w-full h-full px-5 flex justify-center items-center text-xs bg-white rounded-[7px]">
+                            Actions&nbsp;&nbsp;
+                            <svg className={actionsTip && "rotate-180"} width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M0.718574 1.26652C0.471471 0.976974 0.475731 0.51076 0.729225 0.226124C0.852776 0.0862599 1.01361 0.0163273 1.1755 0.0163274C1.34166 0.0163274 1.50675 0.0899399 1.63136 0.238392L4.99708 4.20367L8.44587 0.231032C8.6951 -0.0536042 9.09984 -0.054831 9.35014 0.232259C9.59831 0.520576 9.59831 0.985564 9.34907 1.27388L5.44336 5.77162C5.323 5.90903 5.1611 5.98633 4.99175 5.98633L4.98749 5.98633C4.81708 5.9851 4.65305 5.90535 4.53483 5.76426L0.718574 1.26652Z" fill="#C4C4C4" />
+                            </svg>
+                        </button>
+                        <span className={`${actionsTip ? null : "opacity-0"} absolute left-1/2 -translate-x-1/2 top-[120%] min-w-full group-hover:max-h-52 px-3 bg-white equillibrium_shadow rounded-lg transition-all duration-500 overflow-hidden`}>
+                            <button onClick={() => setActionsTip(!actionsTip)} className={`${!selectedProducts.length && "pointer-events-none opacity-60"} w-full py-2 text-xs text-left border-b border-transparent hover:border-black whitespace-nowrap transition-all`}>
+                                <CSVLink className={!selectedProducts.length && "pointer-events-none opacity-60"} data={CsvData} headers={CsvHeaders} filename="urbanfits-users_data.csv">
+                                    Export Selected in CSV
+                                </CSVLink>
+                            </button>
+                            <Link href="/products/addbundle" disabled={!selectedProducts || selectedProducts.length <= 1} onClick={() => setActionsTip(!actionsTip)} className={`${selectedProducts.length <= 1 && "pointer-events-none opacity-60"} w-full py-2 text-xs text-left border-b border-transparent hover:border-black whitespace-nowrap transition-all`}>
+                                Add to Bundle
+                            </Link>
+                            <button onClick={() => { onClickDelete(); setActionsTip(!actionsTip) }} className={`${!selectedProducts.length && "pointer-events-none opacity-60"} w-full py-2 mb-1 hover:border-b hover:border-black text-xs text-left transition-all`}>Delete Products</button>
+                        </span>
+                    </div>
                     <Button my="my-0" fontSize="text-sm"
                         onClick={() => {
                             setSelectable(!selectable)
@@ -105,17 +144,8 @@ export default function AllProducts() {
                         }}
                         classes={selectable ? "shadow-lg shadow-[#c3992c]" : null}
                     >Select Products</Button>
-                    <LinkBtn
-                        my="my-0" fontSize="text-sm"
-                        disabled={!selectedProducts || selectedProducts.length <= 1}
-                        href="/products/addbundle"
-                    >Add to Bundle</LinkBtn>
-                    <Button
-                        my="my-0" fontSize="text-sm"
-                        disabled={!selectedProducts || selectedProducts.length == 0}
-                        onClick={onClickDelete}
-                    >Delete</Button>
-                </div>
+                    <button title="Refresh Data" disabled={productLoading} onClick={() => getProducts(1, categoryOption)} className={`fa-solid fa-arrows-rotate text-sm ${productLoading ? "fa-spin" : null}`}></button>
+                </section>
             </div>
             <DataTable
                 className='scrollbar_x'
@@ -149,6 +179,7 @@ export default function AllProducts() {
                 columns={productListTableColumns}
                 data={filteredProducts?.map(product => {
                     return {
+                        ...product,
                         id: product._id,
                         product: product.cover_image,
                         name: product.name,

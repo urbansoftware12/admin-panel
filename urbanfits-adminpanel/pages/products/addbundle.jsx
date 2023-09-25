@@ -58,7 +58,7 @@ const BundleItem = (props) => {
 
 export default function CreateBundles() {
     const { selectedProducts } = useProduct()
-    const { user } = useSession()
+    const { admin } = useSession()
     const [loading, setLoading] = useState(false)
 
     const validationSchema = Yup.object().shape({
@@ -85,7 +85,7 @@ export default function CreateBundles() {
                 return setLoading(false)
             }
             try {
-                const { data } = await axios.post(`${process.env.HOST}/api/products/createbundle?id=${user._id}`, { products })
+                const { data } = await axios.post(`${process.env.HOST}/api/products/createbundle?id=${admin._id}`, { products })
                 toaster("success", data.msg)
             } catch (error) {
                 console.log(error)

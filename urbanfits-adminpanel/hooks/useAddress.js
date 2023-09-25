@@ -5,7 +5,7 @@ import axios from "axios";
 import toaster from "@/utils/toast_function";
 
 export default function useAddress() {
-    const { user } = useSession()
+    const { admin } = useSession()
 
     const getAddressFromLS = () => {
         const address = jwt.decode(localStorage.getItem('addressToken'))
@@ -14,9 +14,9 @@ export default function useAddress() {
     }
     const [address, setAddress] = useState(getAddressFromLS)
     const getAddress = async () => {
-        if (!user) return
+        if (!admin) return
         try {
-            const res = await axios.get(`${process.env.HOST}/api/user/addresses/get?user_id=${user._id}`)
+            const res = await axios.get(`${process.env.HOST}/api/user/addresses/get?user_id=${admin._id}`)
             const { payload } = res.data
             localStorage.setItem("addressToken", payload)
             const { _doc } = jwt.decode(payload)
@@ -31,7 +31,7 @@ export default function useAddress() {
 
     const updateAddress = async (values) => {
         try {
-            let { data } = await axios.put(`${process.env.HOST}/api/user/addresses/update?user_id=${user._id}`, values)
+            let { data } = await axios.put(`${process.env.HOST}/api/user/addresses/update?user_id=${admin._id}`, values)
             if (!data.payload) return toaster("error", "Some error occurred")
             const address = jwt.decode(data.payload)
             setAddress(address)

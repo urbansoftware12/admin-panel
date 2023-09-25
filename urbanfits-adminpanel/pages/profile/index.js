@@ -18,16 +18,16 @@ const ProfilePic = "https://urban-fits.s3.eu-north-1.amazonaws.com/website-copyr
 
 
 export default function Profile({ children }) {
-    const { user, updateUser } = useSession()
+    const { admin, updateAdmin } = useSession()
     const [mfaModa, setMfaModa] = useState(false)
     const [loading, setLoading] = useState(false)
     const [imgSpinner, setImgSpinner] = useState(null);
-    const [pfp, setPfp] = useState(user.image && user.image !== '' ? user.image : ProfilePic);
+    const [pfp, setPfp] = useState(admin.image && admin.image !== '' ? admin.image : ProfilePic);
 
     const toggle2FA = async () => {
         setLoading(true)
-        await updateUser({
-            two_fa_enabled: !user.two_fa_enabled
+        await updateAdmin({
+            two_fa_enabled: !admin.two_fa_enabled
         })
         setLoading(false)
     }
@@ -35,22 +35,22 @@ export default function Profile({ children }) {
     const onFileChange = async (e) => {
         const file = e.target.files[0]
         setImgSpinner(<Spinner />)
-        const imgUrl = await uploadImage(file, user._id, 'user-profiles/')
+        const imgUrl = await uploadImage(file, admin._id, 'user-profiles/')
         setPfp(imgUrl)
-        await updateUser({ image: imgUrl })
+        await updateAdmin({ image: imgUrl })
         setImgSpinner(null)
     }
 
     return <>
         {loading ? <Loader /> : null}
-        {user.two_fa_activation_date ? null : <TwoFa show={mfaModa} setMfaModa={setMfaModa} />}
+        {admin.two_fa_activation_date ? null : <TwoFa show={mfaModa} setMfaModa={setMfaModa} />}
         <div className={` mt-[40px] flex items-center font_futura `}>
             <div className="w-36 h-36 rounded-2xl p-1 bg-gold border border-white flex justify-center items-center overflow-hidden">
                 {imgSpinner}
                 <Image width={150} height={150} className="w-full h-full rounded-xl object-cover" alt="avatar" src={pfp} />
             </div>
             <div className="ml-[30px]">
-                <p className=" text-[22px] mb-0">{user?.firstname}&nbsp;{user?.lastname}</p>
+                <p className=" text-[22px] mb-0">{admin?.firstname}&nbsp;{admin?.lastname}</p>
 
                 <div className="flex items-center mt-4 ">
                     <label htmlFor="pfp" className="px-5 py-2 rounded-full bg-gold-land cursor-pointer text-white">Change Avatar</label>
@@ -82,14 +82,14 @@ export default function Profile({ children }) {
                         </p>
 
                         <div className="mt-8 flex justify-between items-center">
-                                {user.two_fa_activation_date ?
-                                    <Button loading={loading} onClick={toggle2FA} my="0" classes='w-44'>{user.two_fa_enabled ? "Disable 2FA" : "Enable 2FA"}</Button>
-                                    :
-                                    <Button onClick={() => setMfaModa(true)} my="0" classes='w-44'>Enable 2FA</Button>}
+                            {admin.two_fa_activation_date ?
+                                <Button loading={loading} onClick={toggle2FA} my="0" classes='w-44'>{admin.two_fa_enabled ? "Disable 2FA" : "Enable 2FA"}</Button>
+                                :
+                                <Button onClick={() => setMfaModa(true)} my="0" classes='w-44'>Enable 2FA</Button>}
                             <div className="flex items-center">
                                 <p className="text-black text-sm">CURRENT STATUS:</p>
                                 <span className="ml-[10px]" >
-                                    <Badge1>{user.two_fa_enabled ? "ENABLED" : "DISABLED"}</Badge1>
+                                    <Badge1>{admin.two_fa_enabled ? "ENABLED" : "DISABLED"}</Badge1>
                                 </span>
                             </div>
                         </div>

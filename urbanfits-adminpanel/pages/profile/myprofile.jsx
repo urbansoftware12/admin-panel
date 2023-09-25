@@ -2,23 +2,25 @@ import React from "react";
 import Profile from ".";
 import CardAdmin from "@/components/cards/cardadmin";
 import useSession from "@/hooks/useSession";
+import Button from "@/components/buttons/simple_btn";
 import { InputText } from "@/components/InputText";
 import { InputSelect } from "@/components/InputSelect";
-import { useFormik } from "formik";
 import { myProfileSchema } from "@/mock/yupSchemas";
+import { useFormik } from 'formik';
+import * as Yup from 'yup'
 
 export default function MyProfile() {
-    const { user } = useSession()
+    const { admin } = useSession()
 
     const initialValues = {
-        firstname: user.firstname,
-        lastname: user.lastname,
-        username: user.username,
-        email: user.email,
-        gender: user.gender,
-        phone_prefix: user.phone_prefix,
-        phone_number: user.phone_number,
-        role: user.role,
+        firstname: admin.firstname,
+        lastname: admin.lastname,
+        username: admin.username,
+        email: admin.email,
+        gender: admin.gender,
+        phone_prefix: admin.phone_prefix,
+        phone_number: admin.phone_number,
+        role: admin.role,
         addressline1: "",
         addressline2: "",
         city: "",
@@ -27,7 +29,19 @@ export default function MyProfile() {
     }
     const { values, errors, handleBlur, handleChange, handleSubmit, touched } = useFormik({
         initialValues: initialValues,
-        validationSchema: myProfileSchema
+        validationSchema: Yup.object({
+            firstname: Yup.string().min(2).required("Please Enter name"),
+            lastname: Yup.string().min(2).required("Please Enter name"),
+            username: Yup.string().min(2).required("Please Enter username"),
+            email: Yup.string().email().min(2).required("Please Enter email"),
+            phone: Yup.number().min(2).required("Please Enter phone"),
+            mobileno: Yup.number().min(2).required("Please Enter mobileno"),
+            addressline1: Yup.string().min(2).required("Please Enter addressline1"),
+            addressline2: Yup.string().required("Please Enter addressline2"),
+            city: Yup.string().required("Please Enter city"),
+            state: Yup.string().required("Please Enter state"),
+            country: Yup.string().required("Please Enter country"),
+        })
     })
 
     return (
@@ -36,7 +50,7 @@ export default function MyProfile() {
                 <CardAdmin classes="w-full px-[30px] py-14 rounded-[25px]" round="rouded-[25px]">
                     <h2 className=" font_futura text-[24px] font-[500] leading-[14px]">Basic Information</h2>
 
-                    <div className="grid grid-cols-2 gap-[20px]" style={{ marginTop: "38px" }}>
+                    <form className="grid grid-cols-2 gap-[20px]" style={{ marginTop: "38px" }}>
                         <div className="flex flex-col gap-[20px]" >
                             <InputText label="First Name"
                                 placeholder="First Name"
@@ -81,7 +95,7 @@ export default function MyProfile() {
                                     (errors.lastname) : null
                                 }
                             />
-                            <InputSelect value={values.gender} width="w-full capitalize" label="Gender">
+                            <InputSelect value={values.gender} onChange={handleChange} width="w-full capitalize" label="Gender">
                                 {["male", "female", "other"].map((gender, index) =>
                                     <option key={index} value={gender}>{gender}</option>
                                 )}
@@ -97,8 +111,10 @@ export default function MyProfile() {
                                 }
                             />
                         </div>
-                    </div>
-
+                        <div className="w-full col-span-full flex justify-end">
+                            <Button type="submit" my="0" classes="w-1/3">Save</Button>
+                        </div>
+                    </form>
                 </CardAdmin>
                 <CardAdmin classes="w-full px-[30px] py-14 rounded-[25px] " round="rouded-[25px]">
                     <h2 className=" font_futura text-[24px] font-[500] leading-[14px] ">Contact</h2>

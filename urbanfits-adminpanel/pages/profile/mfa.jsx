@@ -16,7 +16,7 @@ import Image from "next/image";
 import QrCode from "@/public/QrCode.png";
 
 export default function Authentication() {
-    const { user, updateUser } = useSession()
+    const { admin, updateAdmin } = useSession()
     const [mfaModal, setMfaModal] = useState(false)
     const [loading, setLoading] = useState(false)
     const [sms, setSms] = React.useState(false);
@@ -28,7 +28,7 @@ export default function Authentication() {
 
     const toggle2FA = async () => {
         setLoading(true)
-        await updateUser({ two_fa_enabled: !user.two_fa_enabled })
+        await updateAdmin({ two_fa_enabled: !admin.two_fa_enabled })
         setLoading(false)
     }
 
@@ -39,7 +39,7 @@ export default function Authentication() {
     return (
         <Profile>
             {loading ? <Loader /> : null}
-            {user.two_fa_activation_date ? null : <TwoFa show={mfaModal} setMfaModa={setMfaModal} />}
+            {admin.two_fa_activation_date ? null : <TwoFa show={mfaModal} setMfaModa={setMfaModal} />}
             <div className="grid grid-cols-2 items gap-[20px] ">
                 {!sms ? (
                     <CardAdmin classes="px-[30px] py-[40px] ">
@@ -74,10 +74,10 @@ export default function Authentication() {
                                     <label className="switch w-[40px] h-[22.25px]  ">
                                         <input
                                             type="checkbox"
-                                            checked={user.two_fa_enabled || false}
-                                            value={user.two_fa_enabled || false}
+                                            checked={admin.two_fa_enabled || false}
+                                            value={admin.two_fa_enabled || false}
                                             onChange={() => {
-                                                if (!user.two_fa_activation_date) return setMfaModal(true)
+                                                if (!admin.two_fa_activation_date) return setMfaModal(true)
                                                 else return toggle2FA()
                                             }}
                                         />

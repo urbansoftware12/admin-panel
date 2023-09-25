@@ -287,8 +287,8 @@ export const SearchQueryData = [
     navlink: "/productcategories"
   },
   {
-    label: "Addnew",
-    navlink: "/",
+    label: "Add Category",
+    navlink: "/productcategories",
   },
   {
     label: "All Orders",
@@ -316,7 +316,7 @@ export const SearchQueryData = [
   },
   {
     label: "Add New User",
-    navlink: "/user/userprofile",
+    navlink: "/user/add-user",
   },
   {
     label: "Change Password",

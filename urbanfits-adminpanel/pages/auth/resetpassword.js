@@ -12,7 +12,7 @@ import { useRouter } from 'next/router'
 
 export default function ForgotPassword() {
     const router = useRouter()
-    const { user } = useSession()
+    const { admin } = useSession()
     const [loading, setLoading] = useState(false)
     const [otp, setOtp] = useState('')
     const [otpId, setOtpId] = useState(null)

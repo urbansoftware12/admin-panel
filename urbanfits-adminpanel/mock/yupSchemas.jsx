@@ -38,19 +38,6 @@ export const addProductSchema = Yup.object().shape({
     )
 })
 
-export const myProfileSchema = Yup.object({
-    name: Yup.string().min(2).required("Please Enter name"),
-    username: Yup.string().min(2).required("Please Enter username"),
-    email: Yup.string().email().min(2).required("Please Enter email"),
-    phone: Yup.number().min(2).required("Please Enter phone"),
-    mobileno: Yup.number().min(2).required("Please Enter mobileno"),
-    addressline1: Yup.string().min(2).required("Please Enter addressline1"),
-    addressline2: Yup.string().required("Please Enter addressline2"),
-    city: Yup.string().required("Please Enter city"),
-    state: Yup.string().required("Please Enter state"),
-    country: Yup.string().required("Please Enter country"),
-})
-
 export const changePasswordSchema = Yup.object({
     oldpassword: Yup.string().min(2).required("Please Enter name"),
     newpassword: Yup.string().min(6).required("Please Enter username"),
