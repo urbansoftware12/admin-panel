@@ -1,17 +1,10 @@
 import axios from "axios"
-import toaster from "./toast_function"
 
-const uploadImage = async (file, fileName, folder) => {
+const uploadImage = async (file, fileName="zero", folder) => {
     try {
-        const file_name = fileName ? `&fileName=${fileName}` : ''
-        const url = `${process.env.HOST}/api/S3/signedurl?folder=${folder}${file_name}`
-        const { data } = await axios.get(url)
+        const { data } = await axios.get(`${process.env.HOST}/api/S3/signed-url?folder=${folder}&fileName=${fileName}`)
         await axios.put(data.uploadUrl, file)
-        const imageUrl = `${data?.uploadUrl.split("?")[0]}?timestamp=${Date.now()}`
-        return imageUrl
-    }
-    catch (error) {
-        toaster('error', error)
-    }
+        return `https://urban-fits.s3.eu-north-1.amazonaws.com/${folder}/${fileName}`
+    } catch (error) { console.log(error); }
 }
 export default uploadImage

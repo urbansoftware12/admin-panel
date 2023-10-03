@@ -5,7 +5,6 @@ import useSession from "@/hooks/useSession";
 import Button from "@/components/buttons/simple_btn";
 import { InputText } from "@/components/InputText";
 import { InputSelect } from "@/components/InputSelect";
-import { myProfileSchema } from "@/mock/yupSchemas";
 import { useFormik } from 'formik';
 import * as Yup from 'yup'
 

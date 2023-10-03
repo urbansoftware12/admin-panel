@@ -52,7 +52,7 @@ export default function UserProfile(props) {
     })
     const { values, errors, touched, handleBlur, handleChange, handleReset, handleSubmit, setFieldValue, setValues } = useFormik({
         initialValues: {
-            image: userData.image || '',
+            image: userData?.image || '',
             firstname: userData.firstname || '',
             lastname: userData.lastname || '',
             gender: userData.gender || '',
@@ -67,7 +67,8 @@ export default function UserProfile(props) {
             setLoading(true)
             let imgUrl = null;
             if (values.image && values.image.name) {
-                imgUrl = await uploadImage(values.image, userData._id, 'user-profiles/')
+                console.log(values.image)
+                imgUrl = await uploadImage(values.image, userData._id, 'user-profiles')
             } else delete values.image
             const newUserData = await updateUser(userData._id, { ...values, ...(imgUrl && { image: imgUrl }) })
             setUserData(newUserData)
@@ -146,7 +147,7 @@ export default function UserProfile(props) {
             <section className="col-span-2 border-r border-r-slate-200 p-[40px] flex flex-col  font-[400]">
                 <div className="flex flex-col items-center">
                     <span className="w-16 aspect-square rounded-xl overflow-hidden ">
-                        <Image width={2000} height={2000} className="w-full h-full object-cover object-center" alt="user avatar" src={userData.image || ProfilePic} />
+                        <Image width={2000} height={2000} className="w-full h-full object-cover object-center" alt="user avatar" src={(userData.image || ProfilePic) + "?timestamp=123"} />
                     </span>
                     <p className="text-sm mt-[20px] ">{userData.firstname || null}&nbsp;{userData.lastname || userData.username}</p>
                     <p className="text-sm">{userData.email}</p>
@@ -195,7 +196,7 @@ export default function UserProfile(props) {
                                         <AvatarSIcon />
                                     </div>
                                     <div className="flex flex-col justify-between">
-                                        <p className="text-[22px]">{userData.uf_points}</p>
+                                        <p className="text-[22px]">{userData.uf_wallet.points}</p>
                                         <p className="text-sm">UF-points</p>
                                     </div>
                                 </div>

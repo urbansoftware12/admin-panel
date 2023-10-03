@@ -174,7 +174,7 @@ export default function SidebarLayout({ children }) {
 
                 <div className='flex items-center'>
                     <span onClick={() => handlemenuclick("avatar")} className="w-10 border border-gray-400 aspect-square rounded-full overflow-hidden cursor-pointer" >
-                        <Image src={admin.image} className="w-full h-full object-cover" alt="user avatar" width={80} height={80} />
+                        <Image src={admin.image + "?timestamp=123"} className="w-full h-full object-cover" alt="user avatar" width={80} height={80} />
                     </span>
                     <div className={`duration-200 ${showmenue ? "visible" : "hidden"} absolute top-[89px] right-[154px] `} >
                         <CardAdmin classes="w-[150px] p-5" round="rounded-[15px]" >
