@@ -25,7 +25,7 @@ import Link from "next/link";
 import toaster from "@/utils/toast_function";
 
 export default function UserProfile(props) {
-    const { updateUser, getUserNotifications, resetUser2fa, usersLoading, deleteUsers } = useUser()
+    const { updateUser, getUserNotifications, getUserUfBalance, resetUser2fa, usersLoading, deleteUsers } = useUser()
     const router = useRouter()
     const admin = useSession()
     const [userData, setUserData] = useState(props.userData);

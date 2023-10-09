@@ -38,6 +38,16 @@ const useUser = create((set, get) => ({
         set(() => ({ usersLoading: false }))
     },
 
+    getUserUfBalance: async (user_id, card_number) => {
+        set(() => ({ usersLoading: true }))
+        try {
+            const { data } = await axios.get(`${process.env.HOST}/api/user/uf-wallet/get-balance?user_id=${user_id}&card_number=${card_number}`)
+            set(() => ({ usersLoading: false }))
+            return data.balance
+        } catch (e) { console.log(e) }
+        set(() => ({ usersLoading: false }))
+    },
+
     getUserNotifications: async (user_id) => {
         try {
             const { data } = await axios.get(`${process.env.HOST}/api/user/notifications/get?user_id=${user_id}`)
