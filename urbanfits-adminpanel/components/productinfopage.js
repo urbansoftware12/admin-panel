@@ -75,7 +75,6 @@ const VariantItem = (props) => {
                         name={`variants[${index}].color_name`}
                         value={variant.color_name}
                         onChange={handleChange}
-                        onBlur={handleBlur}
                         error={errors.variants && errors.variants[index] && errors.variants[index].color_name ?
                             (errors.variants[index].color_name) : null
                         }
@@ -87,15 +86,21 @@ const VariantItem = (props) => {
                 {sizes.map((size, sizeIndex) => {
                     return <nav key={sizeIndex} className='w-1/5 flex flex-col items-start'>
                         <div className="mb-5 flex items-center gap-3">
-                            <input name={`variants[${index}].sizes[${sizeIndex}].size`} id={size} value={size} onChange={(e) => {
+                            <input name={`variants[${index}].sizes[${sizeIndex}].size`} id={`variants[${index}].sizes[${sizeIndex}].size`} value={size} onChange={(e) => {
                                 if (e.target.checked) {
-                                    setFieldValue(`variants[${index}].sizes`, [
-                                        ...variant.sizes,
-                                        {
+                                    const newSizes = [...variant.sizes];
+                                    if (e.target.checked) {
+                                        newSizes.push({
                                             size: e.target.value,
-                                            quantity: 0
+                                            quantity: 1
+                                        });
+                                    } else {
+                                        const sizeIndex = newSizes.findIndex((sizeObj) => sizeObj.size === e.target.value);
+                                        if (sizeIndex !== -1) {
+                                            newSizes.splice(sizeIndex, 1);
                                         }
-                                    ]);
+                                    }
+                                    setFieldValue(`variants[${index}].sizes`, newSizes);
                                 } else {
                                     setFieldValue(
                                         `variants[${index}].sizes`,
@@ -103,7 +108,7 @@ const VariantItem = (props) => {
                                     );
                                 }
                             }} checked={selectedSizes.includes(size)} type="checkbox" />
-                            <label htmlFor={size} className='text-sm ml-[5px] mr-[10px] cursor-pointer'>{size}</label>
+                            <label htmlFor={`variants[${index}].sizes[${sizeIndex}].size`} className='text-sm ml-[5px] mr-[10px] cursor-pointer'>{size}</label>
                         </div>
                         {selectedSizes.includes(size) ?
                             <InputText
@@ -368,7 +373,7 @@ export default function ProductInfoPage(props) {
                     <InputText
                         classes="w-full"
                         label="Price"
-                        placeholder="$00"
+                        placeholder="AED 0"
                         type="number"
                         name="price"
                         value={values.price}
@@ -378,7 +383,7 @@ export default function ProductInfoPage(props) {
                     />
                     <InputText
                         classes="w-full"
-                        label="UF Points"
+                        label="UF Points (optional)"
                         placeholder="00"
                         type="number"
                         name="uf_points"
@@ -388,15 +393,15 @@ export default function ProductInfoPage(props) {
                         error={errors.uf_points && touched.uf_points ? errors.uf_points : null}
                     />
                     <div className="w-full h-11 place-self-end flex justify-between items-center">
-                        Enable Gift Code <label className="switch w-[45px] md:w-11 h-6 "><input type="checkbox" name='gift_code' checked={values.gift_code} value={values.gift_code} onChange={(e) => {
+                        Enable Gift Code (optional) <label className="switch w-[45px] md:w-11 h-6 "><input type="checkbox" name='gift_code' checked={values.gift_code} value={values.gift_code} onChange={(e) => {
                             if (values.sale_price || values.sale_price !== '') return toaster("info", "You can either enalbe Gift Code or Sale Price.")
                             handleChange(e);
                         }} /><span className="slider"></span></label>
                     </div>
                     <InputText
                         classes="w-full"
-                        label="Sale Price"
-                        placeholder="$00"
+                        label="Sale Price (optional)"
+                        placeholder="AED 0"
                         type="number"
                         name="sale_price"
                         value={values.sale_price}

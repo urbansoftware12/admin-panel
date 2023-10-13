@@ -210,7 +210,7 @@ export default function AllProducts() {
                             },
                             {
                                 name: "Visit",
-                                onClick: () => { window.open(`/products/product/${product._id}`) }
+                                onClick: () => { window.open(`${process.env.HOST}/products/product/${product._id}`) }
                             },
                             {
                                 name: "Delete",
