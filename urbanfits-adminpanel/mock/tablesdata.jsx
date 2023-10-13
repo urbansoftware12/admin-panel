@@ -1065,7 +1065,7 @@ export const productListTableColumns = [
   {
     selector: row => row.price,
     name: "Price",
-    cell: (row) => `$ ${row.price}`,
+    cell: (row) => `${row.price}د.إ`,
     sortable: true,
   },
   {
