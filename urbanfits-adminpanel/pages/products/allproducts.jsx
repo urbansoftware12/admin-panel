@@ -38,14 +38,11 @@ export default function AllProducts() {
         { label: 'Bundle Items', key: 'bundle_items' },
         { label: 'Categories', key: 'categories' }
     ];
-    const CsvData = selectedProducts.map(product => {
-        return {
-            ...product,
-            bundle_items: product.bundle_items?.join(", ") || "N/A",
-            categories: product.categories?.map(category => category._id).join(", ")
-        }
-    })
-    console.log(selectedProducts)
+    const CsvData = selectedProducts.map(product => ({
+        ...product,
+        bundle_items: product.bundle_items?.join(", ") || "N/A",
+        categories: product.categories?.map(category => category._id).join(", ")
+    }))
 
     useEffect(() => {
         const getCategoriesAndProducts = async () => {

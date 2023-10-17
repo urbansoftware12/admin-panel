@@ -182,265 +182,74 @@ export const userListTableData = [
   },
 ];
 
-export const newOrderTableColumns = [
+const orderStatusColors = { pending: { bg: "#a3a3a3", text: "#ffffff" }, readytoship: { bg: "#eede00", text: "#ffffff" }, shipped: { bg: "#f85b00", text: "#ffffff" }, returned: { bg: "#f30000", text: "#ffffff" }, delivered: { bg: "#00f37a", text: "#ffffff" } }
+export const ordersTableColumns = [
   {
-    accessor: "id",
-    Header: <span className="select-none " >ID</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
+    selector: row => row.id,
+    name: "ID",
+    cell: (row) => <div className="w-full group relative flex justify-start">
+      <span className='w-full whitespace-nowrap truncate cursor-default'>
+        {row.id}
+        <Infotip>{row.id}</Infotip>
+      </span>
+    </div>,
+    width: '10%',
+    sortable: true
   },
   {
-    accessor: "item",
-    Header: <span className="select-none " >Item</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
+    selector: row => row.item,
+    name: "Item(s)",
+    cell: (row) => <div className="flex items-center gap-x-2">
+      <span className='w-10 aspect-square rounded-lg overflow-hidden'>
+        <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={row.image} />
+      </span>
+      {row.name}
+    </div>,
+    width: '25%',
+    sortable: true
   },
   {
-    accessor: "customer",
-    Header: <span className="select-none " >Customer</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
+    selector: row => row.email,
+    cell: row => <div className="w-full group relative flex justify-start">
+      <span className='w-full whitespace-nowrap truncate cursor-default'>
+        {row.email}
+        <Infotip>{row.email}</Infotip>
+      </span>
+    </div>,
+    name: "Customer email",
+    width: '18%',
+    sortable: true,
   },
   {
-    accessor: "quantity",
-    Header: <span className="select-none " >Quantity</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
+    selector: row => row.price,
+    name: "Total Price",
+    sortable: true,
   },
   {
-    accessor: "price",
-    Header: <span className="select-none " >Price</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
+    selector: row => row.status,
+    name: "Status",
+    cell: row => { const lowerStatus = row.status.toLowerCase(); return <span style={{ background: orderStatusColors[lowerStatus].bg, color: orderStatusColors[lowerStatus].text }} className="text-xs px-2 py-0.5 rounded-full">{row.status}</span> },
+    sortable: true,
   },
   {
-    accessor: "payment",
-    Header: <span className="select-none " >Payment</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
+    selector: row => row.date,
+    cell: row => {
+      const date = new Date(row.date)
+      return <div className="w-full group relative flex justify-start">
+        <span className='w-full whitespace-nowrap truncate cursor-default'>
+          {date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear()}
+        </span>
+        <Infotip positions="w-auto whitespace-nowrap right-5 -bottom-full">{row.date}</Infotip>
+      </div>
+    },
+    name: "Joined at",
+    sortable: true,
   },
   {
-    accessor: "status",
-    Header: <span className="select-none " >Status</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
-  },
-  {
-    accessor: "date",
-    Header: <span className="select-none " >Date</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
-  },
-  {
-    accessor: "action",
-    Header: <span className="select-none " >Action</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
-  },
-];
-
-export const newOrderTableData = [
-  {
-    id: <p className="text-[14px] "> 354 </p>,
-    item: (
-      <span className="flex gap-[10px] items-center text-[14px] font-[400] ">
-        <Image alt="product image" src={smartWatch} /> <p className=" ">Smart Watch </p>{" "}
-        <p> </p>
-      </span>
-    ),
-    customer: (
-      <span className="text-[14px] ">
-        <p className="font-[400] "> Bilawal Ashraf </p>
-        <p className="font-[300]"> Bilawalashraf@gmail.com</p>
-      </span>
-    ),
-    quantity: <p className="text-[14px] "> 0 </p>,
-    price: <p className="text-[14px] "> $845 </p>,
-    payment: <p className="text-[14px] ">PAID</p>,
-    status: <StatusBadge status="ready" />,
-    date: <p className="text-[14px] "> 2021-10-30</p>,
-    action: <ActionButton infoLink="orderdetails" />,
-  },
-  {
-    id: <p className="text-[14px] "> 354 </p>,
-    item: (
-      <span className="flex gap-[10px] items-center text-[14px] font-[400] ">
-        <Image alt="product image" src={smartWatch} /> <p className=" ">Ali </p>{" "}
-        <p> </p>
-      </span>
-    ),
-    customer: (
-      <span className="text-[14px] ">
-        <p className="font-[400] "> Ali </p>
-        <p className="font-[300]"> Ali@gmail.com</p>
-      </span>
-    ),
-    quantity: <p className="text-[14px] "> 0 </p>,
-    price: <p className="text-[14px] "> $845 </p>,
-    payment: <p className="text-[14px] ">PAID</p>,
-    status: <StatusBadge status="ontheway" />,
-    date: <p className="text-[14px] "> 2021-10-30</p>,
-    action: <ActionButton />,
-  },
-  {
-    id: <p className="text-[14px] "> 354 </p>,
-    item: (
-      <span className="flex gap-[10px] items-center text-[14px] font-[400] ">
-        <Image alt="product image" src={smartWatch} /> <p className=" ">Smart Watch </p>{" "}
-        <p> </p>
-      </span>
-    ),
-    customer: (
-      <span className="text-[14px] ">
-        <p className="font-[400] "> Bilawal Ashraf </p>
-        <p className="font-[300]"> Bilawalashraf@gmail.com</p>
-      </span>
-    ),
-    quantity: <p className="text-[14px] "> 0 </p>,
-    price: <p className="text-[14px] "> $845 </p>,
-    payment: <p className="text-[14px] ">PAID</p>,
-    status: <StatusBadge status="delivered" />,
-    date: <p className="text-[14px] "> 2021-10-30</p>,
-    action: <ActionButton />,
-  },
-  {
-    id: <p className="text-[14px] "> 354 </p>,
-    item: (
-      <span className="flex gap-[10px] items-center text-[14px] font-[400] ">
-        <Image alt="product image" src={smartWatch} /> <p className=" ">Smart Watch </p>{" "}
-        <p> </p>
-      </span>
-    ),
-    customer: (
-      <span className="text-[14px] ">
-        <p className="font-[400] "> Bilawal Ashraf </p>
-        <p className="font-[300]"> Bilawalashraf@gmail.com</p>
-      </span>
-    ),
-    quantity: <p className="text-[14px] "> 0 </p>,
-    price: <p className="text-[14px] "> $845 </p>,
-    payment: <p className="text-[14px] ">PAID</p>,
-    status: <StatusBadge status="pending" />,
-    date: <p className="text-[14px] "> 2021-10-30</p>,
-    action: <ActionButton />,
-  },
-  {
-    id: <p className="text-[14px] "> 354 </p>,
-    item: (
-      <span className="flex gap-[10px] items-center text-[14px] font-[400] ">
-        <Image alt="product image" src={smartWatch} /> <p className=" ">Smart Watch </p>{" "}
-        <p> </p>
-      </span>
-    ),
-    customer: (
-      <span className="text-[14px] ">
-        <p className="font-[400] "> Bilawal Ashraf </p>
-        <p className="font-[300]"> Bilawalashraf@gmail.com</p>
-      </span>
-    ),
-    quantity: <p className="text-[14px] "> 0 </p>,
-    price: <p className="text-[14px] "> $845 </p>,
-    payment: <p className="text-[14px] ">PAID</p>,
-    status: <StatusBadge status="ready" />,
-    date: <p className="text-[14px] "> 2021-10-30</p>,
-    action: <ActionButton />,
-  },
-  {
-    id: <p className="text-[14px] "> 354 </p>,
-    item: (
-      <span className="flex gap-[10px] items-center text-[14px] font-[400] ">
-        <Image alt="product image" src={smartWatch} /> <p className=" ">Smart Watch </p>{" "}
-        <p> </p>
-      </span>
-    ),
-    customer: (
-      <span className="text-[14px] ">
-        <p className="font-[400] "> Bilawal Ashraf </p>
-        <p className="font-[300]"> Bilawalashraf@gmail.com</p>
-      </span>
-    ),
-    quantity: <p className="text-[14px] "> 0 </p>,
-    price: <p className="text-[14px] "> $845 </p>,
-    payment: <p className="text-[14px] ">PAID</p>,
-    status: <StatusBadge status="ready" />,
-    date: <p className="text-[14px] "> 2021-10-30</p>,
-    action: <ActionButton />,
-  },
-  {
-    id: <p className="text-[14px] "> 354 </p>,
-    item: (
-      <span className="flex gap-[10px] items-center text-[14px] font-[400] ">
-        <Image alt="product image" src={smartWatch} /> <p className=" ">Smart Watch </p>{" "}
-        <p> </p>
-      </span>
-    ),
-    customer: (
-      <span className="text-[14px] ">
-        <p className="font-[400] "> Bilawal Ashraf </p>
-        <p className="font-[300]"> Bilawalashraf@gmail.com</p>
-      </span>
-    ),
-    quantity: <p className="text-[14px] "> 0 </p>,
-    price: <p className="text-[14px] "> $845 </p>,
-    payment: <p className="text-[14px] ">PAID</p>,
-    status: <StatusBadge status="ready" />,
-    date: <p className="text-[14px] "> 2021-10-30</p>,
-    action: <ActionButton />,
-  },
-  {
-    id: <p className="text-[14px] "> 354 </p>,
-    item: (
-      <span className="flex gap-[10px] items-center text-[14px] font-[400] ">
-        <Image alt="product image" src={smartWatch} /> <p className=" ">Smart Watch </p>{" "}
-        <p> </p>
-      </span>
-    ),
-    customer: (
-      <span className="text-[14px] ">
-        <p className="font-[400] "> Bilawal Ashraf </p>
-        <p className="font-[300]"> Bilawalashraf@gmail.com</p>
-      </span>
-    ),
-    quantity: <p className="text-[14px] "> 0 </p>,
-    price: <p className="text-[14px] "> $845 </p>,
-    payment: <p className="text-[14px] ">PAID</p>,
-    status: <StatusBadge status="ready" />,
-    date: <p className="text-[14px] "> 2021-10-30</p>,
-    action: <ActionButton />,
-  },
-  {
-    id: <p className="text-[14px] "> 354 </p>,
-    item: (
-      <span className="flex gap-[10px] items-center text-[14px] font-[400] ">
-        <Image alt="product image" src={smartWatch} /> <p className=" ">Smart Watch </p>{" "}
-        <p> </p>
-      </span>
-    ),
-    customer: (
-      <span className="text-[14px] ">
-        <p className="font-[400] "> Bilawal Ashraf </p>
-        <p className="font-[300]"> Bilawalashraf@gmail.com</p>
-      </span>
-    ),
-    quantity: <p className="text-[14px] "> 0 </p>,
-    price: <p className="text-[14px] "> $845 </p>,
-    payment: <p className="text-[14px] ">PAID</p>,
-    status: <StatusBadge status="ready" />,
-    date: <p className="text-[14px] "> 2021-10-30</p>,
-    action: <ActionButton />,
-  },
-  {
-    id: <p className="text-[14px] "> 354 </p>,
-    item: (
-      <span className="flex gap-[10px] items-center text-[14px] font-[400] ">
-        <Image alt="product image" src={smartWatch} /> <p className=" ">Smart Watch </p>{" "}
-        <p> </p>
-      </span>
-    ),
-    customer: (
-      <span className="text-[14px] ">
-        <p className="font-[400] "> Bilawal Ashraf </p>
-        <p className="font-[300]"> Bilawalashraf@gmail.com</p>
-      </span>
-    ),
-    quantity: <p className="text-[14px] "> 0 </p>,
-    price: <p className="text-[14px] "> $845 </p>,
-    payment: <p className="text-[14px] ">PAID</p>,
-    status: <StatusBadge status="ready" />,
-    date: <p className="text-[14px] "> 2021-10-30</p>,
-    action: <ActionButton />,
-  },
+    selector: row => row.actions,
+    name: "Action",
+    cell: (row) => <ActionButton infoLink={row.infoLink} handleInfo={row.handleInfo} options={row.actions} />
+  }
 ];
 
 export const orderHistoryTableColumns = [
