@@ -82,18 +82,18 @@ const useOrder = create((set, get) => ({
         return set(() => ({ orderLoading: false }))
     },
 
-    deleteOrders: async (ordersToDelete) => {
+    deleteOrders: async (orderIds) => {
         const { admin } = useSession.getState()
         if (!admin) return
 
         set(() => ({ orderLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.HOST}/api/orders/delete?user_id=${admin._id}`, { orders: ordersToDelete })
-            await get().getorders(1)
+            const { data } = await axios.put(`${process.env.HOST}/api/user/orders/delete`, { admin_id: admin._id, orders: orderIds })
+            await get().getOrders(1)
             toaster(data.deletedCount < 1 ? "info" : "success", data.msg)
         } catch (error) {
             console.log(error)
-            toaster("error", error.response.data.msg)
+            if (error.response && error.response.data) toaster("error", error.response.data.msg)
         }
         return set(() => ({ orderLoading: false }))
     }

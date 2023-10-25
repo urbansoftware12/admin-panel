@@ -12,7 +12,7 @@ import { CSVLink } from "react-csv";
 import { ordersTableColumns } from '@/mock/tablesdata';
 
 export default function AllOrders() {
-    const { orders, getOrders, totalOrders, selectedOrders, setSelectedOrders, orderLoading } = useOrder()
+    const { orders, getOrders, totalOrders, selectedOrders, setSelectedOrders, orderLoading, deleteOrders } = useOrder()
     const [deleteModal, setDeleteModal] = useState(null)
     const [query, setQuery] = useState('')
     const [actionsTip, setActionsTip] = useState(false)
@@ -55,7 +55,7 @@ export default function AllOrders() {
                 heading="Delete Order(s)"
                 msg={`This is an irreversible action, the specified Order will be deleted permanently both for Admin panel and User.`}
                 setDeleteModal={setDeleteModal}
-                onTakeAction={() => { }}
+                onTakeAction={() => deleteOrders(selectedOrders)}
             />
         )
     }
@@ -171,7 +171,7 @@ export default function AllOrders() {
                                             heading="Delete Order"
                                             msg={`This is an irreversible action, the specified Order will be deleted permanently both for Admin panel and User.`}
                                             setDeleteModal={setDeleteModal}
-                                            onTakeAction={() => { }}
+                                            onTakeAction={() => deleteOrders([order._id])}
                                         />
                                     )
                                 }
