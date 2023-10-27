@@ -155,8 +155,8 @@ export default function AllOrders() {
                         price: order.price_details.total_price + order.price_details.shipping_fees + "د.إ",
                         status: order.order_status,
                         date: order.createdAt,
-                        handleInfo: () => { setProductInfo(product) },
-                        infoLink: "#",
+                        handleInfo: () => { },
+                        infoLink: `/orders/${order._id}`,
                         actions: [
                             {
                                 name: "Copy ID",

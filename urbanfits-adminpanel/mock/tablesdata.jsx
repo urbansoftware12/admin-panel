@@ -416,94 +416,53 @@ export const orderHistoryTableData = [
 
 export const orderProductDetailTableColumns = [
   {
-    accessor: "id",
-    Header: <span className="select-none " >#</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
+    selector: row => row.id,
+    name: "ID",
+    cell: (row) => <div className="w-full group relative flex justify-start">
+      <span className='w-full whitespace-nowrap truncate cursor-default'>
+        {row.id}
+        <Infotip>{row.id}</Infotip>
+      </span>
+    </div>,
+    width: '10%'
   },
   {
-    accessor: "image",
-    Header: <span className="select-none " >Image</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
-  },
-  {
-    accessor: "product",
-    Header: <span className="select-none " >Product</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
-  },
-  {
-    accessor: "quantity",
-    Header: <span className="select-none " >Quantity</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
-  },
-  {
-    accessor: "price",
-    Header: <span className="select-none " >Price/Unit</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
-  },
-  {
-    accessor: "subtotal",
-    Header: <span className="select-none " >Subtotal</span>,
-    Cell: ({ cell: { value }, row }) => <span> {value} </span>,
-  },
-];
-
-export const orderProductDetailTableData = [
-  {
-    id: <p className="text-[14px] font-[400]"> 1 </p>,
-    image: <Image alt="product image" src={sneakers} />,
-    product: <span className="flex flex-col text-[14px] " >
-      <p className="font-[400] " >  Baby Pink Shoes</p>
-      <p className="font-[300]"> A very smooth and comfort shoes ever for baby </p>
+    selector: row => row.image,
+    name: "Image",
+    cell: (row) => <span className='w-10 aspect-square rounded-lg overflow-hidden'>
+      <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={row.image} />
     </span>,
-    quantity: <p className="text-[14px] font-[400]"> 4 </p>,
-    price: <p className="text-[14px] font-[400]">$50.00 </p>,
-    subtotal: <p className="text-[14px] font-[400]"> $200.00</p>
+    width: '10%',
   },
   {
-    id: <p className="text-[14px] font-[400]"> 1 </p>,
-    image: <Image alt="product image" src={sneakers} />,
-    product: <span className="flex flex-col text-[14px] " >
-      <p className="font-[400] " >  Baby Pink Shoes</p>
-      <p className="font-[300]"> A very smooth and comfort shoes ever for baby </p>
+    selector: row => row.name,
+    name: "Product",
+    cell: (row) => <span className='flex flex-col text-xs text-gray-400'>
+      <p className="text-sm text-black">{row.name}</p>
+      Variant: {row.variant}
     </span>,
-    quantity: <p className="text-[14px] font-[400]"> 4 </p>,
-    price: <p className="text-[14px] font-[400]">$50.00 </p>,
-    subtotal: <p className="text-[14px] font-[400]"> $200.00</p>
+    width: '35%',
   },
   {
-    id: <p className="text-[14px] font-[400]"> 1 </p>,
-    image: <Image alt="product image" src={sneakers} />,
-    product: <span className="flex flex-col text-[14px] " >
-      <p className="font-[400] " >  Baby Pink Shoes</p>
-      <p className="font-[300]"> A very smooth and comfort shoes ever for baby </p>
-    </span>,
-    quantity: <p className="text-[14px] font-[400]"> 4 </p>,
-    price: <p className="text-[14px] font-[400]">$50.00 </p>,
-    subtotal: <p className="text-[14px] font-[400]"> $200.00</p>
+    selector: row => row.quantity,
+    name: "Quantity",
+    width: '9%'
   },
   {
-    id: <p className="text-[14px] font-[400]"> 1 </p>,
-    image: <Image alt="product image" src={sneakers} />,
-    product: <span className="flex flex-col text-[14px] " >
-      <p className="font-[400] " >  Baby Pink Shoes</p>
-      <p className="font-[300]"> A very smooth and comfort shoes ever for baby </p>
-    </span>,
-    quantity: <p className="text-[14px] font-[400]"> 4 </p>,
-    price: <p className="text-[14px] font-[400]">$50.00 </p>,
-    subtotal: <p className="text-[14px] font-[400]"> $200.00</p>
+    selector: row => row.weight,
+    name: "Weight (grams)",
+    width: '13%',
   },
   {
-    id: <p className="text-[14px] font-[400]"> 1 </p>,
-    image: <Image alt="product image" src={sneakers} />,
-    product: <span className="flex flex-col text-[14px] " >
-      <p className="font-[400] " >  Baby Pink Shoes</p>
-      <p className="font-[300]"> A very smooth and comfort shoes ever for baby </p>
-    </span>,
-    quantity: <p className="text-[14px] font-[400]"> 4 </p>,
-    price: <p className="text-[14px] font-[400]">$50.00 </p>,
-    subtotal: <p className="text-[14px] font-[400]"> $200.00</p>
+    selector: row => row.price,
+    name: "Price/Unit",
+    width: '12%',
   },
-
+  {
+    selector: row => row.price * row.quantity,
+    name: "Subtotal",
+    width: '10%'
+  },
 ];
 
 

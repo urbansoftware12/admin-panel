@@ -25,7 +25,7 @@ const useOrder = create((set, get) => ({
             return data.orders
         } catch (error) {
             console.log(error)
-            toaster("error", error.response.data.msg)
+            if(error.response)toaster("error", error.response.data.msg)
         }
         return set(() => ({ orderLoading: false }))
     },
@@ -33,10 +33,8 @@ const useOrder = create((set, get) => ({
     getOneOrder: async (order_id) => {
         set(() => ({ orderLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.HOST}/api/orders/get/one?id=${order_id}`)
-            set(() => ({
-                orderLoading: false
-            }))
+            const { data } = await axios.get(`${process.env.HOST}/api/user/orders/get-one?order_id=${order_id}`)
+            set(() => ({ orderLoading: false }))
             return data.order
         } catch (error) {
             console.log(error)
