@@ -151,9 +151,11 @@ export default function ProductInfoPage(props) {
             for (const variant of product.variants) {
                 setLoader(<Loader status={`Uploading Images of Variant ${variantIndex + 1}`} />)
                 let newVariant = { ...JSON.parse(JSON.stringify(variant)), images: [] }
+                const filteredVariantImages = variant.images.filter(image => image && image !== '')
+                console.log(filteredVariantImages)
                 let imgIndex = 0
-                for (const image of variant.images) {
-                    setLoader(<Loader status={`Uploading Images of Variant ${variantIndex + 1}: ${imgIndex} of ${variant.images.length} uploaded`} />)
+                for (const image of filteredVariantImages) {
+                    setLoader(<Loader status={`Uploading Images of Variant ${variantIndex + 1}: ${imgIndex} of ${filteredVariantImages.length} uploaded`} />)
                     const imgUrl = await uploadImage(image, imgIndex, `product-images/${createdProduct._id}/${createdProduct.variants[variantIndex]._id}`)
                     newVariant.images.push(imgUrl)
                     imgIndex += 1

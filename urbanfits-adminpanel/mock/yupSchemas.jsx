@@ -27,7 +27,7 @@ export const addProductSchema = Yup.object().shape({
         Yup.object().shape({
             color: Yup.string().required('Variant color is required.'),
             color_name: Yup.string().required('Color name is required.'),
-            images: Yup.array().min(1, 'minimum 6 images are required (if not available, then repeat images).').max(6, 'You can only upload maximum 6 images.'),
+            images: Yup.array().min(2, 'minimum 6 images are required (if not available, then repeat images).').max(6, 'You can only upload maximum 6 images.'),
             sizes: Yup.array().of(
                 Yup.object().shape({
                     size: Yup.string(),
