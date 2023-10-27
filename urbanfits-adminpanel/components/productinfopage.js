@@ -145,7 +145,7 @@ export default function ProductInfoPage(props) {
             }
             const createdProduct = await createProduct(productToCreate)
             setLoader(<Loader status="Uploading Cover Image" />)
-            const coverImage = await uploadImage(product.cover_image, createdProduct._id, `product-images/${createdProduct._id}/`)
+            const coverImage = await uploadImage(product.cover_image, createdProduct._id, `product-images/${createdProduct._id}`)
             const finalVariants = []
             let variantIndex = 0
             for (const variant of product.variants) {
@@ -154,7 +154,7 @@ export default function ProductInfoPage(props) {
                 let imgIndex = 0
                 for (const image of variant.images) {
                     setLoader(<Loader status={`Uploading Images of Variant ${variantIndex + 1}: ${imgIndex} of ${variant.images.length} uploaded`} />)
-                    const imgUrl = await uploadImage(image, imgIndex, `product-images/${createdProduct._id}/${createdProduct.variants[variantIndex]._id}/`)
+                    const imgUrl = await uploadImage(image, imgIndex, `product-images/${createdProduct._id}/${createdProduct.variants[variantIndex]._id}`)
                     newVariant.images.push(imgUrl)
                     imgIndex += 1
                 }
