@@ -38,12 +38,24 @@ const useUser = create((set, get) => ({
         set(() => ({ usersLoading: false }))
     },
 
-    getUserUfBalance: async (user_id, card_number) => {
+    getUserUfBalance: async (user_id, card_number, callback) => {
         set(() => ({ usersLoading: true }))
         try {
             const { data } = await axios.get(`${process.env.HOST}/api/user/uf-wallet/get-balance?user_id=${user_id}&card_number=${card_number}`)
             set(() => ({ usersLoading: false }))
+            callback(data.balance)
             return data.balance
+        } catch (e) { console.log(e) }
+        set(() => ({ usersLoading: false }))
+    },
+
+    addPointsToUserWallet: async (pointsData, callback) => {
+        set(() => ({ usersLoading: true }))
+        try {
+            const { data } = await axios.post(`${process.env.HOST}/api/user/uf-wallet/add-points`, pointsData)
+            set(() => ({ usersLoading: false }))
+            callback(data)
+            return toaster("success", data.msg)
         } catch (e) { console.log(e) }
         set(() => ({ usersLoading: false }))
     },

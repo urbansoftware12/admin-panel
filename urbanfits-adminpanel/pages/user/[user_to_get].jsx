@@ -19,13 +19,14 @@ import useSession from "@/hooks/useSession";
 import useUser from "@/hooks/useUser";
 import timeAgo from "@/utils/timestamp_duration";
 import uploadImage from "@/utils/uploadImage";
+import { EncrytOrDecryptData } from "@/utils/data_handle-functions";
 import axios from "axios";
 import mongoose from "mongoose";
 import Link from "next/link";
 import toaster from "@/utils/toast_function";
 
 export default function UserProfile(props) {
-    const { updateUser, getUserNotifications, getUserUfBalance, resetUser2fa, usersLoading, deleteUsers } = useUser()
+    const { updateUser, getUserNotifications, getUserUfBalance, addPointsToUserWallet, resetUser2fa, usersLoading, deleteUsers } = useUser()
     const router = useRouter()
     const admin = useSession()
     const [userData, setUserData] = useState(props.userData);
@@ -35,9 +36,7 @@ export default function UserProfile(props) {
     const [deleteModal, setDeleteModal] = useState(false);
     const [notificLoading, setNotificLoading] = useState(false);
 
-    const handlemenueclick = (id) => {
-        setChecked(id);
-    };
+    const handlemenueclick = (id) => setChecked(id);
 
     const validatedSchema = Yup.object({
         image: Yup.object().nullable(0),
@@ -49,6 +48,22 @@ export default function UserProfile(props) {
         role: Yup.string().oneOf(['administrator', 'customer'], 'Invalid role. 2 Available roles: administrator, customer').required("Please select a user role."),
         phone_prefix: Yup.string().required('Phone prefix is required to save'),
         phone_number: Yup.string().min(6, 'Phone number can be a minimum of 6 digits').max(14, 'Phone number can be a maximum of 14 digits').required('Phone number is required to save')
+    })
+    const pointsSchema = Yup.object({
+        user_id: Yup.string(),
+        card_number: Yup.string(),
+        source: Yup.string(),
+        secret_key: Yup.string(),
+        points: Yup.number(),
+        duducted: Yup.number(),
+        expiration_date: Yup.date().nullable(),
+        notific_params: Yup.object({
+            category: Yup.string().required("Notification Category is required."),
+            heading: Yup.string().required("Notification Heading is required."),
+            type: Yup.string().required(),
+            mini_msg: Yup.string(),
+            message: Yup.string().required("Notification message is required."),
+        })
     })
     const { values, errors, touched, handleBlur, handleChange, handleReset, handleSubmit, setFieldValue, setValues } = useFormik({
         initialValues: {
@@ -106,6 +121,35 @@ export default function UserProfile(props) {
         }
     })
 
+
+    const { values: ptsValues, errors: ptsErrors, touched: ptsTouched, handleChange: ptsHandleChange, setFieldValue: setPtsFieldValue, handleReset: ptsHandleReset, handleSubmit: ptsHandleSubmit } = useFormik({
+        initialValues: {
+            user_id: userData?._id,
+            card_number: userData?.uf_wallet?.card_number,
+            source: "additional_reward",
+            secret_key: EncrytOrDecryptData(process.env.SECRET_KEY),
+            points: 0,
+            duducted: 0,
+            expiration_date: undefined,
+            notific_params: {
+                category: "reward",
+                heading: "",
+                type: "additional_reward",
+                mini_msg: '',
+                message: ""
+            }
+        },
+        validationSchema: pointsSchema,
+        onSubmit: async (values,) => {
+            await addPointsToUserWallet(values, () => getUserUfBalance(
+                userData._id,
+                userData.uf_wallet.card_number,
+                (uf_balance) => setUserData((prevState) => ({ ...prevState, uf_balance }))
+            ))
+            ptsHandleReset()
+        },
+    })
+
     const getNotificIcon = (category) => {
         if (category == "account") return <AvatarSIcon />
         if (category == "order") return <CartLIcon />
@@ -118,7 +162,13 @@ export default function UserProfile(props) {
         setUserNotifics(notifics)
         setNotificLoading(false)
     }
+    const handleSectionPosition = (checked) => {
+        if (checked == 1) return "translate-x-0"
+        if (checked == 2) return "-translate-x-1/3"
+        if (checked == 3) return "-translate-x-[66.66%]"
+    }
     useEffect(() => {
+        getUserUfBalance(userData._id, userData.uf_wallet.card_number, (uf_balance) => setUserData((prevState) => ({ ...prevState, uf_balance })))
         getNotifics()
     }, [])
 
@@ -168,6 +218,11 @@ export default function UserProfile(props) {
                     {userData._id.slice(0, 14)}••••••••••&nbsp;&nbsp;<i className="fa-regular fa-copy" />
                     <span className="absolute -top-7 left-1/2 -translate-x-1/2 translate-y-7 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 px-2 py-0.5 rounded-lg text-[10px] bg-gray-700 text-white transition-all duration-300">Copy</span>
                 </button>
+                <p className="text-sm mt-[30px] ">UF-Wallet Card number</p>
+                <button onClick={() => navigator.clipboard.writeText(userData.uf_wallet.card_number)} className="group relative text-xs mt-[5px] text-left">
+                    {userData.uf_wallet.card_number.slice(0, 12)}••••••••••&nbsp;&nbsp;<i className="fa-regular fa-copy" />
+                    <span className="absolute -top-7 left-1/2 -translate-x-1/2 translate-y-7 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 px-2 py-0.5 rounded-lg text-[10px] bg-gray-700 text-white transition-all duration-300">Copy</span>
+                </button>
                 <div className="w-full p-4 mt-10 border border-red-600 rounded-xl">
                     <h5 className="mb-4 text-sm">User Deletion</h5>
                     <p className="mb-3 text-xs text-red-500"><span className="text-xs text-black">Note:</span> All {userData.firstname || userData.username}'s account data along with their Orders and UF balance and history will be deleted permanently.</p>
@@ -184,11 +239,15 @@ export default function UserProfile(props) {
                         Setting
                         <span className={`${checked == 2 ? "w-full" : 'w-0'} h-1 mt-3 bg-gold-land transition-all duration-300`} />
                     </button>
+                    <button className={`w-40 px-4 flex flex-col justify-between items-center`} onClick={() => handlemenueclick(3)}>
+                        Add UF-Points
+                        <span className={`${checked == 3 ? "w-full" : 'w-0'} h-1 mt-3 bg-gold-land transition-all duration-300`} />
+                    </button>
                 </div>
                 <hr className="h-px border-none bg-gray-200 translate-y-[-1px]" />
 
-                <div className={`w-[200%] flex transition-all duration-700 ${checked == 1 ? null : "-translate-x-1/2"}`}>
-                    <section className={`w-1/2 ${checked == 2 ? "opacity-0" : ''} transition-all duration-500`}>
+                <div className={`w-[300%] flex justify-between transition-all duration-700 ${handleSectionPosition(checked)}`}>
+                    <section className={`w-1/3 ${checked !== 1 && "opacity-0"} transition-all duration-500`}>
                         <div className="mt-10 grid grid-cols-3 gap-10">
                             <CardAdmin classes="px-5 py-[25px] ">
                                 <div className="flex gap-5">
@@ -196,7 +255,7 @@ export default function UserProfile(props) {
                                         <AvatarSIcon />
                                     </div>
                                     <div className="flex flex-col justify-between">
-                                        <p className="text-[22px]">{userData.uf_wallet.points}</p>
+                                        <p className="text-[22px]">{userData?.uf_balance || "00"}</p>
                                         <p className="text-sm">UF-points</p>
                                     </div>
                                 </div>
@@ -233,7 +292,7 @@ export default function UserProfile(props) {
 
                             <hr className="mt-10" />
 
-                            <div className="flex flex-col gap-y-7 mt-10 transition-all duration-300">
+                            <div className={`${checked !== 1 && "max-h-40"} flex flex-col gap-y-7 mt-10 transition-all duration-300 overflow-clip`}>
                                 {notificLoading ? <div className="flex justify-center"><BounceLoader /></div> : null}
                                 {!userNotifics ? <div className="w-full text-center h-40">No notifications to show :/</div> :
                                     userNotifics.map((notific, i) => (
@@ -256,91 +315,127 @@ export default function UserProfile(props) {
                             </div>
                         </CardAdmin>
                     </section>
-                    <CardAdmin classes={`w-1/2 p-[30px] mt-10 ${checked == 1 ? "opacity-0" : ''} transition-all duration-500`}>
-                        <section className="grid grid-cols-1 gap-5">
-                            <form className="grid grid-cols-1 gap-5" onSubmit={handleSubmit} onReset={handleReset}>
-                                <div className="w-full flex gap-5 items-center">
-                                    <p>User Image</p>
-                                    <div className={`w-4/5 relative flex`}>
-                                        <span className="w-3/4 max-w-[75%] pl-[10px] truncate py-2 rounded-lg rounded-r-none border border-r-0 border-gray-300 transition outline-none">{values?.image?.name || userData.image}</span>
-                                        <input type="file" id='pfp' name='image' accept="image/*" onChange={(e) => setFieldValue("image", e.target.files[0])} className="opacity-0 w-0 h-0 appearance-none" />
-                                        <label htmlFor="pfp" className="w-1/4 py-2 text-sm text-white cursor-pointer rounded-r-lg flex justify-center items-center bg-gold-land">Browse</label>
-                                        <p className='absolute text-red-400 bottom-[-19px] left-[10px] text-[11px]'></p>
-                                    </div>
+                    <CardAdmin classes={`w-1/3 p-[30px] mt-10 ${checked !== 2 && "opacity-0 max-h-40"} transition-all duration-500 overflow-hidden`}>
+                        <form className="gap-5" onSubmit={handleSubmit} onReset={handleReset}>
+                            <div className="w-full flex gap-5 items-center">
+                                <p>User Image</p>
+                                <div className={`w-4/5 relative flex`}>
+                                    <span className="w-3/4 max-w-[75%] pl-[10px] truncate py-2 rounded-lg rounded-r-none border border-r-0 border-gray-300 transition outline-none">{values?.image?.name || userData.image}</span>
+                                    <input type="file" id='pfp' name='image' accept="image/*" onChange={(e) => setFieldValue("image", e.target.files[0])} className="opacity-0 w-0 h-0 appearance-none" />
+                                    <label htmlFor="pfp" className="w-1/4 py-2 text-sm text-white cursor-pointer rounded-r-lg flex justify-center items-center bg-gold-land">Browse</label>
+                                    <p className='absolute text-red-400 bottom-[-19px] left-[10px] text-[11px]'></p>
                                 </div>
-
-                                <div className="grid grid-cols-2 gap-[100px]">
-                                    <InputText label="First Name" placeholder="First Name" name="firstname" value={values.firstname} onChange={handleChange} onBlur={handleBlur} error={errors.firstname && touched.firstname ? (errors.firstname) : null} />
-                                    <InputText label="Last Name" placeholder="Last Name" name="lastname" value={values.lastname} onChange={handleChange} onBlur={handleBlur} error={errors.lastname && touched.lastname ? (errors.lastname) : null} />
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-[100px]">
-                                    <InputSelect defaultValue="Select gender" value={values.gender} onChange={handleChange} name="gender" label="Gender" error={errors.gender && touched.gender ? errors.gender : null}>
-                                        <option disabled>Select gender</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                        <option value="other">Other</option>
-                                    </InputSelect>
-                                    <InputSelect defaultValue="customer" value={values.role} onChange={handleChange} name="role" label="User Role" error={errors.role && touched.role ? errors.role : null}>
-                                        <option disabled>Select role</option>
-                                        <option value="administrator">Administrator</option>
-                                        <option value="customer">Customer</option>
-                                    </InputSelect>
-                                </div>
-
-                                <div className="grid grid-cols-1">
-                                    <InputText label="User Name" placeholder="Last Name" name="username" value={values.username} onChange={handleChange} onBlur={handleBlur} error={errors.username && touched.username ? (errors.username) : null} />
-                                    <p className="mt-2 font_futura_light text-sm">Username must be unique with no spaces.</p>
-                                </div>
-                                <InputText label="Email" placeholder="example@domain.com" name="email" value={values.email} onChange={handleChange} onBlur={handleBlur} error={errors.email && touched.email ? errors.email : null} />
-                                <div className="grid grid-cols-2 gap-[100px]  ">
-                                    <InputSelect defaultValue="Select country code" value={values.phone_prefix} onChange={handleChange} name="phone_prefix" label="Phone Prefix" error={errors.phone_prefix && touched.phone_prefix ? errors.phone_prefix : null}>
-                                        <option disabled>Select phone prefix</option>
-                                        {countryCodes.map((item) => {
-                                            if (!item.code) return <option disabled>{item.name}</option>
-                                            return <option value={item.code}>{item.name} {item.code}</option>
-                                        })}
-                                    </InputSelect>
-                                    <InputText label="Phone Number" placeholder="Phone Number" name="phone_number" value={values.phone_number} onChange={handleChange} onBlur={handleBlur} error={errors.phone_number && touched.phone_number ? errors.phone_number : null} />
-                                </div><div className="w-full flex justify-end gap-2">
-                                    <Button type="reset" bg="bg-gray-100" text="black" classes="w-full md:w-1/4" font='font_urbanist_medium'>Cancel</Button>
-                                    <Button type="submit" classes="w-full md:w-1/4" font='font_urbanist_medium'>Save</Button>
-                                </div>
-                            </form>
-
-                            <div className="w-full mt-4 flex justify-between items-center font_urbanist text-sm">
-                                <span className="w-2/5 h-px bg-gray-400"></span>
-                                Security
-                                <span className="w-2/5 h-px bg-gray-400"></span>
                             </div>
-                            {userData.two_fa_activation_date ? <div className="w-full min-h-[80px] p-4 border rounded-xl">
-                                <div className="w-full flex items-center">
-                                    Enable / Disable 2FA<label className="switch w-[45px] mx-4 md:w-11 h-6"><input type="checkbox" name='active_by_phone' checked={userData.two_fa_enabled || false} value={userData.two_fa_enabled} onChange={async () => {
-                                        const newUserData = await updateUser(userData._id, { two_fa_enabled: !userData.two_fa_enabled })
-                                        setUserData(newUserData)
-                                    }} /><span className="slider"></span></label>
-                                </div>
-                                <div className="w-full mt-7 flex items-center gap-x-4">
-                                    <button onClick={async () => {
-                                        const newUserData = await resetUser2fa(userData._id)
-                                        setUserData(newUserData)
-                                    }} className="px-5 py-2 border border-red-600 rounded-full">Reset User's 2FA</button>
-                                    <p className="flex-1 text-xs">Note: By resetting, user's 2FA key will be removed and user will have to register again to secure their account.</p>
-                                </div>
-                            </div> : <div className="w-full min-h-[80px] p-4 flex justify-center items-center text-sm border rounded-xl">This user haven't registered for 2FA.</div>}
 
-                            <div className="w-full mt-4 flex justify-between items-center font_urbanist text-sm">
-                                <span className="w-1/3 h-px bg-gray-400"></span>
-                                Change Password
-                                <span className="w-1/3 h-px bg-gray-400"></span>
+                            <div className="grid grid-cols-2 gap-[100px]">
+                                <InputText label="First Name" placeholder="First Name" name="firstname" value={values.firstname} onChange={handleChange} onBlur={handleBlur} error={errors.firstname && touched.firstname ? (errors.firstname) : null} />
+                                <InputText label="Last Name" placeholder="Last Name" name="lastname" value={values.lastname} onChange={handleChange} onBlur={handleBlur} error={errors.lastname && touched.lastname ? (errors.lastname) : null} />
                             </div>
-                            {userData.register_provider === "urbanfits" ? <form className="grid grid-cols-1 gap-5" onSubmit={passHandleSubmit} onReset={passHandleReset}>
-                                <InputText autoComplete='off' onChange={passHandleChange} value={passValues.admin_password} name="admin_password" label="Admin (Your) Password" placeholder="Enter your password" error={passErrors.admin_password && passTouched.admin_password ? passErrors.admin_password : null} />
-                                <InputText autoComplete='off' onChange={passHandleChange} value={passValues.new_password} name="new_password" label="New User Password" placeholder="New user password" error={passErrors.new_password && passTouched.new_password ? passErrors.new_password : null} />
-                                <InputText autoComplete='off' onChange={passHandleChange} value={passValues.confirm_password} name="confirm_password" label="Confirm User Password" placeholder="Confirm user password" error={passErrors.confirm_password && passTouched.confirm_password ? passErrors.confirm_password : null} />
-                                <Button type="submit" font='font_urbanist_medium'>Update User Password</Button>
-                            </form> : <span className="text-sm text-gray-500">This user's account is associated with Google registration provider, you cannot change the password of such users who signed up with google as they don't need password to login.</span>}
-                        </section>
+
+                            <div className="grid grid-cols-2 gap-[100px]">
+                                <InputSelect defaultValue="Select gender" value={values.gender} onChange={handleChange} name="gender" label="Gender" error={errors.gender && touched.gender ? errors.gender : null}>
+                                    <option disabled>Select gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </InputSelect>
+                                <InputSelect defaultValue="customer" value={values.role} onChange={handleChange} name="role" label="User Role" error={errors.role && touched.role ? errors.role : null}>
+                                    <option disabled>Select role</option>
+                                    <option value="administrator">Administrator</option>
+                                    <option value="customer">Customer</option>
+                                </InputSelect>
+                            </div>
+
+                            <div className="grid grid-cols-1">
+                                <InputText label="User Name" placeholder="Last Name" name="username" value={values.username} onChange={handleChange} onBlur={handleBlur} error={errors.username && touched.username ? (errors.username) : null} />
+                                <p className="mt-2 font_futura_light text-sm">Username must be unique with no spaces.</p>
+                            </div>
+                            <InputText label="Email" placeholder="example@domain.com" name="email" value={values.email} onChange={handleChange} onBlur={handleBlur} error={errors.email && touched.email ? errors.email : null} />
+                            <div className="grid grid-cols-2 gap-[100px]  ">
+                                <InputSelect defaultValue="Select country code" value={values.phone_prefix} onChange={handleChange} name="phone_prefix" label="Phone Prefix" error={errors.phone_prefix && touched.phone_prefix ? errors.phone_prefix : null}>
+                                    <option disabled>Select phone prefix</option>
+                                    {countryCodes.map((item) => {
+                                        if (!item.code) return <option disabled>{item.name}</option>
+                                        return <option value={item.code}>{item.name} {item.code}</option>
+                                    })}
+                                </InputSelect>
+                                <InputText label="Phone Number" placeholder="Phone Number" name="phone_number" value={values.phone_number} onChange={handleChange} onBlur={handleBlur} error={errors.phone_number && touched.phone_number ? errors.phone_number : null} />
+                            </div><div className="w-full flex justify-end gap-2">
+                                <Button type="reset" bg="bg-gray-100" text="black" classes="w-full md:w-1/4" font='font_urbanist_medium'>Cancel</Button>
+                                <Button type="submit" classes="w-full md:w-1/4" font='font_urbanist_medium'>Save</Button>
+                            </div>
+                        </form>
+
+                        <div className="w-full mt-4 flex justify-between items-center font_urbanist text-sm">
+                            <span className="w-2/5 h-px bg-gray-400"></span>
+                            Security
+                            <span className="w-2/5 h-px bg-gray-400"></span>
+                        </div>
+                        {userData.two_fa_activation_date ? <div className="w-full min-h-[80px] p-4 border rounded-xl">
+                            <div className="w-full flex items-center">
+                                Enable / Disable 2FA<label className="switch w-[45px] mx-4 md:w-11 h-6"><input type="checkbox" name='active_by_phone' checked={userData.two_fa_enabled || false} value={userData.two_fa_enabled} onChange={async () => {
+                                    const newUserData = await updateUser(userData._id, { two_fa_enabled: !userData.two_fa_enabled })
+                                    setUserData(newUserData)
+                                }} /><span className="slider"></span></label>
+                            </div>
+                            <div className="w-full mt-7 flex items-center gap-x-4">
+                                <button onClick={async () => {
+                                    const newUserData = await resetUser2fa(userData._id)
+                                    setUserData(newUserData)
+                                }} className="px-5 py-2 border border-red-600 rounded-full">Reset User's 2FA</button>
+                                <p className="flex-1 text-xs">Note: By resetting, user's 2FA key will be removed and user will have to register again to secure their account.</p>
+                            </div>
+                        </div> : <div className="w-full min-h-[80px] p-4 flex justify-center items-center text-sm border rounded-xl">This user haven't registered for 2FA.</div>}
+
+                        <div className="w-full mt-4 flex justify-between items-center font_urbanist text-sm">
+                            <span className="w-1/3 h-px bg-gray-400"></span>
+                            Change Password
+                            <span className="w-1/3 h-px bg-gray-400"></span>
+                        </div>
+                        {userData.register_provider === "urbanfits" ? <form className="grid grid-cols-1 gap-5" onSubmit={passHandleSubmit} onReset={passHandleReset}>
+                            <InputText autoComplete='off' onChange={passHandleChange} value={passValues.admin_password} name="admin_password" label="Admin (Your) Password" placeholder="Enter your password" error={passErrors.admin_password && passTouched.admin_password ? passErrors.admin_password : null} />
+                            <InputText autoComplete='off' onChange={passHandleChange} value={passValues.new_password} name="new_password" label="New User Password" placeholder="New user password" error={passErrors.new_password && passTouched.new_password ? passErrors.new_password : null} />
+                            <InputText autoComplete='off' onChange={passHandleChange} value={passValues.confirm_password} name="confirm_password" label="Confirm User Password" placeholder="Confirm user password" error={passErrors.confirm_password && passTouched.confirm_password ? passErrors.confirm_password : null} />
+                            <Button type="submit" font='font_urbanist_medium'>Update User Password</Button>
+                        </form> : <span className="text-sm text-gray-500">This user's account is associated with Google registration provider, you cannot change the password of such users who signed up with google as they don't need password to login.</span>}
+                    </CardAdmin>
+                    <CardAdmin classes={`w-1/3 p-[30px] mt-10 ${checked !== 3 && "opacity-0 h-0"} transition-all duration-500 overflow-clip`}>
+                        <form onSubmit={ptsHandleSubmit} className="w-full space-y-5">
+                            <div className="mb-5 grid grid-cols-2 gap-5">
+                                <InputSelect defaultValue="Select source" value={ptsValues.source} onChange={(e) => { ptsHandleChange(e); setPtsFieldValue("notific_params.type", e.target.value) }} name="source" label="Source of points" error={ptsErrors.source && ptsTouched.source ? ptsErrors.source : null}>
+                                    <option disabled>Select points source</option>
+                                    {["daily_checkin", "prize_wheel", "signup", "place_order", "additional_reward"].map((s, index) => <option key={index} value={s}>{s}</option>)}
+                                </InputSelect>
+                                <InputSelect defaultValue="Select Expiry date" onChange={(e) => { const expiryDate = new Date(new Date().setDate(new Date().getDate() + parseFloat(e.target.value))); setPtsFieldValue("expiration_date", expiryDate) }} name="expiration_date" label="Expiry Date" error={ptsErrors.expiration_date && ptsTouched.expiration_date ? ptsErrors.expiration_date : null}>
+                                    <option disabled>Select Expiry date</option>
+                                    <option key={undefined} value={null}>None</option>
+                                    <option key={1} value={3}>After 3 Days</option>
+                                    <option key={2} value={7}>After 7 Days</option>
+                                    <option key={3} value={15}>After 15 Days</option>
+                                    <option key={4} value={30}>After 30 Days</option>
+                                </InputSelect>
+                            </div>
+                            <InputText label="Points to add" placeholder="00" name="points" value={ptsValues.points} onChange={ptsHandleChange} error={ptsErrors.points && touched.points ? (ptsErrors.points) : null} />
+                            <h2 className="mt-8 text-base">Notification Configuration</h2>
+                            <div className="grid grid-cols-2 gap-5">
+                                <InputSelect label="Notification Category" defaultValue="Select notification category" name="notific_params.category" value={ptsValues?.notific_params?.category} onChange={ptsHandleChange} error={ptsErrors?.notific_params && ptsErrors.notific_params.category ? (ptsErrors.notific_params.category) : null} >
+                                    {["account", "primary", "reward", "order"].map((category, index) => <option key={index} value={category}>{category}</option>)}
+                                </InputSelect>
+                                <InputText label="Notification Heading" placeholder="Notification heading" name="notific_params.heading" value={ptsValues?.notific_params?.heading} onChange={ptsHandleChange} error={ptsErrors?.notific_params && ptsErrors.notific_params.heading ? ptsErrors.notific_params.heading : null} />
+                            </div>
+                            <InputText label="Mini Display message (optional)" placeholder="Displayed on the notification toaster at screen corner." name="notific_params.mini_msg" value={ptsValues?.notific_params?.mini_msg} onChange={ptsHandleChange} error={ptsErrors?.notific_params && ptsErrors.notific_params.mini_msg ? (ptsErrors.notific_params.mini_msg) : null} />
+
+                            <div className="w-full flex flex-col justify-end">
+                                <h2>Detailed Message</h2>
+                                <div className="relative w-full data_field flex items-center border rounded-md border-gray-300 focus:border-yellow-700 hover:border-yellow-600 transition p-2 mt-4">
+                                    <textarea rows={5} className="w-full bg-transparent outline-none border-none" type="text" value={ptsValues.notific_params.message} name="notific_params.message" id="notific_params.message" maxLength={500} onChange={ptsHandleChange} placeholder="eg. Congratulations! You won 100 uf-points..." />
+                                </div>
+                                {ptsErrors?.notific_params?.message ? <p className="mt-0.5 text-xs text-red-400">{ptsErrors?.notific_params?.message}</p> : null}
+                                {/* <small className='self-end text-gray-500 my-3' >1000 characters max</small> */}
+                            </div>
+
+                            <Button classes="w-full" type="submit">Submit</Button>
+                        </form>
                     </CardAdmin>
                 </div>
             </section>

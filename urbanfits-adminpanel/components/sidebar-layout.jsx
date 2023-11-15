@@ -35,7 +35,7 @@ const SideBarItem = ({ item, sidebaropen }, props) => {
             </div>
         </div>
         {item.subrows && sidebaropen ? item.subrows.map((subitem, index) => (
-            <div key={index} className={`flex items-center gap-2 mt-6 pl-6  ${expand ? "visible" : "hidden"} select-none`} >
+            <div key={index} className={`items-center gap-2  ${expand ? "max-h-[30vh] flex mt-6 pl-6" : "max-h-0"} select-none transition-all duration-300 overflow-hidden`} >
                 <Link key={index} href={subitem.navlink || '#'} className={` font_futura uppercase text-black cursor-pointer text-[12px] font-[500] font-[Futura LT Pro]  ${expand ? "visible" : "hidden"} `}>
                     {subitem.label}
                 </Link>
