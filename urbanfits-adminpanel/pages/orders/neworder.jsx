@@ -89,6 +89,7 @@ export default function AllOrders() {
                         />
                     </div>
                 </div>
+                <span className={`${selectable ? "right-8" : "-right-full"} fixed z-40 bottom-10 px-20 py-3 rounded-full bg-black/40 backdrop-blur-[2px] flex items-center text-base text-white transition-all duration-700`}>Selected: {selectedOrders?.length}</span>
                 <section className='flex gap-x-4'>
                     <div className="relative z-40 h-10 p-px text-sm bg-gold-land flex justify-center items-center rounded-lg">
                         <button onClick={() => setActionsTip(!actionsTip)} className="w-full h-full px-5 flex justify-center items-center text-xs bg-white rounded-[7px]">
@@ -150,8 +151,8 @@ export default function AllOrders() {
                     return {
                         ...order,
                         id: order._id,
-                        name: order?.order_items[0]?.name || "blabla",
-                        image: order?.order_items[0]?.image || process.env.DEFAULT_PFP,
+                        name: order?.order_items[0]?.name || order?.gift_cards[0]?.name,
+                        image: order?.order_items[0]?.image || order?.gift_cards[0]?.bg,
                         price: order.price_details.total_price + order.price_details.shipping_fees + "د.إ",
                         status: order.order_status,
                         date: order.createdAt,

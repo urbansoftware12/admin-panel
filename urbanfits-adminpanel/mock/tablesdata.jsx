@@ -200,8 +200,8 @@ export const ordersTableColumns = [
     selector: row => row.item,
     name: "Item(s)",
     cell: (row) => <div className="flex items-center gap-x-2">
-      <span className='w-10 aspect-square rounded-lg overflow-hidden'>
-        <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={row.image} />
+      <span className={`${row.image?.endsWith("_metal_bg") && row.image} w-10 aspect-square rounded-lg overflow-hidden`}>
+        {!row.image?.endsWith("_metal_bg") && <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={row.image} />}
       </span>
       {row.name}
     </div>,

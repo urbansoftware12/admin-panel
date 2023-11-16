@@ -93,6 +93,7 @@ const Userlist = () => {
                                 Total Online:&nbsp;{totalOnline}
                             </span>
                         </div>
+                <span className={`${selectable ? "right-8" : "-right-full"} fixed z-40 bottom-10 px-20 py-3 rounded-full bg-black/40 backdrop-blur-[2px] flex items-center text-base text-white transition-all duration-700`}>Selected: {selectedUsers?.length}</span>
                     </section>
                     <section className="flex items-center gap-4">
                         <div className="relative z-40 h-10 p-px text-sm bg-gold-land flex justify-center items-center rounded-lg">
