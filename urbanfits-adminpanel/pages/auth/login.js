@@ -27,7 +27,7 @@ export default function Login() {
     const onsubmit = async (values, x, oAuthQuery) => {
         try {
             setLoading(true)
-            const { data } = await axios.post(`${process.env.HOST}/api/admin/login${oAuthQuery ? oAuthQuery : ''}`, values)
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/admin/login${oAuthQuery ? oAuthQuery : ''}`, values)
             if (data.redirect_url && !data.payload) router.push(data.redirect_url)
             else if (data.payload) {
                 await updateAdmin(data.payload, true)

@@ -16,7 +16,7 @@ export default function useAddress() {
     const getAddress = async () => {
         if (!admin) return
         try {
-            const res = await axios.get(`${process.env.HOST}/api/user/addresses/get?user_id=${admin._id}`)
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/addresses/get?user_id=${admin._id}`)
             const { payload } = res.data
             localStorage.setItem("addressToken", payload)
             const { _doc } = jwt.decode(payload)
@@ -31,7 +31,7 @@ export default function useAddress() {
 
     const updateAddress = async (values) => {
         try {
-            let { data } = await axios.put(`${process.env.HOST}/api/user/addresses/update?user_id=${admin._id}`, values)
+            let { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/addresses/update?user_id=${admin._id}`, values)
             if (!data.payload) return toaster("error", "Some error occurred")
             const address = jwt.decode(data.payload)
             setAddress(address)

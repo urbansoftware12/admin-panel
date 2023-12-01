@@ -22,7 +22,7 @@ export const userListTableColumns = [
     selector: row => row.avatar,
     name: "Avatar",
     cell: (row) => <span className='w-10 aspect-square rounded-lg overflow-hidden' >
-      <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={row.avatar || process.env.DEFAULT_PFP} />
+      <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={row.avatar || process.env.NEXT_PUBLIC_DEFAULT_PFP} />
     </span>,
     width: '10%',
     sortable: true

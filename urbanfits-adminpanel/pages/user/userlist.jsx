@@ -157,7 +157,7 @@ const Userlist = () => {
                     return {
                         ...user,
                         id: user._id,
-                        avatar: user.image,
+                        avatar: user.image.includes("googleuser")? user.image: process.env.NEXT_PUBLIC_BASE_IMG_URL + user.image,
                         name: user.firstname || user.username,
                         fullname: user.firstname && user.lastname ? user.firstname + ' ' + user.lastname : user.username,
                         phone: user.phone_prefix ? user.phone_prefix + ' ' + user.phone_number : 'N/A',

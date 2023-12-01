@@ -19,7 +19,7 @@ import toaster from "@/utils/toast_function";
 export default function AddUser() {
     const { updateUser } = useUser()
     const router = useRouter()
-    const [pfp, setPfp] = useState(process.env.DEFAULT_PFP);
+    const [pfp, setPfp] = useState(process.env.NEXT_PUBLIC_DEFAULT_PFP);
     const [otpId, setotpId] = useState(null);
     const [otp, setOtp] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -56,7 +56,7 @@ export default function AddUser() {
         onSubmit: async (values) => {
             try {
                 setLoading(true)
-                const { data } = await axios.post(`${process.env.HOST}/api/user/signup`, { ...values, accept_policies: true, image: undefined })
+                const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/user/signup`, { ...values, accept_policies: true, image: undefined })
                 if (data.redirect_url && data.otp_id) {
                     console.log(data)
                     toaster("success", data.msg)
@@ -75,7 +75,7 @@ export default function AddUser() {
         if (!otp || !isOtpValid) return toaster("error", "Something went wrong, please try creating user again.")
         setLoading(true)
         try {
-            const { data } = await axios.post(`${process.env.HOST}/api/user/signup/callback`, {
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/user/signup/callback`, {
                 otp_id: otpId,
                 otp
             })

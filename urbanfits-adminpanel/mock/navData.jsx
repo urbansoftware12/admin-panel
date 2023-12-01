@@ -35,7 +35,7 @@ export const sidebarItems = [
         navlink: "/products/allproducts",
       },
       {
-        label: "Add New",
+        label: "Add New Product",
 
         navlink: "/products/addproduct",
       },
@@ -57,7 +57,7 @@ export const sidebarItems = [
         navlink: "/productcategories"
       },
       {
-        label: "Add New",
+        label: "Add New Category",
         navlink: "/productcategories",
       },
     ],
@@ -93,7 +93,7 @@ export const sidebarItems = [
         navlink: "/transactions/invoice",
       },
       {
-        label: "Add New",
+        label: "Add New Invoice",
         navlink: "/",
       },
     ],
@@ -167,7 +167,7 @@ export const sidebarItems = [
         navlink: "/",
       },
       {
-        label: "Add New",
+        label: "Add New Payment",
         navlink: "/",
       },
     ],
@@ -179,12 +179,12 @@ export const sidebarItems = [
     expanded: false,
     subrows: [
       {
-        label: "All Coupon",
-        navlink: "/coupon/allcoupon",
+        label: "All Coupons",
+        navlink: "/coupons",
       },
       {
         label: "Add New Coupon ",
-        navlink: "/",
+        navlink: "/coupons/create-coupon",
       },
     ],
   },
@@ -271,7 +271,7 @@ export const SearchQueryData = [
     navlink: "/products/allproducts",
   },
   {
-    label: "Add New",
+    label: "Add New Product",
     navlink: "/products/addproduct",
   },
   {
@@ -355,7 +355,7 @@ export const SearchQueryData = [
     navlink: "/",
   },
   {
-    label: "Add New",
+    label: "Add New Payment",
     navlink: "/",
   },
   {

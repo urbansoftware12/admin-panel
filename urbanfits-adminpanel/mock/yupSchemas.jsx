@@ -11,7 +11,6 @@ export const addProductSchema = Yup.object().shape({
     price: Yup.number().required("Product Price is required.").nullable(),
     uf_points: Yup.number().nullable(),
     sale_price: Yup.number().nullable(),
-    gift_code: Yup.bool(),
     seo_details: Yup.object().shape({
         title: Yup.string().required('SEO title is required.'),
         description: Yup.string().required('SEO description is required.'),
@@ -21,13 +20,13 @@ export const addProductSchema = Yup.object().shape({
         width: Yup.string().required('Please define the width.'),
         height: Yup.string().required('Please define the height.'),
         weight: Yup.string().required('Please define the weight.'),
-        fees: Yup.string().required('Please define the fees.'),
     }),
     variants: Yup.array().of(
         Yup.object().shape({
             color: Yup.string().required('Variant color is required.'),
             color_name: Yup.string().required('Color name is required.'),
-            images: Yup.array().min(2, 'minimum 6 images are required (if not available, then repeat images).').max(6, 'You can only upload maximum 6 images.'),
+            images: Yup.array().min(2, 'minimum 2 images are required (if not available, then repeat images).').max(6, 'You can only upload maximum 6 images.'),
+            compression_quality: Yup.number(),
             sizes: Yup.array().of(
                 Yup.object().shape({
                     size: Yup.string(),
@@ -62,4 +61,22 @@ export const inventeryManagementSchema = Yup.object({
     lowstockthreshold: Yup.string().required("Fill this field"),
     outofstockthreshold: Yup.string().required("Fill this field"),
 
+})
+
+export const couponSchema = Yup.object({
+    coupon_code: Yup.string().min(5, "Coupon code must of at least 5 characters").required("Coupon code is required"),
+    description: Yup.string(),
+    coupon_value: Yup.number(),
+    coupon_config: Yup.object().shape({
+        minimum_spend: Yup.number().nullable(),
+        maximum_spend: Yup.number().nullable(),
+        free_shipping: Yup.boolean(),
+        conjunction_use: Yup.boolean(),
+        exclude_sales: Yup.boolean(),
+        allowed_products: Yup.array(),
+        exclude_products: Yup.array(),
+        allowed_categories: Yup.array(),
+        exclude_categories: Yup.array(),
+    }),
+    expiration_date: Yup.date(),
 })

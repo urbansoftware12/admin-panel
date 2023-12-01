@@ -85,7 +85,7 @@ export default function CreateBundles() {
                 return setLoading(false)
             }
             try {
-                const { data } = await axios.post(`${process.env.HOST}/api/products/createbundle?id=${admin._id}`, { products })
+                const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/products/createbundle?id=${admin._id}`, { products })
                 toaster("success", data.msg)
             } catch (error) {
                 console.log(error)

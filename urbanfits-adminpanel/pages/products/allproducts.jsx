@@ -179,7 +179,7 @@ export default function AllProducts() {
                     return {
                         ...product,
                         id: product._id,
-                        product: product.cover_image,
+                        product: process.env.NEXT_PUBLIC_BASE_IMG_URL + product.cover_image,
                         name: product.name,
                         price: product.price,
                         offer: 0,
@@ -208,7 +208,7 @@ export default function AllProducts() {
                             },
                             {
                                 name: "Visit",
-                                onClick: () => { window.open(`${process.env.HOST}/products/product/${product._id}`) }
+                                onClick: () => { window.open(`${process.env.NEXT_PUBLIC_HOST}/products/product/${product._id}`) }
                             },
                             {
                                 name: "Delete",

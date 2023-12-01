@@ -15,7 +15,7 @@ const useUser = create((set, get) => ({
         const { admin } = useSession.getState()
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.HOST}/api/user/get/many?user_id=${admin._id}&page=${page}`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/many?user_id=${admin._id}&page=${page}`)
             set(() => ({
                 users: data.users,
                 totalUsers: data.totalUsers,
@@ -32,7 +32,7 @@ const useUser = create((set, get) => ({
         const { admin } = useSession.getState()
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.HOST}/api/user/get/online-users?user_id=${admin._id}`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/online-users?user_id=${admin._id}`)
             set(() => ({ totalOnline: data.online_users }))
         } catch (error) { console.log(error) }
         set(() => ({ usersLoading: false }))
@@ -41,7 +41,7 @@ const useUser = create((set, get) => ({
     getUserUfBalance: async (user_id, card_number, callback) => {
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.HOST}/api/user/uf-wallet/get-balance?user_id=${user_id}&card_number=${card_number}`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/uf-wallet/get-balance?user_id=${user_id}&card_number=${card_number}`)
             set(() => ({ usersLoading: false }))
             callback(data.balance)
             return data.balance
@@ -52,7 +52,7 @@ const useUser = create((set, get) => ({
     addPointsToUserWallet: async (pointsData, callback) => {
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.post(`${process.env.HOST}/api/user/uf-wallet/add-points`, pointsData)
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/user/uf-wallet/add-points`, pointsData)
             set(() => ({ usersLoading: false }))
             callback(data)
             return toaster("success", data.msg)
@@ -62,7 +62,7 @@ const useUser = create((set, get) => ({
 
     getUserNotifications: async (user_id) => {
         try {
-            const { data } = await axios.get(`${process.env.HOST}/api/user/notifications/get?user_id=${user_id}`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/notifications/get?user_id=${user_id}`)
             return data.notification_data.notifications
         } catch (error) {
             console.log(error)
@@ -74,7 +74,7 @@ const useUser = create((set, get) => ({
         const { admin } = useSession.getState()
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.HOST}/api/user/update/via-admin?admin_id=${admin._id}&user_id=${user_id}`, valuesObj)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/update/via-admin?admin_id=${admin._id}&user_id=${user_id}`, valuesObj)
             toaster("success", data.msg)
             set(() => ({ usersLoading: false }))
             return data.user
@@ -89,7 +89,7 @@ const useUser = create((set, get) => ({
         const { admin } = useSession.getState()
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.HOST}/api/2fa/reset-user-2fa?admin_id=${admin._id}&user_id=${user_id}`)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/2fa/reset-user-2fa?admin_id=${admin._id}&user_id=${user_id}`)
             toaster("success", data.msg)
             set(() => ({ usersLoading: false }))
             return data.user
@@ -106,7 +106,7 @@ const useUser = create((set, get) => ({
 
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.HOST}/api/user/delete/via-admin?user_id=${admin._id}`, { users: usersToDelete })
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/delete/via-admin?user_id=${admin._id}`, { users: usersToDelete })
             toaster("success", data.msg)
         } catch (error) {
             console.log(error)

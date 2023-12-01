@@ -106,7 +106,7 @@ export default function UserProfile(props) {
             console.log(values)
             setLoading(true)
             try {
-                const { data } = await axios.put(`${process.env.HOST}/api/user/update/password-via-admin`, {
+                const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/update/password-via-admin`, {
                     ...values,
                     admin_id: admin.user._id,
                     user_id: userData._id
@@ -127,7 +127,7 @@ export default function UserProfile(props) {
             user_id: userData?._id,
             card_number: userData?.uf_wallet?.card_number,
             source: "additional_reward",
-            secret_key: EncrytOrDecryptData(process.env.SECRET_KEY),
+            secret_key: EncrytOrDecryptData(process.env.NEXT_PUBLIC_SECRET_KEY),
             points: 0,
             duducted: 0,
             expiration_date: undefined,
@@ -451,7 +451,7 @@ export async function getServerSideProps(context) {
         },
     };
     try {
-        const { data } = await axios.get(`${process.env.HOST}/api/user/get/byid?user_to_get=${user_to_get}&admin_id=${admin_id}`)
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/byid?user_to_get=${user_to_get}&admin_id=${admin_id}`)
         return { props: { userData: data.user } }
     }
     catch (error) {

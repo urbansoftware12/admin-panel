@@ -16,7 +16,7 @@ const useCategories = create((set, get) => ({
             categLoading: true
         }))
         try {
-            const { data } = await axios.get(`${process.env.HOST}/api/categories/get?id=${admin._id}`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/categories/get?id=${admin._id}`)
             set(() => (
                 { categories: data.categories }
             ))
@@ -37,7 +37,7 @@ const useCategories = create((set, get) => ({
             categLoading: true
         }))
         try {
-            const { data } = await axios.post(`${process.env.HOST}/api/categories/create?id=${admin._id}`, category)
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/categories/create?id=${admin._id}`, category)
             set(() => (
                 { categories: data.categories }
             ))
@@ -59,7 +59,7 @@ const useCategories = create((set, get) => ({
             categLoading: true
         }))
         try {
-            const { data } = await axios.put(`${process.env.HOST}/api/categories/update?id=${admin._id}`, update)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/categories/update?id=${admin._id}`, update)
             set(() => (
                 { categories: data.categories }
             ))
@@ -81,7 +81,7 @@ const useCategories = create((set, get) => ({
             categLoading: true
         }))
         try {
-            const { data } = await axios.put(`${process.env.HOST}/api/categories/delete?id=${admin._id}`, { categories: categoriesToDelete })
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/categories/delete?id=${admin._id}`, { categories: categoriesToDelete })
             set(() => (
                 { categories: data.categories }
             ))

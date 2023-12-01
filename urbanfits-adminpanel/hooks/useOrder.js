@@ -16,7 +16,7 @@ const useOrder = create((set, get) => ({
     getOrders: async (page = 1) => {
         set(() => ({ orderLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.HOST}/api/user/orders/get-many?page=${page}`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/orders/get-many?page=${page}`)
             set(() => ({
                 orders: data.orders,
                 totalOrders: data.totalorders,
@@ -33,7 +33,7 @@ const useOrder = create((set, get) => ({
     getOneOrder: async (order_id) => {
         set(() => ({ orderLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.HOST}/api/user/orders/get-one?order_id=${order_id}`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/orders/get-one?order_id=${order_id}`)
             set(() => ({ orderLoading: false }))
             return data.order
         } catch (error) {
@@ -49,7 +49,7 @@ const useOrder = create((set, get) => ({
 
         set(() => ({ orderLoading: true }))
         try {
-            const { data } = await axios.post(`${process.env.HOST}/api/orders/create?id=${admin._id}`, orderToCreate)
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/orders/create?id=${admin._id}`, orderToCreate)
             set(() => ({
                 orderLoading: false
             }))
@@ -66,7 +66,7 @@ const useOrder = create((set, get) => ({
         if (!admin) return
         set(() => ({ orderLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.HOST}/api/orders/update?user_id=${admin._id}&id=${id}`, updatedorder)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/orders/update?user_id=${admin._id}&id=${id}`, updatedorder)
             set(() => ({
                 orderLoading: false,
                 orderInfo: data.order
@@ -86,7 +86,7 @@ const useOrder = create((set, get) => ({
 
         set(() => ({ orderLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.HOST}/api/user/orders/delete`, { admin_id: admin._id, orders: orderIds })
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/orders/delete`, { admin_id: admin._id, orders: orderIds })
             await get().getOrders(1)
             toaster(data.deletedCount < 1 ? "info" : "success", data.msg)
         } catch (error) {

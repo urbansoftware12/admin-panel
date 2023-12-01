@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Button from '@/components/buttons/simple_btn'
 import CardAdmin from '@/components/cards/cardadmin'
 import useCategories from '@/hooks/useCategories'
@@ -10,6 +10,7 @@ import Link from 'next/link'
 import Spinner from './loaders/spinner'
 import useProduct from '@/hooks/useProduct'
 import uploadImage from '@/utils/uploadImage'
+import slugify from 'slugify'
 import { useFormik } from 'formik';
 import { addProductSchema } from '@/mock/yupSchemas'
 import toaster from '@/utils/toast_function'
@@ -19,6 +20,19 @@ const VariantItem = (props) => {
     const colors = ["#000000", "#ffffff", "#EA3838", "#4B9C19", "#3532AA", "#BC26B6", "#E1A822", "#D97133"]
     const sizes = ['S', 'M', 'L', 'Xl', 'XXL']
     const selectedSizes = variant.sizes.map(size => size.size)
+    const imageContainer = useRef(null)
+
+    const onImageSelect = (e) => {
+        console.log(e.currentTarget.files)
+        const finalImgArray = [...variant.images, ...e.currentTarget.files]
+        setFieldValue(`variants[${index}].images`, finalImgArray)
+    }
+
+    const handleRemoveImg = (imgIndex) => {
+        const newImgArray = [...variant.images];
+        newImgArray.splice(imgIndex, 1);
+        setFieldValue(`variants[${index}].images`, newImgArray);
+    };
 
     return <>
         <div key={`1000${index}`} className="w-full flex justify-between items-center">
@@ -32,21 +46,61 @@ const VariantItem = (props) => {
         </div>
         <section className='w-full mb-6 flex flex-col gap-y-8' key={index}>
             <div className='w-full flex gap-x-6'>
-                <nav className="relative w-1/2 grid grid-cols-3 justify-around gap-y-3 ">
+                <nav ref={imageContainer} onDrop={(e) => {
+                    e.preventDefault();
+                    const selectedFiles = e.dataTransfer.files;
+                    const imagesArray = Array.from(selectedFiles);
+                    setFieldValue(`variants[${index}].images`, [...variant.images, ...imagesArray]);
+                    imageContainer.current.style.transform = "scale(1)"
+                    imageContainer.current.style.boxShadow = "none"
+                }} onDragOver={(e) => {
+                    e.preventDefault();
+                    imageContainer.current.style.transform = "scale(1.1)"
+                    imageContainer.current.style.boxShadow = "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset";
+                }}
+                    onDragLeave={() => {
+                        imageContainer.current.style.transform = "scale(1)"
+                        imageContainer.current.style.boxShadow = "none"
+                    }} className="relative w-1/2 p-4 grid grid-cols-3 justify-around border-2 border-dashed rounded-lg gap-y-3 transition-all duration-300">
+                    {variant.images.length ? <button type='button' onClick={() => setFieldValue(`variants[${index}].images`, [])} className="absolute -top-2 -right-1 rounded-full text-xs text-white px-2 py-0.5 bg-red-600">clear all</button> : null}
+                    <input name={`variants[${index}].images`} encType="multipart/form-data" onChange={onImageSelect} type="file" multiple id={`variants[${index}].images`} className='w-0 h-0 appearance-none hidden' />
+                    <span className="col-span-full w-full text-center text-sm">".webp" format images are Highly recommended.</span>
+                    <div className={` ${variant.images.length ? "hidden" : ''} w-full col-span-full text-center`}>
+                        Drop images here or <label htmlFor={`variants[${index}].images`} className='underline cursor-pointer'>Browse</label>
+                    </div>
                     {variant.images.map((imgUrl, imgIndex) => {
                         return <div key={`${index}-${imgIndex}`} className='flex flex-col gap-[10px]'>
                             <div className='w-[120px] h-[112px] border flex items-center justify-center border-[#DADADA] rounded-[15px] relative' >
-                                <div className='absolute top-3 right-5'>
-                                    <label className='cursor-pointer' htmlFor={`variants[${index}].images[${imgIndex}]`} ><i className="fa-solid fa-pen-to-square text-sm" /></label>
-                                    <input name={`variants[${index}].images[${imgIndex}]`} encType="multipart/form-data" onChange={(e) => { setFieldValue(`variants[${index}].images[${imgIndex}]`, e.currentTarget.files[0]) }} type="file" id={`variants[${index}].images[${imgIndex}]`} className='w-0 h-0' />
-                                </div>
-                                <div className='w-[100px] h-[92px] overflow-hidden rounded-[15px]'>
-                                    <DefaultOrPic src={imgUrl !== '' ? propsProduct ? imgUrl : URL.createObjectURL(imgUrl) : ''} />
+                                <button type='button' onClick={() => handleRemoveImg(imgIndex)} className='absolute -top-2 -right-2 w-4 h-4 flex justify-center items-center aspect-square bg-red-600 rounded-full'>
+                                    <i className="fa-solid fa-minus text-[10px] text-white" />
+                                </button>
+                                <div className='group relative w-[100px] h-[92px] overflow-hidden rounded-lg'>
+                                    <span className="opacity-0 group-hover:opacity-100 absolute inset-0 bg-black/60 w-full-h-full flex justify-center items-center text-center text-white text-xs transition-all">
+                                        compressed size: <br />
+                                         {(((imgUrl?.size/1024)/100)*variant.compression_quality).toFixed(1)} kb 
+                                        {/* {((imgUrl?.size/1024)*((100-(100-variant.compression_quality))/100)).toFixed(1)} kb */}
+                                    </span>
+                                    <DefaultOrPic src={imgUrl !== '' ? propsProduct ? process.env.NEXT_PUBLIC_BASE_IMG_URL + imgUrl : URL.createObjectURL(imgUrl) : ''} />
                                 </div>
                             </div>
                         </div>
                     })}
                     {errors && errors.variants && errors.variants[index] && errors.variants[index].images ? <p className='absolute text-red-400 bottom-[-19px] left-[10px] text-[11px]' >{errors.variants[index].images} </p> : null}
+                    {variant.images.length ? <div className='col-span-full w-full pt-6 flex flex-col justify-center items-center gap-y-4'>
+                        <label for="range" class="block text-sm font-medium text-gray-600">Compression quality: {variant.compression_quality}</label>
+                        <input
+                            type="range"
+                            id="range"
+                            name={`variants[${index}].compression_quality`}
+                            min="10"
+                            max="100"
+                            onChange={handleChange}
+                            value={variant.compression_quality}
+                            step="1"
+                            class="mt-1 mb-4"
+                        />
+                        <p className='text-xs text-center'>Note: Will apply to all of this variant images. <br /> Images will be compressed maintaining {variant.compression_quality} % of their quality <br /> for faster response time. <br /> At least 75 % is recommended.</p>
+                    </div> : null}
                 </nav>
                 <nav className='w-1/2'>
                     <h3 className="text-xl mb-3">Variant Color</h3>
@@ -133,9 +187,16 @@ export default function ProductInfoPage(props) {
     const { categories, getCategories, categLoading } = useCategories()
     const { createProduct, updateProduct, productLoading } = useProduct()
     const [loader, setLoader] = useState(null)
+    const coverImage = useRef(null)
 
     const CreateProduct = async (product) => {
         setLoader(<Loader status="Creating Product Instance" />)
+
+        let totalSteps = 3
+        product.variants.forEach(variant => {
+            totalSteps += variant.images.length
+        })
+
         try {
             const productToCreate = {
                 ...values, cover_image: '',
@@ -144,19 +205,19 @@ export default function ProductInfoPage(props) {
                 })
             }
             const createdProduct = await createProduct(productToCreate)
-            setLoader(<Loader status="Uploading Cover Image" />)
-            const coverImage = await uploadImage(product.cover_image, createdProduct._id, `product-images/${createdProduct._id}`)
+            setLoader(<Loader status="Uploading Cover Image" progress={1 / totalSteps * 100} />)
+            const coverImage = await uploadImage(product.cover_image, createdProduct._id, `product-images/${createdProduct._id}`, 30)
             const finalVariants = []
             let variantIndex = 0
             for (const variant of product.variants) {
-                setLoader(<Loader status={`Uploading Images of Variant ${variantIndex + 1}`} />)
+                setLoader(<Loader status={`Compressing & Uploading Images of Variant ${variantIndex + 1}`} progress={2 / totalSteps * 100} />)
                 let newVariant = { ...JSON.parse(JSON.stringify(variant)), images: [] }
                 const filteredVariantImages = variant.images.filter(image => image && image !== '')
                 console.log(filteredVariantImages)
                 let imgIndex = 0
                 for (const image of filteredVariantImages) {
-                    setLoader(<Loader status={`Uploading Images of Variant ${variantIndex + 1}: ${imgIndex} of ${filteredVariantImages.length} uploaded`} />)
-                    const imgUrl = await uploadImage(image, imgIndex, `product-images/${createdProduct._id}/${createdProduct.variants[variantIndex]._id}`)
+                    setLoader(<Loader status={`Compressing & Uploading Images of Variant ${variantIndex + 1}: ${imgIndex + 1} of ${filteredVariantImages.length} uploaded`} progress={(imgIndex + 3) / totalSteps * 100} />)
+                    const imgUrl = await uploadImage(image, imgIndex, `product-images/${createdProduct._id}/${createdProduct.variants[variantIndex]._id}`, variant.compression_quality)
                     newVariant.images.push(imgUrl)
                     imgIndex += 1
                 }
@@ -164,7 +225,7 @@ export default function ProductInfoPage(props) {
                 variantIndex += 1
             }
             const finalProduct = { ...product, cover_image: coverImage, variants: finalVariants }
-            setLoader(<Loader status="Merging Image URLs with Product" />)
+            setLoader(<Loader status="Merging Image URLs with Product" progress={99} />)
             await updateProduct(createdProduct._id, finalProduct)
             return setLoader(null)
         } catch (e) {
@@ -186,7 +247,6 @@ export default function ProductInfoPage(props) {
             price: null,
             uf_points: null,
             sale_price: null,
-            gift_code: false,
             seo_details: {
                 title: '',
                 description: '',
@@ -196,24 +256,24 @@ export default function ProductInfoPage(props) {
                 width: '',
                 height: '',
                 weight: '',
-                fees: ''
             },
             variants: [
                 {
-                    color: '#00000000',
+                    color: '#000000',
                     color_name: '',
-                    images: ['', '', '', '', '', ''],
+                    images: [],
+                    compression_quality: 75,
                     sizes: []
                 }
             ]
         },
-        onSubmit: async (values) => {
+        onSubmit: async (values, { handleReset }) => {
             if (props.product && values._id && values._id.length > 10) {
-                setLoader(<Loader status="Updating the Product" />)
+                setLoader(<Loader status="Updating the Product" progress={99} />)
                 await updateProduct(props.product._id, values)
                 return setLoader(null)
-            }
-            else return await CreateProduct(values)
+            } else await CreateProduct(values)
+            handleReset()
         },
     })
 
@@ -221,16 +281,24 @@ export default function ProductInfoPage(props) {
         setFieldValue('variants', [...values.variants, {
             color: '#000000',
             color_name: '',
-            images: ['', '', '', '', '', ''],
+            images: [],
+            compression_quality: 75,
             sizes: []
         }]);
     };
+
+    const getSlug = (e) => {
+        const { value } = e.target
+        if (value === '' || value.endsWith('/')) return slugify(value, { lower: true })
+        else return `${slugify(value, { lower: true })}/`
+    }
 
     useEffect(() => {
         if (props.product) setValues(props.product)
         if (categories.length !== 0) return
         if (categories.length === 0) getCategories()
     }, [])
+    console.log(values)
 
     return <>
         {loader}
@@ -244,11 +312,12 @@ export default function ProductInfoPage(props) {
                 </div>
             </div>
             <div>
-                <Link href="/admin/products/allproducts">
+                <Link href="/products/allproducts">
                     <Button my="my-0">View All</Button>
                 </Link>
             </div>
         </section>
+        {/* <input type="file" onChange={(e)=>uploadImage(e.target.files[0], "compressed-img", "comp-images")} /> */}
         <CardAdmin classes="my-5" >
             <h2 className='mx-10 px-4 pt-8 pb-4 mb-3 border-b text-2xl' >Basic Information</h2>
             <form className='px-[50px]' onSubmit={handleSubmit} onReset={handleReset}>
@@ -259,7 +328,7 @@ export default function ProductInfoPage(props) {
                         placeholder="&nbsp;"
                         name="name"
                         value={values.name}
-                        onChange={handleChange}
+                        onChange={(e) => { handleChange(e); setFieldValue('slug', getSlug(e)); setFieldValue('seo_details.title', e.target.value) }}
                         onBlur={handleBlur}
                         error={errors.name && touched.name ?
                             (errors.productname) : null
@@ -271,7 +340,7 @@ export default function ProductInfoPage(props) {
                         placeholder="&nbsp;"
                         name="slug"
                         value={values.slug}
-                        onChange={handleChange}
+                        onChange={(e) => { setFieldValue('slug', getSlug(e)) }}
                         onBlur={handleBlur}
                         error={errors.slug && touched.slug ?
                             (errors.slug) : null
@@ -279,13 +348,30 @@ export default function ProductInfoPage(props) {
                     />
                 </section>
                 <section className="w-full mb-7 flex justify-between gap-x-6">
-                    <div className='w-1/2 h-[428px] p-3 border border-gary-300 flex items-center justify-center rounded-2xl relative ' >
+                    <div ref={coverImage} onDrop={(e) => {
+                        e.preventDefault();
+                        const selectedFiles = e.dataTransfer.files;
+                        const imagesArray = Array.from(selectedFiles);
+                        setFieldValue("cover_image", imagesArray[0]);
+                        coverImage.current.style.transform = "scale(1)"
+                        coverImage.current.style.boxShadow = "none"
+                    }} onDragOver={(e) => {
+                        e.preventDefault();
+                        coverImage.current.style.transform = "scale(1.1)"
+                        coverImage.current.style.boxShadow = "rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset";
+                    }} onDragLeave={() => {
+                        coverImage.current.style.transform = "scale(1)"
+                        coverImage.current.style.boxShadow = "none"
+                    }} className='w-1/2 h-[428px] p-3 border-2 border-dashed border-gary-300 flex items-center justify-center rounded-2xl relative transition-all duration-300' >
+                        {values.cover_image ? <button type='button' onClick={() => setFieldValue("cover_image", '')} className='absolute top-5 left-7 w-4 h-4 flex justify-center items-center aspect-square bg-red-600 rounded-full'>
+                            <i className="fa-solid fa-minus text-[10px] text-white" />
+                        </button> : null}
                         <div className='absolute top-5 right-7'>
                             <label className='cursor-pointer' htmlFor="filebtn" ><i className="fa-solid fa-pen-to-square" /></label>
                             <input name='cover_image' encType="multipart/form-data" onChange={(e) => { setFieldValue("cover_image", e.target.files[0]) }} type="file" id="filebtn" className='w-0 h-0' />
                         </div>
                         <div className='w-full h-full overflow-hidden rounded-xl' >
-                            <DefaultOrPic mega src={values.cover_image !== '' ? props.product ? values.cover_image : URL.createObjectURL(values.cover_image) : null} />
+                            <DefaultOrPic mega src={values.cover_image !== '' ? props.product ? process.env.NEXT_PUBLIC_BASE_IMG_URL + values.cover_image : URL.createObjectURL(values.cover_image) : null} />
                         </div>
                         {errors && errors.cover_image ? <p className='absolute text-red-400 bottom-[-19px] left-[10px] text-[11px]' >{errors.cover_image} </p> : null}
                     </div>
@@ -293,12 +379,12 @@ export default function ProductInfoPage(props) {
                         <div className="relative w-full mb-5 data_field items-center">
                             <h2 className="mb-2 font_futura text-sm text-left">Description</h2>
                             {errors && errors.description ? <p className='absolute text-red-400 bottom-[-19px] left-[10px] text-[11px]' >{errors.description} </p> : null}
-                            <textarea rows={5} className="w-full p-2 bg-transparent outline-none border rounded-md border-gray-300 focus:border-yellow-700 hover:border-yellow-600 transition" type="text" value={values.description} name="description" id="description" maxLength={1000} onBlur={handleBlur} onChange={handleChange} placeholder="" />
+                            <textarea rows={5} className="w-full p-2 bg-transparent outline-none border rounded-md border-gray-300 focus:border-yellow-700 hover:border-yellow-600 transition" type="text" value={values.description} name="description" id="description" maxLength={1000} onBlur={handleBlur} onChange={(e) => { handleChange(e); setFieldValue('seo_details.description', e.target.value) }} placeholder="This product is very good, please buy it" />
                         </div>
                         <div className="w-full relative flex flex-col" >
                             <label className='font_futura text-sm flex items-center'>
-                                Product Tags
-                                <span className="font_futura_light text-xs ml-1" >(Write each tag and add individually)</span>
+                                Product Tags (press Shift + Spacebar to add)
+                                {/* <span className="font_futura_light text-xs ml-1" >(Write each tag and add individually)</span> */}
                             </label>
                             <span className="w-full mt-3 h-11 px-3 flex items-center border border-gray-300 focus:border-yellow-700 hover:border-yellow-600 transition rounded-lg outline-none">
                                 <input
@@ -308,6 +394,19 @@ export default function ProductInfoPage(props) {
                                     autoComplete="off"
                                     value={values.newTag}
                                     onChange={handleChange}
+                                    onKeyDown={(e) => {
+                                        if (e.shiftKey && e.key === " ") {
+                                            const value = values.newTag.trim();
+                                            if (value !== '') {
+                                                const newTag = value
+                                                if (!values.tags.includes(newTag)) {
+                                                    setFieldValue("tags", [...values.tags, newTag]);
+                                                    setFieldValue("newTag", '')
+                                                    setFieldValue("seo_details.meta_keywords", [...values.tags, newTag].join(', '))
+                                                }
+                                            }
+                                        }
+                                    }}
                                 />
                                 <button type='button' className={`${values.tags.length > 3 ? "opacity-50 pointer-events-none" : null} p-2 bg-gold-land rounded-md text-white text-sm`}
                                     disabled={values.tags.length > 3}
@@ -385,23 +484,6 @@ export default function ProductInfoPage(props) {
                     />
                     <InputText
                         classes="w-full"
-                        label="UF Points (optional)"
-                        placeholder="00"
-                        type="number"
-                        name="uf_points"
-                        value={values.uf_points}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={errors.uf_points && touched.uf_points ? errors.uf_points : null}
-                    />
-                    <div className="w-full h-11 place-self-end flex justify-between items-center">
-                        Enable Gift Code (optional) <label className="switch w-[45px] md:w-11 h-6 "><input type="checkbox" name='gift_code' checked={values.gift_code} value={values.gift_code} onChange={(e) => {
-                            if (values.sale_price || values.sale_price !== '') return toaster("info", "You can either enalbe Gift Code or Sale Price.")
-                            handleChange(e);
-                        }} /><span className="slider"></span></label>
-                    </div>
-                    <InputText
-                        classes="w-full"
                         label="Sale Price (optional)"
                         placeholder="AED 0"
                         type="number"
@@ -413,6 +495,17 @@ export default function ProductInfoPage(props) {
                         }}
                         onBlur={handleBlur}
                         error={errors.sale_price && touched.sale_price ? errors.sale_price : null}
+                    />
+                    <InputText
+                        classes="w-full"
+                        label="UF Points (optional)"
+                        placeholder="00"
+                        type="number"
+                        name="uf_points"
+                        value={values.uf_points}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={errors.uf_points && touched.uf_points ? errors.uf_points : null}
                     />
                 </section>
                 <h2 className='w-full pt-8 pb-4 mb-3 border-b text-xl'>Meta Data</h2>
@@ -457,32 +550,30 @@ export default function ProductInfoPage(props) {
                     </nav>
                     <nav className='w-1/2 flex flex-col gap-5' >
                         <h4 className='text-[20px]' >Shipping Details</h4>
-                        <div className='grid grid-cols-2 gap-[48px] ' >
-                            <InputText
-                                label="Width"
-                                placeholder="Inch"
-                                type="number"
-                                name="shipping_details.width"
-                                value={values.shipping_details.width}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                error={errors.shipping_details && errors.shipping_details.width && touched.shipping_details && touched.shipping_details.width ?
-                                    (errors.shipping_details.width) : null
-                                }
-                            />
-                            <InputText
-                                label="Height"
-                                placeholder="Inch"
-                                type="number"
-                                name="shipping_details.height"
-                                value={values.shipping_details.height}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                error={errors.shipping_details && errors.shipping_details.height && touched.shipping_details && touched.shipping_details.height ?
-                                    (errors.shipping_details.height) : null
-                                }
-                            />
-                        </div>
+                        <InputText
+                            label="Width"
+                            placeholder="Inch"
+                            type="number"
+                            name="shipping_details.width"
+                            value={values.shipping_details.width}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={errors.shipping_details && errors.shipping_details.width && touched.shipping_details && touched.shipping_details.width ?
+                                (errors.shipping_details.width) : null
+                            }
+                        />
+                        <InputText
+                            label="Height"
+                            placeholder="Inch"
+                            type="number"
+                            name="shipping_details.height"
+                            value={values.shipping_details.height}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={errors.shipping_details && errors.shipping_details.height && touched.shipping_details && touched.shipping_details.height ?
+                                (errors.shipping_details.height) : null
+                            }
+                        />
                         <InputText
                             label="Weight"
                             type="number"
@@ -493,18 +584,6 @@ export default function ProductInfoPage(props) {
                             onBlur={handleBlur}
                             error={errors.shipping_details && errors.shipping_details.weight && touched.shipping_details && touched.shipping_details.weight ?
                                 (errors.shipping_details.weight) : null
-                            }
-                        />
-                        <InputText
-                            label="Shipping Fees"
-                            placeholder="$"
-                            type="number"
-                            name="shipping_details.fees"
-                            value={values.shipping_details.fees}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            error={errors.shipping_details && errors.shipping_details.fees && touched.shipping_details && touched.shipping_details.fees ?
-                                (errors.shipping_details.fees) : null
                             }
                         />
                     </nav>
@@ -526,7 +605,7 @@ export default function ProductInfoPage(props) {
                     <button type="button" className='group text-xs text-white bg-slate-400 px-2 py-1 rounded-md my-4 transition-all duration-300' onClick={handleAddVariant}><i className="fa-solid fa-plus text-white group-hover:rotate-90 group-hover:mr-1 transition-all duration-300" />&nbsp;add another one</button>
                 </section>
                 <section className='flex justify-end gap-[10px]'>
-                    <Button loading={loader !== null ? true : false} disabled={productLoading} type="reset" bg="bg-gray-100" text="black" classes="w-1/5 border" font='font_futura'>Cancel</Button>
+                    <Button loading={loader !== null ? true : false} disabled={productLoading} type="reset" bg="bg-gray-100" text="black" classes="w-1/5 border" font='font_futura'>Clear</Button>
                     <Button loading={loader !== null ? true : false} disabled={productLoading} onClick={() => {
                         if (Object.keys(errors).length !== 0) return toaster("error", "There are still errors in the form.")
                     }} classes="w-1/5 my-0" type="submit">{props.product ? "Update" : "Publish"}</Button>
