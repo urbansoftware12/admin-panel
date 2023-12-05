@@ -111,10 +111,7 @@ export default function SidebarLayout({ children }) {
     }
 
     if (router.asPath.includes("/auth")) return
-    else if (!admin || !admin._id || admin._id.length < 18) {
-        router.push("/auth/login")
-        return null
-    }
+    else if (!admin || !admin._id || admin._id.length < 18) router.replace("/auth/login")
     else return <div className="flex-col bg-[#F4F4F4] overflow-x-hidden overflow-y-scroll font_futura ">
         <Logout show={logoutModal} setLogout={setLogoutModal} />
         <div className={`fixed ${sidebaropen ? "w-[250px]" : "w-[80px]"} duration-300 ${sidebaropen && "rounded-r-[25px]"} bg-white h-screen`} >
@@ -174,7 +171,7 @@ export default function SidebarLayout({ children }) {
 
                 <div className='flex items-center'>
                     <span onClick={() => handlemenuclick("avatar")} className="w-10 border border-gray-400 aspect-square rounded-full overflow-hidden cursor-pointer" >
-                        <Image src={admin.image + "?timestamp=123"} className="w-full h-full object-cover" alt="user avatar" width={80} height={80} />
+                        <Image src={process.env.NEXT_PUBLIC_BASE_IMG_URL + admin.image + "?timestamp=123"} className="w-full h-full object-cover" alt="user avatar" width={80} height={80} />
                     </span>
                     <div className={`duration-200 ${showmenue ? "visible" : "hidden"} absolute top-[89px] right-[154px] `} >
                         <CardAdmin classes="w-[150px] p-5" round="rounded-[15px]" >

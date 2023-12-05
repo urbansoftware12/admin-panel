@@ -44,7 +44,8 @@ const useCoupon = create((set, get) => ({
         set(() => ({ couponLoading: true }))
         try {
             const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/coupon/create?admin_id=${admin._id}`, couponToCreate)
-            callback(data)
+            if (callback) callback(data)
+            toaster("success", data.msg)
             set(() => ({ couponLoading: false }))
             return data
         } catch (error) {
@@ -53,7 +54,6 @@ const useCoupon = create((set, get) => ({
         }
         return set(() => ({ couponLoading: false }))
     }
-
 }))
 
 export default useCoupon

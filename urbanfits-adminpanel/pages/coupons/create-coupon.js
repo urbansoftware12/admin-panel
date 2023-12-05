@@ -6,6 +6,8 @@ import InputTextArea from "@/components/InputTextArea";
 import Button from "@/components/buttons/simple_btn";
 import useProduct from "@/hooks/useProduct";
 import useCategories from "@/hooks/useCategories";
+import useCoupon from "@/hooks/useCoupon";
+import Loader from "@/components/loaders/loader";
 import { CouponProductItem, CouponCategoryItem } from "@/components/coupon_comps";
 import { useFormik } from "formik";
 import { couponSchema } from '@/mock/yupSchemas'
@@ -14,6 +16,7 @@ import mongoose from "mongoose";
 export default function CreateCoupon() {
     const { getOneProduct, productLoading } = useProduct()
     const { getOneCategory, categLoading } = useCategories()
+    const { createCoupon, couponLoading } = useCoupon()
     const [checked, setChecked] = useState(1);
     const [advanceSettings, setAdvanceSettings] = useState(false);
     const handleSectionPosition = (checked) => {
@@ -32,7 +35,7 @@ export default function CreateCoupon() {
                 minimum_spend: null,
                 maximum_spend: null,
                 free_shipping: false,
-                conjunction_use: false,
+                individual_use: false,
                 exclude_sales: false,
                 allowed_products: [''],
                 exclude_products: [''],
@@ -46,10 +49,17 @@ export default function CreateCoupon() {
         },
         validationSchema: couponSchema,
         onSubmit: async (values) => {
-            console.log(values)
+            let finalCouponConfig = structuredClone(values.coupon_config)
+            const susArrayNames = ['allowed_products', 'exclude_products', 'allowed_categories', 'exclude_categories', 'allowed_emails']
+            susArrayNames.forEach(name => {
+                const susArray = eval(`values.coupon_config.${name}`)
+                if (susArray.length === 1 && !susArray[0]) return finalCouponConfig = structuredClone({ ...finalCouponConfig, [name]: [] })
+                else return
+            })
+            await createCoupon({ ...values, coupon_config: finalCouponConfig })
         }
     })
-    console.log(advanceSettings, values, errors)
+    // console.log(values, errors)
 
     const handleRemoveArrayItem = (index, pathname) => {
         const newArray = [...eval(`values.${pathname}`)];
@@ -69,6 +79,7 @@ export default function CreateCoupon() {
     }
 
     return <>
+        {couponLoading ? <Loader /> : null}
         <div className="mt-4 flex flex-col">
             <h2 className="font_futura text-[22px]">Create Coupon</h2>
             <div className="flex items-center mt-4 font_futura text-sm gap-x-3">
@@ -94,9 +105,7 @@ export default function CreateCoupon() {
                         value={values.description}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        error={errors.description && touched.description ?
-                            (errors.description) : null
-                        }
+                        error={errors.description && touched.description ? errors.description : null}
                     />
                 </div>
             </CardAdmin>
@@ -113,18 +122,16 @@ export default function CreateCoupon() {
                         <InputText
                             label="Coupon Worth/Price (د.إ)"
                             placeholder="0"
-                            type="number" name="description"
-                            value={values.description}
+                            type="number" name="coupon_value"
+                            value={values.coupon_value}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            error={errors.description && touched.description ?
-                                (errors.description) : null
-                            }
+                            error={errors.coupon_value && touched.coupon_value ? errors.coupon_value : null}
                         />
                         <InputText
                             label="Coupon expire date"
                             type="date"
-                            placeholder="YYYY-MM-DD" name="description"
+                            placeholder="YYYY-MM-DD" name="expiration_date"
                             value={values.expiration_date}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -177,7 +184,7 @@ export default function CreateCoupon() {
                             <label htmlFor="advance_settings" className="cursor-pointer select-none">Advanced</label>
                         </div>
 
-                        <section style={{ maxHeight: advanceSettings ? "230vh" : "0" }} className="col-span-full w-full transition-all duration-500 overflow-hidden space-y-4">
+                        <section style={{ maxHeight: advanceSettings ? "250vh" : "0" }} className="col-span-full w-full transition-all duration-500 overflow-hidden space-y-4">
                             <div className="col-span-full w-full px-6 py-4 border rounded-lg">
                                 <h3 className="text-2xl mb-4">Allowed Products</h3>
                                 {values.coupon_config?.allowed_products?.map((p_id, index) => <CouponProductItem nameExtension="allowed_products" values={values} errors={errors} index={index} handleBlur={handleBlur} handleRemoveArrayItem={handleRemoveArrayItem} getCorrspondingProduct={getCorrspondingProduct} productLoading={productLoading} />)}

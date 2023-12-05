@@ -67,18 +67,18 @@ export const couponSchema = Yup.object({
     name: Yup.string().required("Coupon name is required."),
     coupon_code: Yup.string().min(5, "Coupon code must be at least 5 characters").required("Coupon code is required"),
     description: Yup.string(),
-    coupon_value: Yup.number(),
+    coupon_value: Yup.number().required("Please specify the coupon worth."),
     coupon_config: Yup.object().shape({
         minimum_spend: Yup.number().nullable(),
         maximum_spend: Yup.number().nullable(),
         free_shipping: Yup.boolean(),
-        conjunction_use: Yup.boolean(),
+        individual_use: Yup.boolean(),
         exclude_sales: Yup.boolean(),
         allowed_products: Yup.array().test(
             'unique-allowed-products',
             'Allowed products should not have duplicate entries with exclude products',
             function (allowedProducts) {
-                if (!allowedProducts) return true;
+                if (!allowedProducts || (allowedProducts.length === 1 && !allowedProducts[0])) return true;
                 const { exclude_products: excludeProducts } = this.parent;
                 return allowedProducts.every(entry => !excludeProducts.includes(entry));
             }
@@ -87,7 +87,7 @@ export const couponSchema = Yup.object({
             'unique-exclude-products',
             'Exclude products should not have duplicate entries with allowed products',
             function (excludeProducts) {
-                if (!excludeProducts) return true;
+                if (!excludeProducts || (excludeProducts.length === 1 && !excludeProducts[0])) return true;
                 const { allowed_products: allowedProducts } = this.parent;
                 return excludeProducts.every(entry => !allowedProducts.includes(entry));
             }
@@ -97,7 +97,7 @@ export const couponSchema = Yup.object({
             'unique-allowed-categories',
             'Categories in allowed_categories must be unique',
             function (allowedCategories) {
-                if (!allowedCategories) return true;
+                if (!allowedCategories || (allowedCategories.length === 1 && !allowedCategories[0])) return true;
                 const { exclude_categories: excludeCategories } = this.parent;
                 return allowedCategories.every(entry => !excludeCategories.includes(entry));
             }
@@ -106,7 +106,7 @@ export const couponSchema = Yup.object({
             'unique-exclude-categories',
             'Categories in exclude_categories must be unique',
             function (excludeCategories) {
-                if (!excludeCategories) return true;
+                if (!excludeCategories || (excludeCategories.length === 1 && !excludeCategories[0])) return true;
                 const { allowed_categories: allowedCategories } = this.parent;
                 return excludeCategories.every(entry => !allowedCategories.includes(entry));
             }
