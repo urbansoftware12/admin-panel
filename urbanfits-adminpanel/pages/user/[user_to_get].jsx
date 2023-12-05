@@ -13,7 +13,6 @@ import { InputSelect } from "@/components/InputSelect";
 import countryCodes from "@/mock/countryCodes";
 import { useFormik } from 'formik';
 import * as Yup from 'yup'
-const ProfilePic = "https://urban-fits.s3.eu-north-1.amazonaws.com/website-copyrights/default-pfp.jpg";
 import { useRouter } from "next/router";
 import useSession from "@/hooks/useSession";
 import useUser from "@/hooks/useUser";
@@ -35,6 +34,7 @@ export default function UserProfile(props) {
     const [loading, setLoading] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [notificLoading, setNotificLoading] = useState(false);
+    const userPfp = userData?.image?.includes("googleuser")? userData.image: process.env.NEXT_PUBLIC_BASE_IMG_URL + userData.image
 
     const handlemenueclick = (id) => setChecked(id);
 
@@ -194,10 +194,10 @@ export default function UserProfile(props) {
         </div>
 
         <CardAdmin classes=" grid grid-cols-6 mt-[20px] ">
-            <section className="col-span-2 border-r border-r-slate-200 p-[40px] flex flex-col  font-[400]">
+            <section className="col-span-2 border-r border-r-slate-200 p-[40px] flex flex-col">
                 <div className="flex flex-col items-center">
                     <span className="w-16 aspect-square rounded-xl overflow-hidden ">
-                        <Image width={2000} height={2000} className="w-full h-full object-cover object-center" alt="user avatar" src={(userData.image || ProfilePic) + "?timestamp=123"} />
+                        <Image width={2000} height={2000} className="w-full h-full object-cover object-center" alt="user avatar" src={(userPfp || process.env.NEXT_PUBLIC_DEFAULT_PFP) + "?timestamp=123"} />
                     </span>
                     <p className="text-sm mt-[20px] ">{userData.firstname || null}&nbsp;{userData.lastname || userData.username}</p>
                     <p className="text-sm">{userData.email}</p>
@@ -316,7 +316,7 @@ export default function UserProfile(props) {
                         </CardAdmin>
                     </section>
                     <CardAdmin classes={`w-1/3 p-[30px] mt-10 ${checked !== 2 && "opacity-0 max-h-40"} transition-all duration-500 overflow-hidden`}>
-                        <form className="gap-5" onSubmit={handleSubmit} onReset={handleReset}>
+                        <form className="space-y-5" onSubmit={handleSubmit} onReset={handleReset}>
                             <div className="w-full flex gap-5 items-center">
                                 <p>User Image</p>
                                 <div className={`w-4/5 relative flex`}>

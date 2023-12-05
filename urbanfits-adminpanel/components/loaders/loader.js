@@ -14,12 +14,12 @@ export default function Loader(props) {
                 {props.status}
                 {props.status ? <i className="ml-4 fa-solid fa-circle fa-bounce text-gray-300" /> : null}
             </p>
-            <nav className="w-full flex flex-col items-center">
+            {props.progress ? <nav className="w-full flex flex-col items-center">
                 <div className="relative w-[65%] h-1.5 mt-4 bg-transparent border border-gray-100 rounded-lg overflow-x-clip">
-                    <span style={{width: `${props.progress? props.progress.toFixed(0) : 2}%`}} className='block bg-gold-land h-full transition-all duration-700'></span>
+                    <span style={{ width: `${props.progress.toFixed(1)}%` }} className='block bg-gold-land h-full transition-all duration-700'></span>
                 </div>
-                <span className="mt-2 text-sm text-center text-white">{props.progress? props.progress.toFixed(0) : 2} %</span>
-            </nav>
+                <span className="mt-2 text-sm text-center text-white">{props.progress ? props.progress.toFixed(0) : 2} %</span>
+            </nav> : null}
         </section>
     )
 }

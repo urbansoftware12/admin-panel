@@ -29,6 +29,21 @@ const useCategories = create((set, get) => ({
         }))
     },
 
+    getOneCategory: async (category_id, callback) => {
+        const { admin } = useSession.getState()
+        if (!admin) return
+
+        set(() => ({categLoading: true}))
+        try {
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/categories/get-one?category_id=${category_id}`)
+            callback(data.category)
+        } catch (error) {
+            console.log(error)
+            toaster("error", error.response?.data?.msg)
+        }
+        return set(() => ({categLoading: false}))
+    },
+
     createCategory: async (category) => {
         const { admin } = useSession.getState()
         if (!admin || admin.role === "customer") return

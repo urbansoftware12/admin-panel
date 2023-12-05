@@ -1,12 +1,11 @@
 import Image from "next/image";
-
-import tableAvatarMan1 from "@/public/tableAvatarMan1.png";
-import tableAvatarMan2 from "@/public/tableAvatarMan2.png";
-import tableAvatarMan3 from "@/public/tableAvatarMan3.png";
-import tableAvatarGirl1 from "@/public/tableAvatarGirl1.png";
-import tableAvatarGirl2 from "@/public/tableAvatarGirl2.png";
+// import tableAvatarMan1 from "@/public/tableAvatarMan1.png";
+// import tableAvatarMan2 from "@/public/tableAvatarMan2.png";
+// import tableAvatarMan3 from "@/public/tableAvatarMan3.png";
+// import tableAvatarGirl1 from "@/public/tableAvatarGirl1.png";
+// import tableAvatarGirl2 from "@/public/tableAvatarGirl2.png";
+// import sneakers from "@/public/sneakers.png";
 import smartWatch from "@/public/smartWatch.png";
-import sneakers from "@/public/sneakers.png";
 
 import MenuButton from "@/components/buttons/menuButton";
 import ActionButton from "@/components/buttons/ActionButton";
@@ -88,99 +87,6 @@ export const userListTableColumns = [
     cell: (row) => <ActionButton infoLink={row.infoLink} handleInfo={row.handleInfo} options={row.actions} />
   }
 ]
-
-export const userListTableData = [
-  {
-    profile: <Image alt="product image" src={tableAvatarMan1} />,
-    name: "John",
-    email: "Bilawalashraf@gmail.com",
-    phone: "+91-989-325-8652",
-    totalbuy: "1845",
-    status: "Active",
-    joinon: "Active",
-    action: <ActionButton />,
-  },
-  {
-    profile: <Image alt="product image" src={tableAvatarGirl1} />,
-    name: "Artur",
-    email: "Bilawalashraf@gmail.com",
-    phone: "+91-989-325-8652",
-    totalbuy: "1845",
-    status: "Active",
-    joinon: "Active",
-    action: <ActionButton />,
-  },
-  {
-    profile: <Image alt="product image" src={tableAvatarGirl2} />,
-    name: "Arthur",
-    email: "Bilawalashraf@gmail.com",
-    phone: "+91-989-325-8652",
-    totalbuy: "1845",
-    status: "Active",
-    joinon: "Active",
-    action: <ActionButton />,
-  },
-  {
-    profile: <Image alt="product image" src={tableAvatarMan2} />,
-    name: "Doe John",
-    email: "Bilawalashraf@gmail.com",
-    phone: "+91-989-325-8652",
-    totalbuy: "1845",
-    status: "Active",
-    joinon: "Active",
-    action: <ActionButton />,
-  },
-  {
-    profile: <Image alt="product image" src={tableAvatarMan3} />,
-    name: "Willson",
-    email: "Bilawalashraf@gmail.com",
-    phone: "+91-989-325-8652",
-    totalbuy: "1845",
-    status: "Active",
-    joinon: "Active",
-    action: <ActionButton />,
-  },
-  {
-    profile: <Image alt="product image" src={tableAvatarMan1} />,
-    name: "Dikra Willson",
-    email: "Bilawalashraf@gmail.com",
-    phone: "+91-989-325-8652",
-    totalbuy: "1845",
-    status: "Active",
-    joinon: "Active",
-    action: <ActionButton />,
-  },
-  {
-    profile: <Image alt="product image" src={tableAvatarGirl1} />,
-    name: "Sara Khan",
-    email: "Bilawalashraf@gmail.com",
-    phone: "+91-989-325-8652",
-    totalbuy: "1845",
-    status: "Active",
-    joinon: "Active",
-    action: <ActionButton />,
-  },
-  {
-    profile: <Image alt="product image" src={tableAvatarGirl2} />,
-    name: "Natellie",
-    email: "Bilawalashraf@gmail.com",
-    phone: "+91-989-325-8652",
-    totalbuy: "1845",
-    status: "Active",
-    joinon: "Active",
-    action: <ActionButton />,
-  },
-  {
-    profile: <Image alt="product image" src={tableAvatarMan2} />,
-    name: "Mark Gomis",
-    email: "Bilawalashraf@gmail.com",
-    phone: "+91-989-325-8652",
-    totalbuy: "1845",
-    status: "Active",
-    joinon: "Active",
-    action: <ActionButton />,
-  },
-];
 
 const orderStatusColors = { pending: { bg: "#a3a3a3", text: "#ffffff" }, readytoship: { bg: "#eede00", text: "#ffffff" }, shipped: { bg: "#f85b00", text: "#ffffff" }, returned: { bg: "#f30000", text: "#ffffff" }, delivered: { bg: "#00f37a", text: "#ffffff" } }
 export const ordersTableColumns = [

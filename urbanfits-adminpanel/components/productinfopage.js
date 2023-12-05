@@ -77,7 +77,7 @@ const VariantItem = (props) => {
                                 <div className='group relative w-[100px] h-[92px] overflow-hidden rounded-lg'>
                                     <span className="opacity-0 group-hover:opacity-100 absolute inset-0 bg-black/60 w-full-h-full flex justify-center items-center text-center text-white text-xs transition-all">
                                         compressed size: <br />
-                                         {(((imgUrl?.size/1024)/100)*variant.compression_quality).toFixed(1)} kb 
+                                        {(((imgUrl?.size / 1024) / 100) * variant.compression_quality).toFixed(1)} kb
                                         {/* {((imgUrl?.size/1024)*((100-(100-variant.compression_quality))/100)).toFixed(1)} kb */}
                                     </span>
                                     <DefaultOrPic src={imgUrl !== '' ? propsProduct ? process.env.NEXT_PUBLIC_BASE_IMG_URL + imgUrl : URL.createObjectURL(imgUrl) : ''} />
@@ -209,6 +209,7 @@ export default function ProductInfoPage(props) {
             const coverImage = await uploadImage(product.cover_image, createdProduct._id, `product-images/${createdProduct._id}`, 30)
             const finalVariants = []
             let variantIndex = 0
+            let totalImgIteration = 0
             for (const variant of product.variants) {
                 setLoader(<Loader status={`Compressing & Uploading Images of Variant ${variantIndex + 1}`} progress={2 / totalSteps * 100} />)
                 let newVariant = { ...JSON.parse(JSON.stringify(variant)), images: [] }
@@ -216,15 +217,16 @@ export default function ProductInfoPage(props) {
                 console.log(filteredVariantImages)
                 let imgIndex = 0
                 for (const image of filteredVariantImages) {
-                    setLoader(<Loader status={`Compressing & Uploading Images of Variant ${variantIndex + 1}: ${imgIndex + 1} of ${filteredVariantImages.length} uploaded`} progress={(imgIndex + 3) / totalSteps * 100} />)
+                    setLoader(<Loader status={`Compressing & Uploading Images of Variant ${variantIndex + 1}: ${imgIndex + 1} of ${filteredVariantImages.length} uploaded`} progress={(totalImgIteration + 3) / totalSteps * 100} />)
                     const imgUrl = await uploadImage(image, imgIndex, `product-images/${createdProduct._id}/${createdProduct.variants[variantIndex]._id}`, variant.compression_quality)
                     newVariant.images.push(imgUrl)
                     imgIndex += 1
+                    totalImgIteration += 1
                 }
                 finalVariants.push(newVariant)
                 variantIndex += 1
             }
-            const finalProduct = { ...product, cover_image: coverImage, variants: finalVariants }
+            const finalProduct = { ...createdProduct, cover_image: coverImage, variants: finalVariants }
             setLoader(<Loader status="Merging Image URLs with Product" progress={99} />)
             await updateProduct(createdProduct._id, finalProduct)
             return setLoader(null)
@@ -239,14 +241,14 @@ export default function ProductInfoPage(props) {
         initialValues: {
             name: '',
             slug: '',
-            categories: [null],
+            categories: [''],
             description: '',
             cover_image: '',
             newTag: '',
             tags: [],
-            price: null,
-            uf_points: null,
-            sale_price: null,
+            price: 0,
+            uf_points: 0,
+            sale_price: 0,
             seo_details: {
                 title: '',
                 description: '',
@@ -267,13 +269,13 @@ export default function ProductInfoPage(props) {
                 }
             ]
         },
-        onSubmit: async (values, { handleReset }) => {
+        onSubmit: async (values, { resetForm }) => {
             if (props.product && values._id && values._id.length > 10) {
                 setLoader(<Loader status="Updating the Product" progress={99} />)
                 await updateProduct(props.product._id, values)
                 return setLoader(null)
             } else await CreateProduct(values)
-            handleReset()
+            resetForm()
         },
     })
 
@@ -298,7 +300,6 @@ export default function ProductInfoPage(props) {
         if (categories.length !== 0) return
         if (categories.length === 0) getCategories()
     }, [])
-    console.log(values)
 
     return <>
         {loader}
@@ -453,7 +454,7 @@ export default function ProductInfoPage(props) {
                                     error={errors.categories && errors.categories[categoryIndex] && touched.categories && touched.categories[categoryIndex] ?
                                         errors.categories[categoryIndex] : null
                                     }>
-                                    {[{ id: null, path: "Select Category" }, ...categories?.map((cat) => ({ id: cat._id, path: cat.path }))]?.map((obj, index) => {
+                                    {[{ id: '', path: "Select Category" }, ...categories?.map((cat) => ({ id: cat._id, path: cat.path }))]?.map((obj, index) => {
                                         const { id, path } = obj
                                         return <option key={index} value={id} selected={values.parent == id} disabled={index == 0}> {path} </option>
                                     })}

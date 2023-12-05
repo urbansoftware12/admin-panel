@@ -47,7 +47,7 @@ const BundleItem = (props) => {
             {foundProduct ?
                 productLoading ? <div className="relative w-1/4 aspect-square flex justify-center"><Spinner variant="border-black" /></div> : <>
                     <div className="w-1/4 aspect-square overflow-hidden">
-                        <Image width={560} height={590} src={foundProduct.cover_image} alt="product image" className="w-full h-full rounded-lg md:rounded-xl object-cover object-top" />
+                        <Image width={560} height={590} src={process.env.NEXT_PUBLIC_BASE_IMG_URL + foundProduct.cover_image} alt="product image" className="w-full h-full rounded-lg md:rounded-xl object-cover object-top" />
                     </div>
                     <h3 className="font_futura my-2 text-lg">{foundProduct.name}</h3>
                 </> : null}
