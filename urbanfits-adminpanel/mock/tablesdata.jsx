@@ -781,48 +781,6 @@ export const productListTableColumns = [
   }
 ]
 
-
-export const productCategoriesTableColumns00 = [
-  {
-    accessor: "id",
-    Header: ({ getToggleAllRowsSelectedProps }) => (
-      <>
-        <input id="selectall" type="checkbox" {...getToggleAllRowsSelectedProps()} />
-        <label htmlFor="selectall" className="select-none">ID</label>
-      </>
-    ),
-    Cell: ({ cell: { value }, row }) => <div className="group relative z-30 flex justify-start gap-x-2" > <input value={value} id={value} type="checkbox" {...row.getToggleRowSelectedProps()} /> <label htmlFor={value} className='w-10 truncate cursor-pointer'>
-      {value}
-      <Infotip>{value}</Infotip>
-    </label> </div>,
-    disableSortBy: true,
-  },
-  {
-    accessor: "name",
-    Header: <span className="select-none " >Name</span>,
-    Cell: ({ cell: { value } }) => <span className='max-w-[80px] truncate cursor-pointer'>{value}</span>,
-  },
-  {
-    accessor: "description",
-    Header: <span className="select-none " >Description</span>,
-    Cell: ({ cell: { value }, r }) => <span className='max-w-[80px] truncate cursor-pointer'>{value}</span>,
-  },
-  {
-    accessor: "slug",
-    Header: <span className="select-none " >Slug</span>,
-    Cell: ({ cell: { value } }) => <span className='max-w-[80px] truncate cursor-pointer'>{value}</span>,
-  },
-  {
-    accessor: "order",
-    Header: <span className="select-none " >Order</span>,
-    Cell: ({ cell: { value } }) => <span>{value}</span>,
-  },
-  {
-    accessor: "action",
-    Header: <span className="select-none " >Action</span>,
-    Cell: ({ cell: { value } }) => value,
-  }
-]
 export const productCategoriesTableColumns = [
   {
     selector: row => row.id,
@@ -869,5 +827,67 @@ export const productCategoriesTableColumns = [
     cell: (row) => <MenuButton options={row.actions} />,
     sortable: true,
     width: "16%"
+  }
+]
+
+export const couponsTableColumns = [
+  {
+    selector: row => row.id,
+    name: <span className="text-[15px]">ID</span>,
+    cell: (row) => {
+      const { id } = row
+      return <div className="w-full group relative flex justify-start">
+        <span className='w-full whitespace-nowrap truncate overflow-hidden cursor-default'>
+          {id}
+          <Infotip>{id}</Infotip>
+        </span>
+      </div>
+    },
+    sortable: true,
+    width: "26%"
+  },
+  {
+    selector: row => row.name,
+    name: <span className="select-none text-[15px]">Name</span>,
+    sortable: true,
+    width: "18%"
+  },
+  {
+    selector: row => row.coupon_value,
+    name: <span className="select-none text-[15px]">Worth (د.إ)</span>,
+    sortable: true,
+    width: "14%"
+  },
+  {
+    selector: row => row.createdAt,
+    name: <span className="select-none text-[15px]" >Created at</span>,
+    cell: (row) => {
+      const date = new Date(row.createdAt)
+      return <span className='w-full whitespace-nowrap truncate cursor-default'>
+        {date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear()}
+      </span>
+    },
+    sortable: true,
+    width: "13%"
+  },
+  {
+    selector: row => row.expiration_date,
+    name: <span className="select-none text-[15px]" >Expires at</span>,
+    cell: (row) => {
+      if (!row.expiration_date) return "N/A"
+      const date = new Date(row.expiration_date)
+      return <span className='w-full whitespace-nowrap truncate cursor-default'>
+        {date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear()}
+      </span>
+    },
+    sortable: true,
+    width: "13%"
+  },
+  {
+    selector: row => row.actions,
+    name: <span className="select-none text-[15px]" >Actions</span>,
+    cell: (row) => <MenuButton options={row.actions} />,
+    sortable: true,
+    width: "8%"
   }
 ]

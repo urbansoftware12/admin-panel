@@ -1,11 +1,10 @@
 import { useState } from "react";
-import useSession from "./useSession";
 import jwt from 'jsonwebtoken'
 import axios from "axios";
 import toaster from "@/utils/toast_function";
+import { admin } from '@/utils/auth_header';
 
 export default function useAddress() {
-    const { admin } = useSession()
 
     const getAddressFromLS = () => {
         const address = jwt.decode(localStorage.getItem('addressToken'))

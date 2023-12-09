@@ -23,6 +23,7 @@ import axios from "axios";
 import mongoose from "mongoose";
 import Link from "next/link";
 import toaster from "@/utils/toast_function";
+import AuthHeader from "@/utils/auth_header";
 
 export default function UserProfile(props) {
     const { updateUser, getUserNotifications, getUserUfBalance, addPointsToUserWallet, resetUser2fa, usersLoading, deleteUsers } = useUser()
@@ -108,9 +109,8 @@ export default function UserProfile(props) {
             try {
                 const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/update/password-via-admin`, {
                     ...values,
-                    admin_id: admin.user._id,
                     user_id: userData._id
-                })
+                }, AuthHeader)
                 toaster("success", data.msg)
                 passHandleReset()
             } catch (error) {
@@ -451,7 +451,7 @@ export async function getServerSideProps(context) {
         },
     };
     try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/byid?user_to_get=${user_to_get}&admin_id=${admin_id}`)
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/byid?user_to_get=${user_to_get}`, AuthHeader)
         return { props: { userData: data.user } }
     }
     catch (error) {

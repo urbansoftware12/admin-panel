@@ -1,23 +1,30 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import toaster from "@/utils/toast_function";
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 
 const useSession = create(persist((set, get) => ({
     admin: null,
+    authToken: null,
     country: { name: "United Arab Emirates", code: "+971", country: "ae", src: "https://urban-fits.s3.eu-north-1.amazonaws.com/country-flags/AE.jpg" },
     geo_selected_by_user: false,
     setGeoSelectedByUser: (bool) => set(() => ({ geo_selected_by_user: bool })),
     setCountry: (value) => set(() => ({ country: value })),
 
-    updateAdmin: async (valuesObj, updateLocally = false) => {
+    updateAdmin: async (valuesObj, updateLocally = false,) => {
         if (updateLocally) {
-            const userData = jwt.decode(valuesObj)?._doc
-            console.log(userData)
-            delete userData.password
-            if (userData.role !== "administrator") return toaster("error", "403 Forbidden. Only administrator allowed.")
-            else set(() => ({ admin: userData }))
+            try {
+                const userData = jwt.decode(valuesObj)?._doc
+                // const userData = jwt.verify(valuesObj, process.env.NEXT_PUBLIC_SECRET_KEY)
+                set(() => ({ authToken: valuesObj }))
+                delete userData.password
+                if (userData.role !== "administrator") return toaster("error", "403 Forbidden. Only administrator allowed.")
+                else set(() => ({ admin: userData }))
+            } catch (e) {
+                console.log(e)
+                toaster("error", "Error 403: Admin acces denied. Please try again.")
+            }
         }
         else {
             try {
@@ -56,6 +63,6 @@ const useSession = create(persist((set, get) => ({
         }
     }
 }),
-    { name: "authToken" }
+    { name: "authToken", storage: createJSONStorage(() => sessionStorage) }
 ))
 export default useSession

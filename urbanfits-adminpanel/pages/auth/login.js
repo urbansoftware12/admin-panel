@@ -24,16 +24,16 @@ export default function Login() {
 
     const passRef = useRef()
 
-    const onsubmit = async (values, x, oAuthQuery) => {
+    const onsubmit = async (values) => {
         try {
             setLoading(true)
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/admin/login${oAuthQuery ? oAuthQuery : ''}`, values)
-            if (data.redirect_url && !data.payload) router.push(data.redirect_url)
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/admin/login`, values)
+            if (data.redirect_url && !data.payload) router.replace(data.redirect_url)
             else if (data.payload) {
                 await updateAdmin(data.payload, true)
                 const userData = jwt.decode(data.payload)?._doc
                 if (userData.role === "administrator") {
-                    router.push('/')
+                    router.replace('/')
                     toaster("success", data.msg)
                 } else return setLoading(false)
             }
@@ -66,10 +66,7 @@ export default function Login() {
         onSubmit: onsubmit
     })
 
-    const sessionValidity = (e) => {
-        const checked = e.target.checked
-        localStorage.setItem('remember_me', checked)
-    }
+    const sessionValidity = (e) => localStorage.setItem('remember_me', e.target.checked)
 
     if (admin && admin.email) return <AlertPage type="success" heading="You are signed in!" />
     return <>

@@ -6,7 +6,6 @@ import { SearchIcon } from '@/public/sidebaricons/SearchIcon';
 import Spinner from '@/components/loaders/spinner';
 import Button from "@/components/buttons/simple_btn";
 import LinkBtn from '@/components/buttons/link_btn';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { CSVLink } from "react-csv";
 import useCategories from '@/hooks/useCategories';

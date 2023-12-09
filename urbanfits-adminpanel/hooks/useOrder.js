@@ -1,7 +1,7 @@
 import { create } from 'zustand'
-import useSession from './useSession';
 import toaster from "@/utils/toast_function";
 import axios from "axios";
+import AuthHeader, { admin } from '@/utils/auth_header';
 
 const useOrder = create((set, get) => ({
 
@@ -25,7 +25,7 @@ const useOrder = create((set, get) => ({
             return data.orders
         } catch (error) {
             console.log(error)
-            if(error.response)toaster("error", error.response.data.msg)
+            if (error.response) toaster("error", error.response.data.msg)
         }
         return set(() => ({ orderLoading: false }))
     },
@@ -44,15 +44,12 @@ const useOrder = create((set, get) => ({
     },
 
     createOrder: async (orderToCreate) => {
-        const { admin } = useSession.getState()
         if (!admin) return
 
         set(() => ({ orderLoading: true }))
         try {
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/orders/create?id=${admin._id}`, orderToCreate)
-            set(() => ({
-                orderLoading: false
-            }))
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/orders/create`, orderToCreate, AuthHeader)
+            set(() => ({ orderLoading: false }))
             return data.order
         } catch (error) {
             console.log(error)
@@ -62,11 +59,10 @@ const useOrder = create((set, get) => ({
     },
 
     updateOrder: async (id, updatedorder) => {
-        const { admin } = useSession.getState()
         if (!admin) return
         set(() => ({ orderLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/orders/update?user_id=${admin._id}&id=${id}`, updatedorder)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/orders/update?id=${id}`, updatedorder, AuthHeader)
             set(() => ({
                 orderLoading: false,
                 orderInfo: data.order
@@ -81,12 +77,11 @@ const useOrder = create((set, get) => ({
     },
 
     deleteOrders: async (orderIds) => {
-        const { admin } = useSession.getState()
         if (!admin) return
 
         set(() => ({ orderLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/orders/delete`, { admin_id: admin._id, orders: orderIds })
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/orders/delete`, { orders: orderIds }, AuthHeader)
             await get().getOrders(1)
             toaster(data.deletedCount < 1 ? "info" : "success", data.msg)
         } catch (error) {

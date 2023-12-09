@@ -48,7 +48,7 @@ export default function CreateCoupon() {
             expiration_date: '',
         },
         validationSchema: couponSchema,
-        onSubmit: async (values) => {
+        onSubmit: async (values, { resetForm }) => {
             let finalCouponConfig = structuredClone(values.coupon_config)
             const susArrayNames = ['allowed_products', 'exclude_products', 'allowed_categories', 'exclude_categories', 'allowed_emails']
             susArrayNames.forEach(name => {
@@ -56,10 +56,12 @@ export default function CreateCoupon() {
                 if (susArray.length === 1 && !susArray[0]) return finalCouponConfig = structuredClone({ ...finalCouponConfig, [name]: [] })
                 else return
             })
-            await createCoupon({ ...values, coupon_config: finalCouponConfig })
+            try {
+                await createCoupon({ ...values, coupon_config: finalCouponConfig, ...(values.expiration_date && { expiration_date: values.expiration_date }) })
+                resetForm()
+            } catch (err) { console.log(err) }
         }
     })
-    // console.log(values, errors)
 
     const handleRemoveArrayItem = (index, pathname) => {
         const newArray = [...eval(`values.${pathname}`)];
@@ -89,7 +91,7 @@ export default function CreateCoupon() {
             </div>
         </div>
 
-        <form onSubmit={handleSubmit} onReset={handleReset}>
+        <form onSubmit={handleSubmit} onReset={() => { handleReset(); setAdvanceSettings(false) }}>
             <CardAdmin classes="p-10 mt-[30px]">
                 <div className="flex flex-col gap-[20px] ">
                     <p className="text-[22px] font-[500] ">Add New Coupon</p>
@@ -138,7 +140,7 @@ export default function CreateCoupon() {
                             error={errors.expiration_date && touched.expiration_date ? errors.expiration_date : null}
                         />
                         <nav className="flex gap-[10px] mt-[10px] ">
-                            <input id="free_shipping" type="checkbox" />
+                            <input id="free_shipping" name="coupon_config.free_shipping" value={values.coupon_config?.free_shipping} checked={values.coupon_config?.free_shipping} onChange={handleChange} type="checkbox" />
                             <label htmlFor="free_shipping" className="text-sm cursor-pointer">Allow Free Shipping</label>
                         </nav>
                     </section>
@@ -148,7 +150,7 @@ export default function CreateCoupon() {
                             placeholder="No minimum"
                             type="number"
                             name="coupon_config.minimum_spend"
-                            value={values.coupon_config?.minimum_spend}
+                            value={values.coupon_config?.minimum_spend || ''}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             error={errors?.coupon_config?.minimum_spend && touched?.coupon_config?.minimum_spend ? errors?.coupon_config?.minimum_spend : null}
@@ -158,7 +160,7 @@ export default function CreateCoupon() {
                             placeholder="No maximum"
                             type="number"
                             name="coupon_config.maximum_spend"
-                            value={values.coupon_config?.maximum_spend}
+                            value={values.coupon_config?.maximum_spend || ''}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             error={errors?.coupon_config?.maximum_spend && touched?.coupon_config?.maximum_spend ? errors?.coupon_config?.maximum_spend : null}
@@ -166,14 +168,14 @@ export default function CreateCoupon() {
                         <div>
                             <p className="flex items-center text-[14px] font-[500] gap-[30px]">Individual use only</p>
                             <div className="flex items-center gap-[10px] text-sm mt-[21px]">
-                                <input id="conjunction_use" name="coupon_config.conjunction_use" value={values.coupon_config?.conjunction_use} onChange={handleChange} onBlur={handleBlur} error={errors?.coupon_config?.conjunction_use && touched?.coupon_config?.conjunction_use ? errors?.coupon_config?.conjunction_use : null} type="checkbox" />
-                                <label htmlFor="conjunction_use" className="cursor-pointer">Check this box if the coupon cannot be used in conjunction with other. </label>
+                                <input id="individual_use" name="coupon_config.individual_use" value={values.coupon_config?.individual_use} checked={values.coupon_config?.individual_use} onChange={handleChange} onBlur={handleBlur} error={errors?.coupon_config?.individual_use && touched?.coupon_config?.individual_use ? errors?.coupon_config?.individual_use : null} type="checkbox" />
+                                <label htmlFor="individual_use" className="cursor-pointer">Check this box if the coupon cannot be used in conjunction with other. </label>
                             </div>
                         </div>
                         <div>
                             <p className="flex items-center text-[14px] font-[500] gap-[30px] " >Exclude sale items</p>
                             <div className="flex items-center gap-[10px] text-sm mt-[21px] " >
-                                <input id="exclude_sales" name="coupon_config.exclude_sales" value={values.coupon_config?.exclude_sales} onChange={handleChange} onBlur={handleBlur} error={errors?.coupon_config?.exclude_sales && touched?.coupon_config?.exclude_sales ? errors?.coupon_config?.exclude_sales : null} type="checkbox" />
+                                <input id="exclude_sales" name="coupon_config.exclude_sales" value={values.coupon_config?.exclude_sales} checked={values.coupon_config?.exclude_sales} onChange={handleChange} onBlur={handleBlur} error={errors?.coupon_config?.exclude_sales && touched?.coupon_config?.exclude_sales ? errors?.coupon_config?.exclude_sales : null} type="checkbox" />
                                 <label htmlFor="exclude_sales" className="cursor-pointer">Check this box if the coupon should not apply to items on sales. &nbsp; &nbsp; &nbsp; </label>
                             </div>
                         </div>
@@ -232,7 +234,7 @@ export default function CreateCoupon() {
                             placeholder="Unlimited usage"
                             type="number"
                             name="coupon_config.coupon_usage_limit"
-                            value={values.coupon_config?.coupon_usage_limit}
+                            value={values.coupon_config?.coupon_usage_limit || ''}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             error={errors?.coupon_config?.coupon_usage_limit && touched?.coupon_config?.coupon_usage_limit ? errors?.coupon_config?.coupon_usage_limit : null}
@@ -242,7 +244,7 @@ export default function CreateCoupon() {
                             placeholder="Unlimited usage"
                             type="number"
                             name="coupon_config.user_usage_limit"
-                            value={values.coupon_config?.user_usage_limit}
+                            value={values.coupon_config?.user_usage_limit || ''}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             error={errors?.coupon_config?.user_usage_limit && touched?.coupon_config?.user_usage_limit ? errors?.coupon_config?.coupon_usage_limit : null}
