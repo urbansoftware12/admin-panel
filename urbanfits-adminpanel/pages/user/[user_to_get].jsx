@@ -28,7 +28,6 @@ import AuthHeader from "@/utils/auth_header";
 export default function UserProfile(props) {
     const { updateUser, getUserNotifications, getUserUfBalance, addPointsToUserWallet, resetUser2fa, usersLoading, deleteUsers } = useUser()
     const router = useRouter()
-    const admin = useSession()
     const [userData, setUserData] = useState(props.userData);
     const [userNotifics, setUserNotifics] = useState([]);
     const [checked, setChecked] = useState(1);
