@@ -14,8 +14,6 @@ function App({ Component, pageProps }) {
   const adminRoles = ["administrator", "author", "editor"]
 
   useEffect(() => {
-    console.log("website down until payment")
-    makeItDown()
     if (!admin || !admin._id) router.push("/auth/login")
     else if (!adminRoles.includes(admin.role)) logOut()
   }, [])
@@ -24,13 +22,13 @@ function App({ Component, pageProps }) {
     router.events.on("routeChangeComplete", () => setProgress(100))
   }, [router.events])
 
-  return <main className='!hidden !opacity-0'>
+  return <>
     <LoadingBar color='linear-gradient(90deg, #FAE892 0%, #B3903E 70%)' height={4} waitingTime={0} loaderSpeed={200} shadow={true} progress={progress} onLoaderFinished={() => setProgress(0)} />
     <ToastContainer className="toast" />
     {router.pathname.includes("/auth") || router.pathname.includes("/40") ? <Component {...pageProps} /> :
       <SidebarLayout>
         <Component {...pageProps} />
       </SidebarLayout>}
-  </main>
+  </>
 }
 export default dynamic(() => Promise.resolve(App), { ssr: false })
