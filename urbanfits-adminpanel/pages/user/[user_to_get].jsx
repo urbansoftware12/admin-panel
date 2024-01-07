@@ -442,15 +442,18 @@ export default function UserProfile(props) {
     </>
 };
 export async function getServerSideProps(context) {
-    const { admin_id, user_to_get } = await context.query
-    if (!admin_id || !user_to_get || !mongoose.Types.ObjectId.isValid(admin_id) || !mongoose.Types.ObjectId.isValid(user_to_get)) return {
+    const { auth_token, user_to_get } = await context.query
+    if (!auth_token || !user_to_get || !mongoose.Types.ObjectId.isValid(user_to_get)) return {
         redirect: {
-            destination: '/404',
+            destination: '/403',
             permanent: false,
         },
     };
     try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/byid?user_to_get=${user_to_get}`, AuthHeader)
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/byid?user_to_get=${user_to_get}`, {headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${auth_token}`
+        }})
         return { props: { userData: data.user } }
     }
     catch (error) {

@@ -86,17 +86,18 @@ export default function CreateCoupon() {
             <h2 className="font_futura text-[22px]">Create Coupon</h2>
             <div className="flex items-center mt-4 font_futura text-sm gap-x-3">
                 <Link href="/">Home</Link> <i className="fa-solid fa-chevron-right" />
-                <span >Coupons</span> <i className="fa-solid fa-chevron-right" />
-                <Link href="/allproducts">Create Coupon</Link>
+                <Link href="/coupons">Coupons</Link> <i className="fa-solid fa-chevron-right" />
+                <span>Create Coupon</span>
             </div>
         </div>
 
         <form onSubmit={handleSubmit} onReset={() => { handleReset(); setAdvanceSettings(false) }}>
             <CardAdmin classes="p-10 mt-[30px]">
-                <div className="flex flex-col gap-[20px] ">
-                    <p className="text-[22px] font-[500] ">Add New Coupon</p>
+                <div className="flex flex-col gap-[20px]">
+                    <p className="text-[22px]">Add New Coupon</p>
                     <InputText name="name" value={values.name} onChange={handleChange} onBlur={handleBlur} error={errors.name && touched.name ? errors.name : null} h="h-[56px]" placeholder="Coupon Name" />
                     <InputText name="coupon_code" value={values.coupon_code} onChange={handleChange} onBlur={handleBlur} error={errors.coupon_code && touched.coupon_code ? errors.coupon_code : null} h="h-[56px]" placeholder="Coupon Code (Case Sensitive)" />
+                    <p className="text-xs text-red-600">WARNING: After coupon creation, the Coupon Code won't be shown again and will be hashed forever for security, please proceed by saving the Coupon Code in a save place.</p>
 
                     <InputTextArea
                         mt="mt-[0px]"

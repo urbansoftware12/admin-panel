@@ -12,6 +12,7 @@ import { userListTableColumns } from "@/mock/tablesdata";
 import { CSVLink } from "react-csv";
 import toaster from "@/utils/toast_function";
 import LinkBtn from "@/components/buttons/link_btn";
+import { authToken } from "@/utils/auth_header";
 
 const Userlist = () => {
     const { admin } = useSession()
@@ -165,11 +166,11 @@ const Userlist = () => {
                         status: user.is_active,
                         joined_at: user.createdAt,
                         handleInfo: () => { },
-                        infoLink: `/user/${user._id}?admin_id=${admin._id}`,
+                        infoLink: `/user/${user._id}?auth_token=${authToken}`,
                         actions: [
                             {
                                 name: "View Profile",
-                                link: `/user/${user._id}?admin_id=${admin._id}`,
+                                link: `/user/${user._id}?auth_token=${authToken}`,
                                 onClick: () => { }
                             },
                             {

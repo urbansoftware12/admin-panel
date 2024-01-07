@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Button from "@/components/buttons/simple_btn";
 import LinkBtn from "@/components/buttons/link_btn";
 import DeleteAction from "@/components/modals/deleteAction";
 import CardAdmin from "@/components/cards/cardadmin";
@@ -11,7 +12,7 @@ import { CSVLink } from "react-csv";
 import { couponsTableColumns } from "@/mock/tablesdata";
 
 export default function AllCoupons() {
-    const { getCoupons, couponLoading } = useCoupon()
+    const { getCoupons, couponLoading, deleteCoupon } = useCoupon()
     const [coupons, setCoupons] = useState([])
     const [query, setQuery] = useState('')
     const [actionsTip, setActionsTip] = useState(false)
@@ -26,18 +27,18 @@ export default function AllCoupons() {
         else return true
     });
 
-    const onClickDelete = () => {
-        if (!selectedCoupons.length) return
-        setDeleteModal(
-            <DeleteAction
-                show={true}
-                heading="Delete Coupons(s)"
-                msg={`This is an irreversible action, are you sure you want to delete ${selectedCoupons} selected coupons?`}
-                setDeleteModal={setDeleteModal}
-                onTakeAction={() => { }}
-            />
-        )
-    }
+    // const onClickDelete = () => {
+    //     if (!selectedCoupons.length) return
+    //     setDeleteModal(
+    //         <DeleteAction
+    //             show={true}
+    //             heading="Delete Coupons(s)"
+    //             msg={`This is an irreversible action, are you sure you want to delete ${selectedCoupons} selected coupons?`}
+    //             setDeleteModal={setDeleteModal}
+    //             onTakeAction={() => { }}
+    //         />
+    //     )
+    // }
 
     const CsvHeaders = [
         { label: 'Coupon ID', key: '_id' },
@@ -62,8 +63,7 @@ export default function AllCoupons() {
                 <h2 className="font_futura text-[22px]">Coupons List</h2>
                 <div className="flex items-center mt-4 font_futura text-sm gap-x-3">
                     <Link href="/">Home</Link> <i className="fa-solid fa-chevron-right" />
-                    <span >Coupons</span> <i className="fa-solid fa-chevron-right" />
-                    <span>Coupon List</span>
+                    <span>Coupons</span>
                 </div>
             </nav>
             <LinkBtn href="/coupons/create-coupon">Create Coupon</LinkBtn>
@@ -88,7 +88,7 @@ export default function AllCoupons() {
                 </div>
                 <span className={`${selectedCoupons.length ? "right-8" : "-right-full"} fixed z-40 bottom-10 px-20 py-3 rounded-full bg-black/40 backdrop-blur-[2px] flex items-center text-base text-white transition-all duration-700`}>Selected: {selectedCoupons?.length}</span>
                 <section className='flex gap-x-4'>
-                    <div className="relative z-40 h-10 p-px text-sm bg-gold-land flex justify-center items-center rounded-lg">
+                    {/* <div className="relative z-40 h-10 p-px text-sm bg-gold-land flex justify-center items-center rounded-lg">
                         <button onClick={() => setActionsTip(!actionsTip)} className="w-full h-full px-5 flex justify-center items-center text-xs bg-white rounded-[7px]">
                             Actions&nbsp;&nbsp;
                             <svg className={actionsTip && "rotate-180"} width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -96,14 +96,14 @@ export default function AllCoupons() {
                             </svg>
                         </button>
                         <span className={`${actionsTip ? null : "opacity-0"} absolute left-1/2 -translate-x-1/2 top-[120%] min-w-full group-hover:max-h-52 px-3 bg-white equillibrium_shadow rounded-lg transition-all duration-500 overflow-hidden`}>
-                            <button onClick={() => setActionsTip(!actionsTip)} className={`${!selectedCoupons.length && "pointer-events-none opacity-60"} w-full py-2 text-xs text-left border-b border-transparent hover:border-black whitespace-nowrap transition-all`}>
-                                <CSVLink className={!selectedCoupons.length && "pointer-events-none opacity-60"} data={CsvData} headers={CsvHeaders} filename="urbanfits-users_data.csv">
-                                    Export Selected in CSV
-                                </CSVLink>
-                            </button>
                             <button onClick={() => { onClickDelete(); setActionsTip(!actionsTip) }} className={`${!selectedCoupons.length && "pointer-events-none opacity-60"} w-full py-2 mb-1 hover:border-b hover:border-black text-xs text-left transition-all`}>Delete Coupons</button>
                         </span>
-                    </div>
+                    </div> */}
+                    <Button onClick={() => setActionsTip(!actionsTip)} disabled={!selectedCoupons.length}>
+                        <CSVLink className="text-xs" data={CsvData} headers={CsvHeaders} filename="urbanfits-users_data.csv">
+                            Export Selected in CSV
+                        </CSVLink>
+                    </Button>
                     <button title="Refresh Data" disabled={couponLoading} onClick={() => getCoupons((coupon_data) => setCoupons(coupon_data))} className={`fa-solid fa-arrows-rotate text-sm ${couponLoading ? "fa-spin" : null}`}></button>
                 </section>
             </div>
@@ -123,6 +123,7 @@ export default function AllCoupons() {
                 columns={couponsTableColumns}
                 progressPending={couponLoading}
                 progressComponent={<Spinner forBtn={true} variant="border-black" />}
+                noDataComponent={<p>No Coupons to display</p>}
                 highlightOnHover
                 selectableRows
                 onSelectedRowsChange={(state) => setSelectedCoupons(state.selectedRows)}
@@ -141,7 +142,7 @@ export default function AllCoupons() {
                                             heading="Delete Category(s)"
                                             msg={`This is an irreversible action. Are you sure you want to delete '${coupon.name}' coupon?`}
                                             setDeleteModal={setDeleteModal}
-                                            onTakeAction={() => { }}
+                                            onTakeAction={() => deleteCoupon(coupon._id)}
                                         />
                                     )
                                 }, name: "Delete"

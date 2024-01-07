@@ -65,7 +65,7 @@ export const inventeryManagementSchema = Yup.object({
 
 export const couponSchema = Yup.object({
     name: Yup.string().required("Coupon name is required."),
-    coupon_code: Yup.string().min(5, "Coupon code must be at least 5 characters").required("Coupon code is required"),
+    coupon_code: Yup.string().min(8, "Coupon code must be at least 8 characters").required("Coupon code is required"),
     description: Yup.string(),
     coupon_value: Yup.number().required("Please specify the coupon worth."),
     coupon_config: Yup.object().shape({
