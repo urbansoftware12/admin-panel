@@ -12,45 +12,35 @@ import { PagesIcon } from "@/public/sidebaricons/PagesIcon";
 import { PaymentIcon } from "@/public/sidebaricons/PaymentIcon";
 import { ProductIcon } from "@/public/sidebaricons/ProductIcon";
 import { ReviewsIcon } from "@/public/sidebaricons/ReviewsIcon";
-import { Vendoricon } from "@/public/sidebaricons/Vendoricon";
 import React from "react";
 
 export const sidebarItems = [
-
   {
-    id: 1,
     label: "Dashboard",
     icon: <Dashboardicon />,
     navlink: "/",
   },
   {
-    id: 2,
     label: "Products",
     icon: <ProductIcon />,
-    expanded: false,
     subrows: [
       {
         label: "All Products",
-
         navlink: "/products/allproducts",
       },
       {
         label: "Add New Product",
-
         navlink: "/products/addproduct",
       },
       {
         label: "Add Bundle",
-
         navlink: "/products/addbundle",
       }
     ],
   },
   {
-    id: 3,
     label: "Categories",
     icon: <CategoriesIcon />,
-    expanded: false,
     subrows: [
       {
         label: "All Categories",
@@ -63,26 +53,13 @@ export const sidebarItems = [
     ],
   },
   {
-    id: 4,
     label: "Orders",
     icon: <CartIcon />,
-    expanded: false,
-    subrows: [
-      {
-        label: "All Orders",
-        navlink: "/orders/neworder",
-      },
-      {
-        label: "orderhistory",
-        navlink: "/orders/orderhistory",
-      },
-    ],
+    navlink: "/orders",
   },
   {
-    id: 5,
     label: "Transactions",
     icon: <DollarIcon />,
-    expanded: false,
     subrows: [
       {
         label: "All Transactions",
@@ -99,10 +76,8 @@ export const sidebarItems = [
     ],
   },
   {
-    id: 6,
     label: "Users",
     icon: <ProductIcon />,
-    expanded: false,
     subrows: [
       {
         label: "All users",
@@ -131,16 +106,12 @@ export const sidebarItems = [
     ],
   },
   {
-    id: 7,
     label: "Vendors",
     icon: <ProductIcon />,
-    expanded: false,
   },
   {
-    id: 8,
     label: "Account",
     icon: <AccountIcon />,
-    expanded: false,
     subrows: [
       {
         label: "General Settings",
@@ -157,10 +128,8 @@ export const sidebarItems = [
     ],
   },
   {
-    id: 9,
     label: "Payment Methods",
     icon: <PaymentIcon />,
-    expanded: false,
     subrows: [
       {
         label: "All Payment Methods",
@@ -173,10 +142,8 @@ export const sidebarItems = [
     ],
   },
   {
-    id: 10,
     label: "Coupon",
     icon: <CouponIcon />,
-    expanded: false,
     subrows: [
       {
         label: "All Coupons",
@@ -189,10 +156,8 @@ export const sidebarItems = [
     ],
   },
   {
-    id: 11,
     label: "Shipping Settings",
     icon: <ProductIcon />,
-    expanded: false,
     subrows: [
       {
         label: "All Shipping Zone",
@@ -205,45 +170,34 @@ export const sidebarItems = [
     ],
   },
   {
-    id: 12,
     label: "Reviews",
     icon: <ReviewsIcon />,
     // navlink: "/",
-    expanded: false,
   },
   {
-    id: 13,
     label: "Brands",
     icon: <BrandIcon />,
     // navlink: "/",
-    expanded: false,
   },
   {
-    id: 14,
     label: "Authentication",
     icon: <ExitIcon />,
     // navlink: "/",
-    expanded: false,
 
   },
   {
-    id: 15,
     label: "Icons",
     icon: <DaimondIcon />,
     // navlink: "/",
-    expanded: false,
 
   },
   {
-    id: 16,
     label: "Other Pages",
     icon: <PagesIcon />,
     // navlink: "/",
-    expanded: false,
 
   },
   {
-    id: 17,
     label: "Profile (temp)",
     icon: <DaimondIcon />,
     subrows: [

@@ -206,7 +206,7 @@ export default function ProductInfoPage(props) {
             }
             const createdProduct = await createProduct(productToCreate)
             setLoader(<Loader status="Uploading Cover Image" progress={1 / totalSteps * 100} />)
-            const coverImage = await uploadImage(product.cover_image, createdProduct._id, `product-images/${createdProduct._id}`, 30)
+            const coverImage = await uploadImage(product.cover_image, `product-images/${createdProduct._id}/${createdProduct._id}`, 30)
             const finalVariants = []
             let variantIndex = 0
             let totalImgIteration = 0
@@ -218,7 +218,7 @@ export default function ProductInfoPage(props) {
                 let imgIndex = 0
                 for (const image of filteredVariantImages) {
                     setLoader(<Loader status={`Compressing & Uploading Images of Variant ${variantIndex + 1}: ${imgIndex + 1} of ${filteredVariantImages.length} uploaded`} progress={(totalImgIteration + 3) / totalSteps * 100} />)
-                    const imgUrl = await uploadImage(image, imgIndex, `product-images/${createdProduct._id}/${createdProduct.variants[variantIndex]._id}`, variant.compression_quality)
+                    const imgUrl = await uploadImage(image, `product-images/${createdProduct._id}/${createdProduct.variants[variantIndex]._id}/${imgIndex}`, variant.compression_quality)
                     newVariant.images.push(imgUrl)
                     imgIndex += 1
                     totalImgIteration += 1
@@ -318,7 +318,6 @@ export default function ProductInfoPage(props) {
                 </Link>
             </div>
         </section>
-        {/* <input type="file" onChange={(e)=>uploadImage(e.target.files[0], "compressed-img", "comp-images")} /> */}
         <CardAdmin classes="my-5" >
             <h2 className='mx-10 px-4 pt-8 pb-4 mb-3 border-b text-2xl' >Basic Information</h2>
             <form className='px-[50px]' onSubmit={handleSubmit} onReset={handleReset}>

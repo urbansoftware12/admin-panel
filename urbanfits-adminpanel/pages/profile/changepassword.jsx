@@ -15,22 +15,19 @@ export default function ChangePassword() {
     confirmnewpassword: "",
   }
 
-
   const { values, errors, handleBlur, handleChange, handleSubmit, touched } = useFormik({
     initialValues: initialValues,
     validationSchema: changePasswordSchema
   })
-
-
-
   return (
     <Profile>
       <CardAdmin classes="p-[40px]   ">
         <div className="grid grid-cols-2 gap-x-[40px] ">
           <div className=" flex flex-col gap-[19px]">
             <InputText
+              autoComplete="off"
               label="Old Password"
-              width="  w-[100%]"
+              width="w-[100%]"
               placeholder="Old Password"
               type="password"
               name="oldpassword"
@@ -42,11 +39,11 @@ export default function ChangePassword() {
               }
             />
             <InputText
+              autoComplete="off"
               label="New Password"
               width="  w-[100%]"
               placeholder="New Password"
               type="password"
-
               name="newpassword"
               value={values.newpassword}
               onChange={handleChange}
@@ -79,7 +76,7 @@ export default function ChangePassword() {
               width="  w-[100%]"
               placeholder="Confirm New Password"
               type="password"
-
+              autoComplete="off"
               name="confirmnewpassword"
               value={values.confirmnewpassword}
               onChange={handleChange}

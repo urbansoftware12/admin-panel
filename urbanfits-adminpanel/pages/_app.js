@@ -4,8 +4,11 @@ import SidebarLayout from '@/components/sidebar-layout';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import useSession from '@/hooks/useSession';
+import useNotification from '@/hooks/useNotification';
 import LoadingBar from 'react-top-loading-bar'
 import { ToastContainer } from 'react-toastify'
+import toaster from "@/utils/toast_function";
+import { pusherClient, presenceInstance, initBeamsClient } from "@/utils/pusher";
 
 function App({ Component, pageProps }) {
   const [progress, setProgress] = useState(0)
@@ -14,8 +17,23 @@ function App({ Component, pageProps }) {
   const adminRoles = ["administrator", "author", "editor"]
 
   useEffect(() => {
-    if (!admin || !admin._id) router.push("/auth/login")
+    if (!admin || !admin._id) router.replace("/auth/login")
     else if (!adminRoles.includes(admin.role)) logOut()
+
+    const adminChannel = pusherClient.subscribe('admin-channel')
+    adminChannel.bind('new-notification', (notific_data) => {
+      useNotification.setState({ adminNotifics: [notific_data, ...useNotification.getState().adminNotifics] })
+      toaster(notific_data.data?.type || "info", <span>{notific_data.data.msg}{notific_data.data?.href && <Link className="underline" href={notific_data.data.href}>&nbsp;Inspect</Link>}</span>, 'bottom-left')
+    })
+
+    const pusherPresenceInst = presenceInstance(admin)
+    const presenceChannel = pusherPresenceInst.subscribe('presence-urbanifts')
+    initBeamsClient()
+
+    return () => {
+      pusherClient.unsubscribe('admin-channel')
+      presenceChannel.unsubscribe('presence-urbanifts')
+    }
   }, [])
   useEffect(() => {
     router.events.on("routeChangeStart", () => setProgress(77))

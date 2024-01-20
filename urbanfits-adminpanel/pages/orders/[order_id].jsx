@@ -2,19 +2,18 @@ import React from "react";
 import CardAdmin from "@/components/cards/cardadmin";
 import Link from "next/link";
 import LinkBtn from "@/components/buttons/link_btn";
-import Button from "@/components/buttons/simple_btn";
 import { CartLIcon } from "@/public/sidebaricons/CartLIcon";
 import { ReplaceLIcon } from "@/public/icons/ReplaceLIcon";
 import { GiftLIcon } from "@/public/icons/GiftLIcon";
 import { TruckLIcon } from "@/public/icons/TruckLIcon";
 import { PassengerLIcon } from "@/public/icons/PassengerLIcon";
-import { DaimondIcon } from "@/public/sidebaricons/DaimondIcon";
-import { CartIcon } from "@/public/sidebaricons/CartIcon";
-import { TruckIcon } from "@/public/sidebaricons/TruckIcon";
 import DataTable from 'react-data-table-component';
-import { orderProductDetailTableColumns, orderProductDetailTableData } from "@/mock/tablesdata";
+import { orderProductDetailTableColumns } from "@/mock/tablesdata";
 import mongoose from 'mongoose';
 import axios from "axios";
+// import { DaimondIcon } from "@/public/sidebaricons/DaimondIcon";
+// import { CartIcon } from "@/public/sidebaricons/CartIcon";
+// import { TruckIcon } from "@/public/sidebaricons/TruckIcon";
 
 export default function OrderDetails({ order }) {
     const date = new Date(order.createdAt)

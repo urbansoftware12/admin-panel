@@ -7,14 +7,11 @@ import useSession from "@/hooks/useSession";
 import CustomTab from "@/components/CustomTabs/CustomTab";
 import uploadImage from '@/utils/uploadImage'
 import Spinner from '@/components/loaders/spinner'
-
 import { profileTabData } from "@/mock/customtabData";
-import { Button2 } from "@/components/buttons/Button2";
 import { Badge1 } from "@/components/buttons/badges/Badge1";
 import CardAdmin from "@/components/cards/cardadmin";
 import Loader from "@/components/loaders/loader";
 const TwoFa = dynamic(() => import('@/components/modals/twoFa'));
-const ProfilePic = "https://urban-fits.s3.eu-north-1.amazonaws.com/website-copyrights/default-pfp.jpg";
 
 
 export default function Profile({ children }) {
@@ -22,7 +19,7 @@ export default function Profile({ children }) {
     const [mfaModa, setMfaModa] = useState(false)
     const [loading, setLoading] = useState(false)
     const [imgSpinner, setImgSpinner] = useState(null);
-    const [pfp, setPfp] = useState(admin.image && admin.image !== '' ? admin.image : ProfilePic);
+    const [pfp, setPfp] = useState(admin?.image ? admin.image : process.env.NEXT_PUBLIC_DEFAULT_PFP);
 
     const toggle2FA = async () => {
         setLoading(true)
@@ -35,7 +32,7 @@ export default function Profile({ children }) {
     const onFileChange = async (e) => {
         const file = e.target.files[0]
         setImgSpinner(<Spinner />)
-        const imgUrl = await uploadImage(file, admin._id, 'user-profiles/')
+        const imgUrl = await uploadImage(file, `user-profiles/${admin._id}`)
         setPfp(imgUrl)
         await updateAdmin({ image: imgUrl })
         setImgSpinner(null)
@@ -47,7 +44,7 @@ export default function Profile({ children }) {
         <div className={` mt-[40px] flex items-center font_futura `}>
             <div className="w-36 h-36 rounded-2xl p-1 bg-gold border border-white flex justify-center items-center overflow-hidden">
                 {imgSpinner}
-                <Image width={150} height={150} className="w-full h-full rounded-xl object-cover" alt="avatar" src={pfp} />
+                <Image width={150} height={150} className="w-full h-full rounded-xl object-cover" alt="avatar" src={process.env.NEXT_PUBLIC_BASE_IMG_URL + pfp + "?timestamp=123"} />
             </div>
             <div className="ml-[30px]">
                 <p className=" text-[22px] mb-0">{admin?.firstname}&nbsp;{admin?.lastname}</p>
@@ -55,9 +52,9 @@ export default function Profile({ children }) {
                 <div className="flex items-center mt-4 ">
                     <label htmlFor="pfp" className="px-5 py-2 rounded-full bg-gold-land cursor-pointer text-white">Change Avatar</label>
                     <input onChange={onFileChange} type="file" id='pfp' name='pfp' accept="image/*" className="opacity-0 appearance-none w-0 h-0 pointer-events-none " />
-                    <span className="ml-[20px]">
+                    {/* <span className="ml-[20px]">
                         <BasketIcon />
-                    </span>
+                    </span> */}
                 </div>
 
                 <p className="text-[14px] mt-[10px] ">

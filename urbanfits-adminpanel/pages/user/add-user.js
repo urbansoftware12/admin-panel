@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import CardAdmin from "@/components/cards/cardadmin";
 import Image from "next/image";
 import Button from "@/components/buttons/simple_btn";
@@ -80,7 +80,7 @@ export default function AddUser() {
                 otp
             })
             if (values.image) {
-                const imgUrl = await uploadImage(values.image, data.user_id, 'user-profiles/')
+                const imgUrl = await uploadImage(values.image, `user-profiles/${data.user_id}`)
                 await updateUser(data.user_id, { image: imgUrl })
             }
             toaster("success", "User created successfully.")

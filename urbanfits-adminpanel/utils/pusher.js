@@ -1,5 +1,6 @@
 import PusherServer from 'pusher'
 import PusherClient from 'pusher-js'
+import * as PusherPushNotifications from "@pusher/push-notifications-web";
 
 const pusherServer = new PusherServer({
     appId: process.env.NEXT_PUBLIC_PUSHER_APP_ID,
@@ -16,7 +17,7 @@ const pusherClient = new PusherClient(process.env.NEXT_PUBLIC_PUSHER_KEY, {
 const presenceInstance = (user) => {
     const instance = new PusherClient(process.env.NEXT_PUBLIC_PUSHER_KEY, {
         cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
-        authEndpoint: `${process.env.NEXT_PUBLIC_HOST}/api/pusher/auth`,
+        authEndpoint: `${process.env.NEXT_PUBLIC_HOST}/api/pusher/auth/channel`,
         auth: {
             params: {
                 user_id: user?._id,
@@ -27,4 +28,16 @@ const presenceInstance = (user) => {
     return instance
 }
 
-export { pusherServer, pusherClient, presenceInstance }
+// For beams push notifications
+const initBeamsClient = async () => {
+    const beamsClient = new PusherPushNotifications.Client({
+        instanceId: process.env.NEXT_PUBLIC_PUSHER_INSTANCE_ID,
+    });
+
+    beamsClient.start()
+        .then(() => beamsClient.addDeviceInterest('@_urbanfits_admin_notifications'))
+        .then(() => console.log('Admin subscribed with admin beams successfully!'))
+        .catch(console.error);
+}
+
+export { pusherServer, pusherClient, presenceInstance, initBeamsClient }

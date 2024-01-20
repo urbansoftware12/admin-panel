@@ -107,7 +107,7 @@ export const ordersTableColumns = [
     name: "Item(s)",
     cell: (row) => <div className="flex items-center gap-x-2">
       <span className={`${row.image?.endsWith("_metal_bg") && row.image} w-10 aspect-square rounded-lg overflow-hidden`}>
-        {!row.image?.endsWith("_metal_bg") && <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={row.image} />}
+        {!row.image?.endsWith("_metal_bg") && <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={process.env.NEXT_PUBLIC_BASE_IMG_URL + row.image} />}
       </span>
       {row.name}
     </div>,
@@ -336,7 +336,7 @@ export const orderProductDetailTableColumns = [
     selector: row => row.image,
     name: "Image",
     cell: (row) => <span className='w-10 aspect-square rounded-lg overflow-hidden'>
-      <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={row.image} />
+      <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={process.env.NEXT_PUBLIC_BASE_IMG_URL + row.image} />
     </span>,
     width: '10%',
   },

@@ -4,21 +4,16 @@ import Link from "next/link";
 import Logout from "./modals/logout";
 import CardAdmin from "@/components/cards/cardadmin";
 import useSession from "@/hooks/useSession";
-import toaster from "@/utils/toast_function";
 import { useRouter } from "next/router";
 import logo_outlined from "@/public/icons/logo_outlined.svg";
 import { sidebarItems, SearchQueryData } from "@/mock/navData";
 import { RightArrowIcon } from "@/public/sidebaricons/RightArrowIcon";
 import { DownArowSmallIcon } from "@/public/sidebaricons/DownArowSmallIcon";
-import { SettingIcon } from "@/public/sidebaricons/SettingIcon";
-import { BellIcon } from "@/public/sidebaricons/BellIcon";
+import NotificationTab from "./notification_tab";
 import { SearchIcon } from "@/public/sidebaricons/SearchIcon";
 import { LocationIcon } from "@/public/sidebaricons/LocationIcon";
 import { CallIcon } from "@/public/sidebaricons/CallIcon";
-import AvatarIconV from "@/public/icons/AvatarIconV";
-import { ClockIcon } from "@/public/icons/ClockIcon";
-import { Button2 } from "@/components/buttons/Button2";
-import { pusherClient, presenceInstance } from "@/utils/pusher";
+import { SettingIcon } from "@/public/sidebaricons/SettingIcon";
 
 const SideBarItem = ({ item, sidebaropen }, props) => {
     const [expand, setExpand] = useState(false)
@@ -47,54 +42,7 @@ const SideBarItem = ({ item, sidebaropen }, props) => {
 export default function SidebarLayout({ children }) {
     const { admin } = useSession()
     const router = useRouter()
-    const [showmenue, setshowMenue] = useState(false);
-    const [shownotification, setShownotification] = useState(false);
-    const [arrowmenue, setArrowmenu] = useState(false);
     const [logoutModal, setLogoutModal] = useState(false);
-
-    useEffect(() => {
-        const adminChannel = pusherClient.subscribe('admin-channel')
-        adminChannel.bind('new-order-received', (data) => {
-            toaster("info", <span>{data.msg}<Link className="underline" href='#'>&nbsp;view orders</Link></span>, 'bottom-left')
-        })
-        adminChannel.bind('new-signup', (data) => {
-            toaster("info", <span>{data.msg}<Link className="underline" href={`/user/${data.user_id}?admin_id=${admin._id}` || "#"}>&nbsp;view profile</Link></span>, 'bottom-left')
-        })
-        adminChannel.bind('login', (data) => {
-            toaster("info", <span>{data.msg}<Link className="underline" href={`/user/${data.user_id}?admin_id=${admin._id}` || "#"}>&nbsp;view profile</Link></span>, 'bottom-left')
-        })
-
-        const pusherPresenceInst = presenceInstance(admin)
-        const presenceChannel = pusherPresenceInst.subscribe('presence-urbanifts')
-
-        return () => {
-            pusherClient.unsubscribe('admin-channel')
-            presenceChannel.unsubscribe('presence-urbanifts')
-        }
-    }, [])
-
-    const handlemenuclick = (menu) => {
-        if (menu == "avatar") {
-            setshowMenue(!showmenue);
-            setArrowmenu(false);
-            setShownotification(false);
-        }
-        else if (menu == "arrow") {
-            setArrowmenu(!arrowmenue);
-            setshowMenue(false);
-            setShownotification(false);
-        }
-        else {
-            setShownotification(!shownotification);
-            setArrowmenu(false);
-            setshowMenue(false);
-        }
-
-    }
-    const [notchecked, setNotchecked] = useState(1);
-    const handlenotmenuclick = (id) => {
-        setNotchecked(id);
-    };
 
     const [sidebaropen, setSidebaropen] = React.useState(true);
     const [query, setQuery] = useState('')
@@ -159,6 +107,7 @@ export default function SidebarLayout({ children }) {
                         <input
                             autoComplete="off"
                             type="text"
+                            name="search_box"
                             id="search"
                             value={query}
                             onChange={onSearch}
@@ -170,128 +119,31 @@ export default function SidebarLayout({ children }) {
                 </div>
 
                 <div className='flex items-center'>
-                    <span onClick={() => handlemenuclick("avatar")} className="w-10 border border-gray-400 aspect-square rounded-full overflow-hidden cursor-pointer" >
-                        <Image src={process.env.NEXT_PUBLIC_BASE_IMG_URL + admin.image + "?timestamp=123"} className="w-full h-full object-cover" alt="user avatar" width={80} height={80} />
-                    </span>
-                    <div className={`duration-200 ${showmenue ? "visible" : "hidden"} absolute top-[89px] right-[154px] `} >
-                        <CardAdmin classes="w-[150px] p-5" round="rounded-[15px]" >
-                            <div className="flex flex-col gap-3 text-sm" >
-                                <Link href="/profile/myprofile" className="group w-full flex flex-col" >My Profile<i className='h-0.5 w-0 group-hover:w-full bg-gold-land transition-all' /></Link>
-                                <Link href="/profile/authentication" className="group w-full flex flex-col">Settings<i className='h-0.5 w-0 group-hover:w-full bg-gold-land transition-all' /></Link>
-                                <button onClick={() => setLogoutModal(true)} className="group flex flex-col text-left">Log out<i className='h-0.5 w-0 group-hover:w-full bg-gold-land transition-all' /></button>
-                            </div>
-                        </CardAdmin>
-                    </div>
 
-                    <span onClick={() => handlemenuclick("arrow")} className={` cursor-pointer ml-[15px] `}>
+                    <div className="group relative px-2 py-1 border border-gray-300 rounded-full flex items-center cursor-pointer" tabIndex={3}>
+                        <span className="inline-block w-9 aspect-square mr-3 border border-gray-400 rounded-full overflow-hidden">
+                            <Image src={process.env.NEXT_PUBLIC_BASE_IMG_URL + admin.image + "?timestamp=123"} className="w-full h-full object-cover" alt="user avatar" width={80} height={80} />
+                        </span>
                         <DownArowSmallIcon />
-                    </span>
-                    <div className={` duration-200 ${arrowmenue ? "visible" : "hidden"}   absolute top-[89px] right-[35px] `} >
-                        <CardAdmin classes=" w-[150px] p-[20px] " round="rounded-[15px]" >
-                            <div className="flex flex-col gap-y-3 text-xs" >
-                                <Link href='/admin' className="group w-full flex flex-col">My Account<i className='h-0.5 w-0 group-hover:w-full bg-gold-land transition-all' /></Link>
-                                <Link href='/profile/securitysettings' className="group w-full flex flex-col">Security<i className='h-0.5 w-0 group-hover:w-full bg-gold-land transition-all' /></Link>
-                                <Link href='/profile/authentication' className="group w-full flex flex-col">2FA Authentication<i className='h-0.5 w-0 group-hover:w-full bg-gold-land transition-all' /></Link>
+                        <CardAdmin classes="w-[150px] p-5 origin-top scale-0 group-focus-within:scale-100 duration-300 absolute -bottom-1 translate-y-full translate-x-[-30%]" round="rounded-[15px]" >
+                            <div className="flex flex-col gap-3 text-sm" >
+                                <Link href="/profile/myprofile">My Profile</Link>
+                                <Link href="/profile/authentication">Settings</Link>
+                                <button onClick={() => setLogoutModal(true)} className="text-left">Log out</button>
                             </div>
                         </CardAdmin>
                     </div>
-
-                    <span onClick={() => handlemenuclick("bell")} className={` cursor-pointer ml-[20px] `}>
-                        <BellIcon />
-                    </span>
-                    <div className={` z-[999] duration-200 ${shownotification ? "visible" : "hidden"}   absolute top-[89px] right-[92px] `} >
-                        <CardAdmin classes=" w-[320px] p-[20px] z-50 " round="rounded-[15px]" >
-                            <div  >
-                                <p className=" text-[14px] font-[500] " > Notification </p>
-                                <div>
-                                    <div className="flex gap-[50px]  text-[16px] mt-[15px] ">
-                                        <p
-                                            className={`${notchecked == 1
-                                                ? "  border-b-2 gradient_txt_2 border-b-[#ccb849] "
-                                                : null
-                                                }  text-[11px] font-[500] uppercase z-50  pb-[10px] cursor-pointer `}
-                                            onClick={() => handlenotmenuclick(1)}
-                                        >
-                                            Activities
-                                        </p>
-                                        <p
-                                            className={`${notchecked == 2
-                                                ? " border-b-2 gradient_txt_2 border-b-[#ccb849]"
-                                                : "font-[300] "
-                                                } text-[11px] font-[500] uppercase z-50 px-[16px] pb-[10px] cursor-pointer`}
-                                            onClick={() => handlenotmenuclick(2)}
-                                        >
-                                            Notes
-                                        </p>
-                                        <p
-                                            className={`${notchecked == 3
-                                                ? " border-b-2 gradient_txt_2 border-b-[#ccb849]"
-                                                : "font-[300] "
-                                                } text-[11px] font-[500] uppercase  px-[16px] pb-[10px] cursor-pointer`}
-                                            onClick={() => handlenotmenuclick(3)}
-                                        >
-                                            Alerts
-                                        </p>
-                                    </div>
-                                    <hr className=" border-none h-[1px] bg-[#CCCCCC] translate-y-[-1px]  " />
-                                </div>
-                                {notchecked == 1 &&
-                                    <>
-                                        {[...Array(5)].map((i) => (
-                                            <div key={i} className="flex items-center gap-[15px] my-[9px] " >
-                                                <div className="bg-[#B9BBC1] w-[25px] h-[25px] flex items-center justify-center rounded-[50px] " >
-                                                    <AvatarIconV fill="white" stroke="white" w="8" h="10" />
-                                                </div>
-                                                <div  >
-                                                    <p className=" text-[12px] font-[500] " >You Joined a Group</p>
-                                                    <p className=" text-[10px] font-[300] flex gap-[5px] items-center "> <ClockIcon w="8" h="8" /> <p>Today</p></p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </>
-                                }
-                                {notchecked == 2 &&
-                                    <>
-                                        {[...Array(5)].map((i) => (
-                                            <div key={i} className="flex items-center gap-[15px] my-[9px] " >
-                                                <div className="bg-[#B9BBC1] w-[25px] h-[25px] flex items-center justify-center rounded-[50px] " >
-                                                    <AvatarIconV fill="white" stroke="white" w="8" h="10" />
-                                                </div>
-                                                <div>
-                                                    <p className=" text-[12px] font-[500] " >You Joined a Group</p>
-                                                    <p className=" text-[10px] font-[300] flex gap-[5px] items-center "> <ClockIcon w="8" h="8" /> <p>Today</p></p>
-                                                </div>
-                                            </div>
-
-                                        ))}
-
-                                    </>
-                                }
-                                {notchecked == 3 &&
-                                    <>
-                                        {[...Array(5)].map((i) => (
-                                            <div key={i} className="flex items-center gap-[15px] my-[9px] " >
-                                                <div className="bg-[#B9BBC1] w-[25px] h-[25px] flex items-center justify-center rounded-[50px] " >
-                                                    <AvatarIconV fill="white" stroke="white" w="8" h="10" />
-                                                </div>
-                                                <div  >
-                                                    <p className=" text-[12px] font-[500] " >You Joined a Group</p>
-                                                    <p className=" text-[10px] font-[300] flex gap-[5px] items-center "> <ClockIcon w="8" h="8" /> <p>Today</p></p>
-                                                </div>
-                                            </div>
-
-                                        ))}
-
-                                    </>
-                                }
-
-                                <div className="flex gap-[20px] mt-[20px] " >
-                                    <Button2 width="w-[130px]" > Mark All Read </Button2>
-                                    <Button2 width="w-[130px]" > Delete All </Button2>
-                                </div>
+                    <NotificationTab />
+                    <button className="group relative">
+                        <SettingIcon />
+                        <CardAdmin classes="absolute w-[150px] p-[20px] origin-top-right scale-0 group-focus-within:scale-100 duration-300 absolute -bottom-2 right-1 translate-y-full" round="rounded-[15px]" >
+                            <div className="flex flex-col items-start gap-y-3 text-xs" >
+                                <Link href='/admin'>My Account</Link>
+                                <Link href='/profile/securitysettings'>Security</Link>
+                                <Link href='/profile/authentication'>2FA Authentication</Link>
                             </div>
                         </CardAdmin>
-                    </div>
+                    </button>
                 </div>
             </div>
             <hr className={`mt-[20px]`} />

@@ -14,7 +14,6 @@ import countryCodes from "@/mock/countryCodes";
 import { useFormik } from 'formik';
 import * as Yup from 'yup'
 import { useRouter } from "next/router";
-import useSession from "@/hooks/useSession";
 import useUser from "@/hooks/useUser";
 import timeAgo from "@/utils/timestamp_duration";
 import uploadImage from "@/utils/uploadImage";
@@ -34,7 +33,7 @@ export default function UserProfile(props) {
     const [loading, setLoading] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [notificLoading, setNotificLoading] = useState(false);
-    const userPfp = userData?.image?.includes("googleuser")? userData.image: process.env.NEXT_PUBLIC_BASE_IMG_URL + userData.image
+    const userPfp = userData?.image?.includes("googleuser") ? userData.image : process.env.NEXT_PUBLIC_BASE_IMG_URL + userData.image
 
     const handlemenueclick = (id) => setChecked(id);
 
@@ -83,7 +82,7 @@ export default function UserProfile(props) {
             let imgUrl = null;
             if (values.image && values.image.name) {
                 console.log(values.image)
-                imgUrl = await uploadImage(values.image, userData._id, 'user-profiles')
+                imgUrl = await uploadImage(values.image, `user-profiles${userData._id}`)
             } else delete values.image
             const newUserData = await updateUser(userData._id, { ...values, ...(imgUrl && { image: imgUrl }) })
             setUserData(newUserData)
@@ -450,10 +449,12 @@ export async function getServerSideProps(context) {
         },
     };
     try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/byid?user_to_get=${user_to_get}`, {headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${auth_token}`
-        }})
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/byid?user_to_get=${user_to_get}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${auth_token}`
+            }
+        })
         return { props: { userData: data.user } }
     }
     catch (error) {
