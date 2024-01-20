@@ -1,7 +1,7 @@
 import React from "react";
-import Profile from "../profile";
+// import Profile from "../profile";
 import CardAdmin from "@/components/cards/cardadmin";
-import { QuestionIcon } from "@/public/icons/QuestionIcon";
+import QuestionIcon from "@/public/icons/QuestionIcon";
 import { RightArrowIcon } from "@/public/sidebaricons/RightArrowIcon";
 import { InputText } from "@/components/InputText";
 import { InputSelect } from "@/components/InputSelect";
