@@ -12,10 +12,9 @@ import { userListTableColumns } from "@/mock/tablesdata";
 import { CSVLink } from "react-csv";
 import toaster from "@/utils/toast_function";
 import LinkBtn from "@/components/buttons/link_btn";
-import { authToken } from "@/utils/auth_header";
 
 const Userlist = () => {
-    const { admin } = useSession()
+    const { authToken } = useSession()
     const { users, getUsers, selectedUsers, setSelectedUsers, totalUsers, totalOnline, deleteUsers, usersLoading } = useUser()
     const [query, setQuery] = useState('')
     const [selectable, setSelectable] = useState(false)

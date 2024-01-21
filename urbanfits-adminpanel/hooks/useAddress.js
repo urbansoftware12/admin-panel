@@ -2,7 +2,8 @@ import { useState } from "react";
 import jwt from 'jsonwebtoken'
 import axios from "axios";
 import toaster from "@/utils/toast_function";
-import { admin } from '@/utils/auth_header';
+import useSession from "./useSession";
+const { admin } = useSession.getState()
 
 export default function useAddress() {
 

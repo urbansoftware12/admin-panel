@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { BellIcon } from "@/public/sidebaricons/BellIcon";
+import useSession from '@/hooks/useSession';
 import useNotification from '@/hooks/useNotification';
-import { authToken } from '@/utils/auth_header';
 import BounceLoader from './loaders/bounceLoader';
 
 const NotificationItem = (props) => {
+    const { authToken } = useSession()
     const { _id, category, seen, seen_by, data } = props.notification;
     const [description, setDescription] = useState(false)
     const statusColors = {
@@ -31,12 +32,12 @@ const NotificationItem = (props) => {
 export default function NotificationTab() {
     const { adminNotifics, getAdminNotifics, markRead, adminNotificLoading } = useNotification()
     const [tab, setTab] = useState(1)
+    const unseenNotifics = adminNotifics.find(notific => !notific.seen)
 
     useEffect(() => {
-        if (!adminNotifics.length) getAdminNotifics()
+        getAdminNotifics()
     }, [])
 
-    const unseenNotifics = adminNotifics.find(notific => !notific.seen)
 
     return <button className="group relative ml-5" tabIndex={1}>
         {unseenNotifics && <i className='absolute -top-1 right-2.5 w-2.5 aspect-square bg-gold-land rounded-2xl' />}

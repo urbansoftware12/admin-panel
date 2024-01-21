@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import toaster from "@/utils/toast_function";
 import axios from 'axios';
-import AuthHeader, { admin } from '@/utils/auth_header';
+import useSession from "./useSession";
+const { admin, authHeader } = useSession.getState()
 
 const useUser = create((set, get) => ({
     users: [],
@@ -13,10 +14,9 @@ const useUser = create((set, get) => ({
 
     getUsers: async (page = 1) => {
         if (!admin) return
-        console.log(AuthHeader)
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/many?page=${page}`, AuthHeader)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/many?page=${page}`, authHeader)
             set(() => ({
                 users: data.users,
                 totalUsers: data.totalUsers,
@@ -33,7 +33,7 @@ const useUser = create((set, get) => ({
         if (!admin) return
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/online-users`, AuthHeader)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/online-users`, authHeader)
             set(() => ({ totalOnline: data.online_users }))
         } catch (error) { console.log(error) }
         set(() => ({ usersLoading: false }))
@@ -75,7 +75,7 @@ const useUser = create((set, get) => ({
         if (!admin) return
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/update/via-admin?user_id=${user_id}`, valuesObj, AuthHeader)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/update/via-admin?user_id=${user_id}`, valuesObj, authHeader)
             toaster("success", data.msg)
             set(() => ({ usersLoading: false }))
             return data.user
@@ -90,7 +90,7 @@ const useUser = create((set, get) => ({
         if (!admin) return
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/2fa/reset-user-2fa?user_id=${user_id}`, AuthHeader)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/2fa/reset-user-2fa?user_id=${user_id}`, authHeader)
             toaster("success", data.msg)
             set(() => ({ usersLoading: false }))
             return data.user
@@ -106,7 +106,7 @@ const useUser = create((set, get) => ({
 
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/delete/via-admin`, { users: usersToDelete }, AuthHeader)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/delete/via-admin`, { users: usersToDelete }, authHeader)
             toaster("success", data.msg)
         } catch (error) {
             console.log(error)

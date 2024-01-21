@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import toaster from "@/utils/toast_function";
 import axios from "axios";
-import AuthHeader, { admin } from '@/utils/auth_header';
+import useSession from "./useSession";
 
 const useNotification = create((set, get) => ({
 
@@ -9,10 +9,10 @@ const useNotification = create((set, get) => ({
     adminNotificLoading: false,
 
     getAdminNotifics: async () => {
-        if (!admin) return
+        const { authHeader } = useSession.getState()
         set(() => ({ adminNotificLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/admin/notifications/get`, AuthHeader)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/admin/notifications/get`, authHeader)
             set(() => ({ adminNotifics: data.notifications }))
         } catch (error) {
             console.log(error)
@@ -22,6 +22,7 @@ const useNotification = create((set, get) => ({
     },
 
     markRead: async (notifications) => {
+        const { admin, authHeader } = useSession.getState()
         if (!admin) return
         try {
             let updatedNotifics = structuredClone(get().adminNotifics);
@@ -33,10 +34,9 @@ const useNotification = create((set, get) => ({
                     name: admin.username
                 };
             }
-            console.log("here is the udpated notifications array: ", updatedNotifics)
             set(() => ({ adminNotifics: updatedNotifics }))
 
-            await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/admin/notifications/mark-read`, { notifications }, AuthHeader)
+            await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/admin/notifications/mark-read`, { notifications }, authHeader)
         } catch (error) {
             console.log(error)
             if (error.response) toaster("error", error.response.data.msg)

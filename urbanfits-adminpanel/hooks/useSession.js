@@ -7,6 +7,12 @@ import jwt from 'jsonwebtoken';
 const useSession = create(persist((set, get) => ({
     admin: null,
     authToken: null,
+    authHeader: {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer null`
+        }
+    },
     country: { name: "United Arab Emirates", code: "+971", country: "ae", src: "https://urban-fits.s3.eu-north-1.amazonaws.com/country-flags/AE.jpg" },
     geo_selected_by_user: false,
     setGeoSelectedByUser: (bool) => set(() => ({ geo_selected_by_user: bool })),
@@ -16,8 +22,15 @@ const useSession = create(persist((set, get) => ({
         if (updateLocally) {
             try {
                 const userData = jwt.decode(valuesObj)?._doc
-                // const userData = jwt.verify(valuesObj, process.env.NEXT_PUBLIC_SECRET_KEY)
-                set(() => ({ authToken: valuesObj }))
+                set(() => ({
+                    authToken: valuesObj,
+                    authHeader: {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': "Bearer " + valuesObj
+                        }
+                    }
+                }))
                 delete userData.password
                 if (userData.role !== "administrator") return toaster("error", "403 Forbidden. Only administrator allowed.")
                 else set(() => ({ admin: userData }))

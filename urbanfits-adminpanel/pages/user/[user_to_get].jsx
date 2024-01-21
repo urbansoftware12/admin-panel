@@ -14,6 +14,7 @@ import countryCodes from "@/mock/countryCodes";
 import { useFormik } from 'formik';
 import * as Yup from 'yup'
 import { useRouter } from "next/router";
+import useSession from "@/hooks/useSession";
 import useUser from "@/hooks/useUser";
 import timeAgo from "@/utils/timestamp_duration";
 import uploadImage from "@/utils/uploadImage";
@@ -22,11 +23,11 @@ import axios from "axios";
 import mongoose from "mongoose";
 import Link from "next/link";
 import toaster from "@/utils/toast_function";
-import AuthHeader from "@/utils/auth_header";
 
 export default function UserProfile(props) {
     const { updateUser, getUserNotifications, getUserUfBalance, addPointsToUserWallet, resetUser2fa, usersLoading, deleteUsers } = useUser()
     const router = useRouter()
+    const { authHeader } = useSession()
     const [userData, setUserData] = useState(props.userData);
     const [userNotifics, setUserNotifics] = useState([]);
     const [checked, setChecked] = useState(1);
@@ -108,7 +109,7 @@ export default function UserProfile(props) {
                 const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/update/password-via-admin`, {
                     ...values,
                     user_id: userData._id
-                }, AuthHeader)
+                }, authHeader)
                 toaster("success", data.msg)
                 passHandleReset()
             } catch (error) {

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import Logout from "./modals/logout";
 import CardAdmin from "@/components/cards/cardadmin";
 import useSession from "@/hooks/useSession";
@@ -10,6 +11,7 @@ import { sidebarItems, SearchQueryData } from "@/mock/navData";
 import { RightArrowIcon } from "@/public/sidebaricons/RightArrowIcon";
 import { DownArowSmallIcon } from "@/public/sidebaricons/DownArowSmallIcon";
 import NotificationTab from "./notification_tab";
+// const NotificationTab = dynamic(() => import('./notification_tab'), { loading: () => "--" })
 import { SearchIcon } from "@/public/sidebaricons/SearchIcon";
 import { LocationIcon } from "@/public/sidebaricons/LocationIcon";
 import { CallIcon } from "@/public/sidebaricons/CallIcon";
@@ -43,10 +45,10 @@ export default function SidebarLayout({ children }) {
     const { admin } = useSession()
     const router = useRouter()
     const [logoutModal, setLogoutModal] = useState(false);
-
     const [sidebaropen, setSidebaropen] = React.useState(true);
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
+    
     const onSearch = (e) => {
         const term = e.target.value.toLowerCase()
         setQuery(term)

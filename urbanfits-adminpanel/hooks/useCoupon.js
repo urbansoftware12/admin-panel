@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import toaster from "@/utils/toast_function";
 import axios from "axios";
-import AuthHeader, { admin } from '@/utils/auth_header';
+import useSession from "./useSession";
+const { admin, authHeader } = useSession.getState()
 
 const useCoupon = create((set, get) => ({
 
@@ -13,7 +14,7 @@ const useCoupon = create((set, get) => ({
         if (!admin) return
         set(() => ({ couponLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/coupon/get/many`, AuthHeader)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/coupon/get/many`, authHeader)
             callback(data.coupons)
             set(() => ({ couponLoading: false }))
             return data.coupons
@@ -43,7 +44,7 @@ const useCoupon = create((set, get) => ({
 
         set(() => ({ couponLoading: true }))
         try {
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/coupon/create`, couponToCreate, AuthHeader)
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/coupon/create`, couponToCreate, authHeader)
             if (callback) callback(data)
             toaster("success", data.msg)
             set(() => ({ couponLoading: false }))
@@ -58,7 +59,7 @@ const useCoupon = create((set, get) => ({
     deleteCoupon: async (coupon_id, callback) => {
         set(() => ({ couponLoading: true }))
         try {
-            const { data } = await axios.delete(`${process.env.NEXT_PUBLIC_HOST}/api/coupon/delete?coupon_id=${coupon_id}`, AuthHeader)
+            const { data } = await axios.delete(`${process.env.NEXT_PUBLIC_HOST}/api/coupon/delete?coupon_id=${coupon_id}`, authHeader)
             set(() => ({ couponLoading: false }))
             toaster("success", data.msg)
             get().getCoupons()

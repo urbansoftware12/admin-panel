@@ -17,24 +17,22 @@ function App({ Component, pageProps }) {
   const adminRoles = ["administrator", "author", "editor"]
 
   useEffect(() => {
-    if (!admin || !admin._id) router.replace("/auth/login")
-    else if (!adminRoles.includes(admin.role)) logOut()
+    (async () => {
+      if (!admin || !admin._id) return router.replace("/auth/login")
+      else if (!adminRoles.includes(admin.role)) return logOut()
 
-    const adminChannel = pusherClient.subscribe('admin-channel')
-    adminChannel.bind('new-notification', (notific_data) => {
-      useNotification.setState({ adminNotifics: [notific_data, ...useNotification.getState().adminNotifics] })
-      toaster(notific_data.data?.type || "info", <span>{notific_data.data.msg}{notific_data.data?.href && <Link className="underline" href={notific_data.data.href}>&nbsp;Inspect</Link>}</span>, 'bottom-left')
-    })
+      const adminChannel = pusherClient.subscribe('admin-channel')
+      adminChannel.bind('new-notification', (notific_data) => {
+        useNotification.setState({ adminNotifics: [notific_data, ...useNotification.getState().adminNotifics] })
+        toaster(notific_data.data?.type || "info", <span>{notific_data.data.msg}{notific_data.data?.href && <Link className="underline" href={notific_data.data.href}>&nbsp;Inspect</Link>}</span>, 'bottom-left')
+      })
 
-    const pusherPresenceInst = presenceInstance(admin)
-    const presenceChannel = pusherPresenceInst.subscribe('presence-urbanifts')
-    initBeamsClient()
+      const pusherPresenceInst = presenceInstance(admin)
+      pusherPresenceInst.subscribe('presence-urbanfits')
+      initBeamsClient()
 
-    return () => {
-      pusherClient.unsubscribe('admin-channel')
-      presenceChannel.unsubscribe('presence-urbanifts')
-    }
-  }, [])
+    })()
+  }, [admin])
   useEffect(() => {
     router.events.on("routeChangeStart", () => setProgress(77))
     router.events.on("routeChangeComplete", () => setProgress(100))

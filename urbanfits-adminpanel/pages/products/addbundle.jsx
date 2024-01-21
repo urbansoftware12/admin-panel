@@ -7,7 +7,6 @@ import Link from 'next/link';
 import useSession from '@/hooks/useSession';
 import useProduct from '@/hooks/useProduct';
 import { useFormik } from 'formik';
-import AuthHeader from '@/utils/auth_header';
 import * as Yup from 'yup';
 import axios from 'axios';
 import toaster from '@/utils/toast_function';
@@ -59,7 +58,7 @@ const BundleItem = (props) => {
 
 export default function CreateBundles() {
     const { selectedProducts } = useProduct()
-    const { admin } = useSession()
+    const { authHeader } = useSession()
     const [loading, setLoading] = useState(false)
 
     const validationSchema = Yup.object().shape({
@@ -86,7 +85,7 @@ export default function CreateBundles() {
                 return setLoading(false)
             }
             try {
-                const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/products/createbundle`, { products }, AuthHeader)
+                const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/products/createbundle`, { products }, authHeader)
                 toaster("success", data.msg)
             } catch (error) {
                 console.log(error)
