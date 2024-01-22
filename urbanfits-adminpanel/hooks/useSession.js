@@ -55,6 +55,18 @@ const useSession = create(persist((set, get) => ({
             }
         }
     },
+    emitPresenceEvent: async (event_name = "user_joined") => {
+        const { admin } = get()
+        if (!admin) return
+        try {
+            axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/presence`, {
+                event: {
+                    name: event_name,
+                    user_id: admin._id
+                }
+            })
+        } catch (e) { console.log("Error emitting presence event: ", e) }
+    },
     logOut: (redirect) => {
         localStorage.clear()
         window.location.href = redirect || '/'
