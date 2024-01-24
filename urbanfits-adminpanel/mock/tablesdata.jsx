@@ -1,12 +1,5 @@
 import Image from "next/image";
-// import tableAvatarMan1 from "@/public/tableAvatarMan1.png";
-// import tableAvatarMan2 from "@/public/tableAvatarMan2.png";
-// import tableAvatarMan3 from "@/public/tableAvatarMan3.png";
-// import tableAvatarGirl1 from "@/public/tableAvatarGirl1.png";
-// import tableAvatarGirl2 from "@/public/tableAvatarGirl2.png";
-// import sneakers from "@/public/sneakers.png";
 import smartWatch from "@/public/smartWatch.png";
-
 import MenuButton from "@/components/buttons/menuButton";
 import ActionButton from "@/components/buttons/ActionButton";
 import StatusBadge from "@/components/GenericTables/StatusBadge";
@@ -24,7 +17,6 @@ export const userListTableColumns = [
       <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={row.avatar || process.env.NEXT_PUBLIC_DEFAULT_PFP} />
     </span>,
     width: '10%',
-    sortable: true
   },
   {
     selector: row => row.name,
@@ -85,6 +77,65 @@ export const userListTableColumns = [
     selector: row => row.actions,
     name: "Action",
     cell: (row) => <ActionButton infoLink={row.infoLink} handleInfo={row.handleInfo} options={row.actions} />
+  }
+]
+
+export const userTasksTableColumns = [
+  {
+    selector: row => row.avatar,
+    name: "Avatar",
+    cell: (row) => <span className='w-10 aspect-square rounded-lg overflow-hidden' >
+      <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={row.avatar || process.env.NEXT_PUBLIC_DEFAULT_PFP} />
+    </span>,
+    width: '10%'
+  },
+  {
+    selector: row => row.name,
+    cell: row => <span className='w-full whitespace-nowrap truncate cursor-default'>{row.name}</span>,
+    name: "Name",
+    width: '20%',
+    sortable: true
+  },
+  {
+    selector: row => row.email,
+    cell: row => <div className="w-full group relative flex justify-start">
+      <span className='w-full whitespace-nowrap truncate cursor-default'>
+        {row.email}
+        <Infotip>{row.email}</Infotip>
+      </span>
+    </div>,
+    name: "Email",
+    sortable: true,
+    width: '25%'
+  },
+  {
+    selector: row => row.tasks.length,
+    name: "Tasks Completed",
+    cell: row => {
+      const completedTasks = row.tasks.filter(task => task.completed).length
+      const greenFlag = completedTasks > 8;
+      return <span style={{ background: greenFlag ? "#22c55e" : "#f3f4f6", color: greenFlag ? "white" : "black" }} className="ml-3 text-xs bg-gray-100 text-white px-2 py-0.5 rounded-full">{completedTasks}</span>
+    },
+    sortable: true,
+    width: '15%'
+  },
+  {
+    selector: row => row.tasks.find(task => task.image_submitted && task.need_image && !task.completed),
+    cell: row => {
+      const unApproved = row.tasks.find(task => task.image_submitted && task.need_image && !task.completed);
+      return <span style={{ background: unApproved ? "#f97316" : "#94a3b8", color: "#ffffff" }} className='ml-3 px-2 py-px text-xs rounded-2xl whitespace-nowrap truncate cursor-default'>
+        {unApproved ? "need approval" : "none"}
+      </span>
+    },
+    name: "Submission",
+    sortable: true,
+    width: '16%'
+  },
+  {
+    selector: row => row.actions,
+    name: "Action",
+    cell: (row) => <ActionButton infoLink={row.infoLink} handleInfo={row.handleInfo} options={row.actions} />,
+    width: '14%'
   }
 ]
 
@@ -371,8 +422,6 @@ export const orderProductDetailTableColumns = [
   },
 ];
 
-
-
 export const transactionTableColumns = [
   {
     accessor: "transid",
@@ -514,9 +563,6 @@ export const transactionTableData = [
   },
 
 ]
-
-
-
 
 export const invoiceTableColumns = [
   {
@@ -712,8 +758,6 @@ export const recentOrdersTableData = [
   },
 
 ]
-
-
 
 export const productListTableColumns = [
   {

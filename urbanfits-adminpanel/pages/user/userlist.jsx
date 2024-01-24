@@ -93,7 +93,7 @@ const Userlist = () => {
                                 Total Online:&nbsp;{totalOnline}
                             </span>
                         </div>
-                <span className={`${selectable ? "right-8" : "-right-full"} fixed z-40 bottom-10 px-20 py-3 rounded-full bg-black/40 backdrop-blur-[2px] flex items-center text-base text-white transition-all duration-700`}>Selected: {selectedUsers?.length}</span>
+                        <span className={`${selectable ? "right-8" : "-right-full"} fixed z-40 bottom-10 px-20 py-3 rounded-full bg-black/40 backdrop-blur-[2px] flex items-center text-base text-white transition-all duration-700`}>Selected: {selectedUsers?.length}</span>
                     </section>
                     <section className="flex items-center gap-4">
                         <div className="relative z-40 h-10 p-px text-sm bg-gold-land flex justify-center items-center rounded-lg">
@@ -157,7 +157,7 @@ const Userlist = () => {
                     return {
                         ...user,
                         id: user._id,
-                        avatar: user.image.includes("googleuser")? user.image: process.env.NEXT_PUBLIC_BASE_IMG_URL + user.image,
+                        avatar: user.image.includes("googleuser") ? user.image : process.env.NEXT_PUBLIC_BASE_IMG_URL + user.image,
                         name: user.firstname || user.username,
                         fullname: user.firstname && user.lastname ? user.firstname + ' ' + user.lastname : user.username,
                         phone: user.phone_prefix ? user.phone_prefix + ' ' + user.phone_number : 'N/A',
@@ -170,6 +170,11 @@ const Userlist = () => {
                             {
                                 name: "View Profile",
                                 link: `/user/${user._id}?auth_token=${authToken}`,
+                                onClick: () => { }
+                            },
+                            {
+                                name: "View Tasks",
+                                link: `/user/tasks/${user._id}`,
                                 onClick: () => { }
                             },
                             {

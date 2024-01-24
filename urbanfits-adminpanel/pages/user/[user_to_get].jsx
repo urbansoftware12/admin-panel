@@ -192,7 +192,7 @@ export default function UserProfile(props) {
             </section>
         </div>
 
-        <CardAdmin classes=" grid grid-cols-6 mt-[20px] ">
+        <CardAdmin classes=" grid grid-cols-6 mt-5">
             <section className="col-span-2 border-r border-r-slate-200 p-[40px] flex flex-col">
                 <div className="flex flex-col items-center">
                     <span className="w-16 aspect-square rounded-xl overflow-hidden ">
@@ -200,6 +200,7 @@ export default function UserProfile(props) {
                     </span>
                     <p className="text-sm mt-[20px] ">{userData.firstname || null}&nbsp;{userData.lastname || userData.username}</p>
                     <p className="text-sm">{userData.email}</p>
+                    <Link className="mx-auto mt-2 px-6 py-1 border border-black rounded-2xl text-sm" href={`/user/tasks/${userData._id}`}>View User Tasks</Link>
                 </div>
 
                 <p className="text-base mt-[60px] ">Contact Information</p>
@@ -443,11 +444,11 @@ export default function UserProfile(props) {
 };
 export async function getServerSideProps(context) {
     const { auth_token, user_to_get } = await context.query
-    if (!auth_token || !user_to_get || !mongoose.Types.ObjectId.isValid(user_to_get)) return {
+    if (!auth_token || !mongoose.Types.ObjectId.isValid(user_to_get)) return {
         redirect: {
             destination: '/403',
             permanent: false,
-        },
+        }
     };
     try {
         const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/byid?user_to_get=${user_to_get}`, {
@@ -464,7 +465,7 @@ export async function getServerSideProps(context) {
             redirect: {
                 destination: '/404',
                 permanent: false,
-            },
+            }
         };
     }
 }

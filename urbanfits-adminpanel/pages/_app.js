@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '@/styles/globals.css'
 import SidebarLayout from '@/components/sidebar-layout';
+import Link from "next/link";
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import useSession from '@/hooks/useSession';

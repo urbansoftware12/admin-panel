@@ -84,6 +84,10 @@ export const sidebarItems = [
         navlink: "/user/userlist",
       },
       {
+        label: "User tasks",
+        navlink: "/user/tasks",
+      },
+      {
         label: "Add New User",
         navlink: "/user/add-user",
       },
