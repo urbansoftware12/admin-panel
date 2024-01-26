@@ -43,6 +43,20 @@ const useUser = create((set, get) => ({
         set(() => ({ usersLoading: false }))
     },
 
+    approveTask: async (taskData, callback) => {
+        if (!admin) return
+        set(() => ({ usersLoading: true }))
+        try {
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/tasks/approve?`, taskData, authHeader)
+            if (callback) callback(data)
+        } catch (error) {
+            console.log(error)
+            if (error.response) toaster("error", error.response.data.msg)
+            toaster("error", "Network Error")
+        }
+        set(() => ({ usersLoading: false }))
+    },
+
     getTotalOnlineUsers: async () => {
         if (!admin) return
         set(() => ({ usersLoading: true }))

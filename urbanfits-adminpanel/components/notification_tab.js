@@ -22,7 +22,7 @@ const NotificationItem = (props) => {
         <div className={`w-full ${data.description && "mt-1"} flex justify-between`}>
             {data.description ? <button onClick={() => setDescription(prev => !prev)} className="px-2 py-px self-end border border-slate-500 rounded-xl text-[10px]"><i className="fa-solid fa-chevron-down" />&nbsp;View description</button> : <i />}
             {seen_by?.admin_id ? <span className="bg-gray-400 text-white px-2 py-px self-end rounded-xl text-[10px]">Marked read by <Link href={`/user/${seen_by.admin_id}?auth_token=${authToken}`} className="underline decoration-blue-500">@{seen_by.name}</Link></span>
-                : <button onClick={() => props.markRead([_id])} className="px-2 py-px self-end border border-slate-500 rounded-xl text-[10px]"><i className="fa-solid fa-check" />&nbsp;Mark as read</button>}
+                : <button onClick={() => props.markRead([{ _id, seen }])} className="px-2 py-px self-end border border-slate-500 rounded-xl text-[10px]"><i className="fa-solid fa-check" />&nbsp;Mark as read</button>}
         </div>
         {data.description ? <div onClick={() => navigator.clipboard.writeText(data.description)} title='Copy Text' style={description ? { border: `1px solid ${statusColors[data.type].border}` } : {}} className={`w-full ${description ? "max-h-[10rem] mt-2 p-2" : "max-h-0"} text-left bg-white cursor-pointer rounded-lg hover:bg-gray-100 text-[10px] transition-all overflow-y-auto scrollbar_x`}>{data.description}</div> : null}
 
@@ -58,7 +58,7 @@ export default function NotificationTab() {
             {tab == 1 &&
                 <aside className="w-full h-full py-2 px-1 border rounded-lg overflow-auto">
                     <div className="w-full mb-2 flex justify-end gap-x-2">
-                        <button onClick={() => markRead(adminNotifics.map(notific => notific._id))} className="px-2 py-px self-end border border-slate-500 rounded-xl text-[10px]"><i className="fa-solid fa-check" />&nbsp;Mark All as read</button>
+                        {unseenNotifics && <button onClick={() => markRead(adminNotifics.map(notific => ({ _id: notific._id, seen: notific.seen })))} className="px-2 py-px self-end border border-slate-500 rounded-xl text-[10px]"><i className="fa-solid fa-check" />&nbsp;Mark All as read</button>}
                         <button onClick={getAdminNotifics} className="px-2 py-px self-end border border-slate-500 rounded-xl text-[10px]"><i className="fa-solid fa-rotate-right" />&nbsp;Refresh</button>
                     </div>
                     {adminNotifics.length ? adminNotifics.map((notification, index) => <NotificationItem key={index} notification={notification} markRead={markRead} />) : <div className='w-full py-20 flex justify-center items-center'>No Notifications :/</div>}

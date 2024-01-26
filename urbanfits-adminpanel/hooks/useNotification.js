@@ -26,8 +26,10 @@ const useNotification = create((set, get) => ({
         if (!admin) return
         try {
             let updatedNotifics = structuredClone(get().adminNotifics);
-            for (let notific_id of notifications) {
-                const notificIndex = updatedNotifics.findIndex(n => n._id === notific_id);
+            const oldNotifics = notifications.filter(n => !n.seen)
+            console.log(oldNotifics)
+            for (let oldNotific of oldNotifics) {
+                const notificIndex = updatedNotifics.findIndex(n => n._id === oldNotific._id);
                 updatedNotifics[notificIndex].seen = true;
                 updatedNotifics[notificIndex].seen_by = {
                     admin_id: admin._id,
@@ -36,7 +38,7 @@ const useNotification = create((set, get) => ({
             }
             set(() => ({ adminNotifics: updatedNotifics }))
 
-            await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/admin/notifications/mark-read`, { notifications }, authHeader)
+            await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/admin/notifications/mark-read`, { notifications: notifications.map(n=> n._id) }, authHeader)
         } catch (error) {
             console.log(error)
             if (error.response) toaster("error", error.response.data.msg)
