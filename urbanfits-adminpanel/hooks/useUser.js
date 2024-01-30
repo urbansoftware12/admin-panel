@@ -49,6 +49,7 @@ const useUser = create((set, get) => ({
         try {
             const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/tasks/approve?`, taskData, authHeader)
             if (callback) callback(data)
+            toaster("success", data.msg)
         } catch (error) {
             console.log(error)
             if (error.response) toaster("error", error.response.data.msg)

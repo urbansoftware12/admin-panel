@@ -14,7 +14,7 @@ const NotificationItem = (props) => {
         "info": { bg: "#eff6ff", border: "#93c5fd" },
         "error": { bg: "#fef2f2", border: "#fca5a5" }
     }
-    return <div key={props.key} style={{ border: `1px solid ${statusColors[data.type].border}`, background: !seen ? statusColors[data.type].bg : '' }} className="relative w-full flex flex-col items-start mb-2 px-4 py-2 rounded-lg">
+    return <div key={props.key} style={{ border: `1px solid ${statusColors[data.type].border}`, background: !seen ? statusColors[data.type].bg : '' }} className="relative w-full flex flex-col items-start mb-2 px-4 py-2 rounded-lg overflow-x-hidden">
         <span style={{ background: statusColors[data.type].border }} className="absolute top-1 right-2 px-1 py-px text-white text-[8px] rounded-xl">{category}</span>
         <span className="text-xs">{data.title}</span>
 

@@ -10,11 +10,12 @@ import axios from "axios";
 const TaskItem = ({ task, userId, setUserTasks }) => {
     const { approveTask } = useUser()
     const [image, setImage] = useState(false);
+    const [loading, setLoading] = useState(false);
     const status = {
         bg: task.completed ? "#22c55e" : (task.image_submitted && !task.completed ? "#f97316" : "#94a3b8"),
         text: task.completed ? "completed" : (task.image_submitted && !task.completed ? "need approval" : "pending")
     }
-    return <div key={task.name} style={{opacity: task.completed? 0.6: 1}} className='w-full px-4 py-2 border rounded-lg flex flex-col'>
+    return <div key={task.name} style={{ opacity: task.completed ? 0.6 : 1, pointerEvents: loading ? "none" : "auto" }} className='w-full px-4 py-2 border rounded-lg flex flex-col'>
         <div className="mb-2 flex justify-between">
             <h3 className="text-base font-semibold">{task.title}</h3>
             <span style={{ background: status.bg }} className="px-3 py-0.5 rounded-xl text-xs leading-normal text-white">{status.text}</span>
@@ -32,17 +33,26 @@ const TaskItem = ({ task, userId, setUserTasks }) => {
                 </div>
             </div>
             <button onClick={() => setImage(true)} className="px-3 py-1 border rounded-3xl text-slate-700"><i className="fa-solid fa-play" />&nbsp; View Image</button>
-            <button onClick={() => approveTask({ task_name: task.name, user_id: userId }, (data) => setUserTasks(data.tasks.tasks))} className="bg-gold-land px-3 py-1 text-white rounded-3xl"><i className="fa-solid fa-user-check" />&nbsp; Approve</button>
+            <button type='button' onClick={() => {
+                setLoading(true);
+                approveTask({ task_name: task.name, user_id: userId }, (data) => {
+                    setLoading(true);
+                    setUserTasks(data.tasks)
+                })
+            }} className={`bg-gold-land px-3 py-1 text-white rounded-3xl ${loading ? "animate-pulse" : ''}`}>
+                {loading ? "Approving..." : <><i className="fa-solid fa-user-check" /> &nbsp; Approve</>}
+            </button>
         </div> : null}
     </div>
 }
 
 export default function UserUfTasks({ tasksDoc }) {
     const [userTasks, setUserTasks] = useState(tasksDoc)
+    console.log(userTasks)
     return <>
         <div className="w-full mt-[15px] flex justify-between items-center">
             <nav>
-                <p className="font_futura not-italic text-[22px]  font-medium text-black">{userTasks.user_id.firstname || userTasks.user_id.username}'s Tasks</p>
+                <p className="font_futura not-italic text-[22px]  font-medium text-black">{userTasks?.user_id?.firstname || userTasks?.user_id?.username}'s Tasks</p>
                 <section className="flex justify-between items-center">
                     <div className="flex items-center mt-4 font_futura text-sm gap-x-3">
                         <Link href="/">Home</Link> <i className="fa-solid fa-chevron-right" />
