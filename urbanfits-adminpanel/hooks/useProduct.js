@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import toaster from "@/utils/toast_function";
 import axios from "axios";
 import useSession from "./useSession";
-const { admin, authHeader } = useSession.getState()
+const { admin } = useSession.getState()
 
 const useProduct = create((set, get) => ({
 
@@ -64,7 +64,7 @@ const useProduct = create((set, get) => ({
             productLoading: true
         }))
         try {
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/products/create`, productToCreate, authHeader)
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/products/create`, productToCreate)
             set(() => ({ productLoading: false }))
             return data.product
         } catch (error) {
@@ -79,7 +79,7 @@ const useProduct = create((set, get) => ({
 
         set(() => ({ productLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/products/update?id=${id}`, updatedProduct, authHeader)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/products/update?id=${id}`, updatedProduct)
             set(() => ({
                 productLoading: false,
                 productInfo: data.product
@@ -98,7 +98,7 @@ const useProduct = create((set, get) => ({
 
         set(() => ({ productLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/products/delete`, { products: productsToDelete }, authHeader)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/products/delete`, { products: productsToDelete })
             await get().getProducts(1)
             toaster(data.deletedCount < 1 ? "info" : "success", data.msg)
         } catch (error) {

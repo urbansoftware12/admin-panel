@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import toaster from "@/utils/toast_function";
 import axios from "axios";
 import useSession from "./useSession";
-const { admin, authHeader } = useSession.getState()
+const { admin } = useSession.getState()
 
 const useCategories = create((set, get) => ({
 
@@ -14,7 +14,7 @@ const useCategories = create((set, get) => ({
 
         set(() => ({ categLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/categories/get`, authHeader)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/categories/get`)
             set(() => ({ categories: data.categories }))
         } catch (error) {
             console.log(error)
@@ -46,7 +46,7 @@ const useCategories = create((set, get) => ({
             categLoading: true
         }))
         try {
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/categories/create`, category, authHeader)
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/categories/create`, category)
             set(() => ({ categories: data.categories }))
             toaster("success", data.msg)
         } catch (error) {
@@ -65,7 +65,7 @@ const useCategories = create((set, get) => ({
             categLoading: true
         }))
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/categories/update`, update, authHeader)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/categories/update`, update)
             set(() => ({ categories: data.categories }))
             toaster("success", data.msg)
         } catch (error) {
@@ -80,7 +80,7 @@ const useCategories = create((set, get) => ({
 
         set(() => ({ categLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/categories/delete`, { categories: categoriesToDelete }, authHeader)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/categories/delete`, { categories: categoriesToDelete })
             set(() => ({ categories: data.categories }))
             toaster(data.deletedCount < 1 ? "info" : "success", data.msg)
         } catch (error) {
@@ -89,7 +89,6 @@ const useCategories = create((set, get) => ({
         }
         return set(() => ({ categLoading: false }))
     }
-
 }))
 
 export default useCategories

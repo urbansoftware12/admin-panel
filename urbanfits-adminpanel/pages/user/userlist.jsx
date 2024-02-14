@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import Link from "next/link";
 import CardAdmin from "@/components/cards/cardadmin";
@@ -6,7 +6,6 @@ import Spinner from "@/components/loaders/spinner";
 import Button from "@/components/buttons/simple_btn";
 import DeleteAction from "@/components/modals/deleteAction";
 import { SearchIcon } from "@/public/sidebaricons/SearchIcon";
-import useSession from "@/hooks/useSession";
 import useUser from "@/hooks/useUser";
 import { userListTableColumns } from "@/mock/tablesdata";
 import { CSVLink } from "react-csv";
@@ -14,7 +13,6 @@ import toaster from "@/utils/toast_function";
 import LinkBtn from "@/components/buttons/link_btn";
 
 const Userlist = () => {
-    const { authToken } = useSession()
     const { users, getUsers, selectedUsers, setSelectedUsers, totalUsers, totalOnline, deleteUsers, usersLoading } = useUser()
     const [query, setQuery] = useState('')
     const [selectable, setSelectable] = useState(false)
@@ -165,11 +163,11 @@ const Userlist = () => {
                         status: user.is_active,
                         joined_at: user.createdAt,
                         handleInfo: () => { },
-                        infoLink: `/user/${user._id}?auth_token=${authToken}`,
+                        infoLink: `/user/${user._id}`,
                         actions: [
                             {
                                 name: "View Profile",
-                                link: `/user/${user._id}?auth_token=${authToken}`,
+                                link: `/user/${user._id}`,
                                 onClick: () => { }
                             },
                             {

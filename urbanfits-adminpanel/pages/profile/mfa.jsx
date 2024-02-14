@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Profile from ".";
 import CardAdmin from "@/components/cards/cardadmin";
 import Loader from "@/components/loaders/loader";

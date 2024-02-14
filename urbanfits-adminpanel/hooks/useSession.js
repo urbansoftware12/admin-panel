@@ -3,9 +3,11 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import toaster from "@/utils/toast_function";
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
+import { parse } from "cookie"
 
 const useSession = create(persist((set, get) => ({
     admin: null,
+    adminLoading: false,
     authToken: null,
     authHeader: {
         headers: {
@@ -14,25 +16,56 @@ const useSession = create(persist((set, get) => ({
         }
     },
     country: { name: "United Arab Emirates", code: "+971", country: "ae", src: "https://urban-fits.s3.eu-north-1.amazonaws.com/country-flags/AE.jpg" },
-    geo_selected_by_user: false,
+    isLoggedIn: () => {
+        const { "is_logged_in": isLoggedIn } = parse(document.cookie);
+        console.log("the login cookie: ", isLoggedIn)
+        return isLoggedIn && isLoggedIn === "true";
+    },
     setGeoSelectedByUser: (bool) => set(() => ({ geo_selected_by_user: bool })),
     setCountry: (value) => set(() => ({ country: value })),
+
+    getMe: async () => {
+        const { isLoggedIn, updateAdmin } = get();
+        if (!isLoggedIn()) return;
+        set(() => ({ adminLoading: true }));
+        try {
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/me`)
+            await updateAdmin(data.payload, true)
+        }
+        catch (error) {
+            console.log(error)
+            toaster("error", error.response?.data.msg || (navigator.onLine ? "Oops! somethign went wrong." : "Network Error"))
+        } finally { set(() => ({ adminLoading: false })); }
+    },
+
+    signIn: async (credentials, callback, router) => {
+        const { isLoggedIn, updateAdmin } = get();
+        if (isLoggedIn()) return toaster("info", "You are already logged in.");
+        set(() => ({ adminLoading: true }));
+        try {
+            const axiosData = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/auth/login`, credentials)
+            const { data } = axiosData;
+            console.log("the login data: ", data, axiosData)
+            if (data.redirect_url && !data.payload) router.push(data.redirect_url)
+            else if (data.payload) {
+                await updateAdmin(data.payload, true)
+                router.replace("/")
+                console.log("i reached here that means i redirected user to the home page")
+                toaster("success", data.msg)
+                if (callback) callback(data)
+            }
+        }
+        catch (error) {
+            console.log(error)
+            toaster("error", error.response?.data.msg || (navigator.onLine ? "Oops! somethign went wrong." : "Network Error"))
+        } finally { set(() => ({ adminLoading: false })); }
+    },
 
     updateAdmin: async (valuesObj, updateLocally = false,) => {
         if (updateLocally) {
             try {
-                const userData = jwt.decode(valuesObj)?._doc
-                set(() => ({
-                    authToken: valuesObj,
-                    authHeader: {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': "Bearer " + valuesObj
-                        }
-                    }
-                }))
-                delete userData.password
-                if (userData.role !== "administrator") return toaster("error", "403 Forbidden. Only administrator allowed.")
+                const userData = jwt.decode(valuesObj)
+                if (userData.role !== "administrator") return toaster("error", "401 Admin Unauthorized. Only administrator allowed.")
                 else set(() => ({ admin: userData }))
             } catch (e) {
                 console.log(e)
@@ -41,9 +74,8 @@ const useSession = create(persist((set, get) => ({
         }
         else {
             try {
-                const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/update?id=${get().admin._id}`, valuesObj)
-                const userData = jwt.decode(data.payload)?._doc
-                delete userData.password
+                const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/update`, valuesObj)
+                const userData = jwt.decode(data.payload)
                 if (userData.role !== "administrator") return toaster("error", "403 Forbidden. Only administrator allowed.")
                 else {
                     set(() => ({ admin: userData }))
@@ -67,12 +99,17 @@ const useSession = create(persist((set, get) => ({
             })
         } catch (e) { console.log("Error emitting presence event: ", e) }
     },
-    logOut: (redirect) => {
-        localStorage.clear()
-        window.location.href = redirect || '/'
-        set(() => ({ admin: null }))
-        toaster("success", "You are signed out !")
-        sessionStorage.clear()
+    logOut: async (router) => {
+        try {
+            await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/auth/logout`);
+            router.replace("/");
+        } catch (e) { console.log("Coouldn't log out.", e) }
+        finally {
+            localStorage.clear()
+            sessionStorage.clear()
+            set(() => ({ admin: null, adminLoading: false }))
+            toaster("success", "You are signed out !")
+        }
     },
     matchOtpAndUpdate: async (values) => {
         try {

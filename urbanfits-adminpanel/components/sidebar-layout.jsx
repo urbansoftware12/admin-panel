@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import Logout from "./modals/logout";
 import CardAdmin from "@/components/cards/cardadmin";
 import useSession from "@/hooks/useSession";
@@ -11,7 +10,6 @@ import { sidebarItems, SearchQueryData } from "@/mock/navData";
 import { RightArrowIcon } from "@/public/sidebaricons/RightArrowIcon";
 import { DownArowSmallIcon } from "@/public/sidebaricons/DownArowSmallIcon";
 import NotificationTab from "./notification_tab";
-// const NotificationTab = dynamic(() => import('./notification_tab'), { loading: () => "--" })
 import { SearchIcon } from "@/public/sidebaricons/SearchIcon";
 import { LocationIcon } from "@/public/sidebaricons/LocationIcon";
 import { CallIcon } from "@/public/sidebaricons/CallIcon";
@@ -42,26 +40,25 @@ const SideBarItem = ({ item, sidebaropen }, props) => {
 }
 
 export default function SidebarLayout({ children }) {
-    const { admin } = useSession()
-    const router = useRouter()
+    const router = useRouter();
+    const { admin, isLoggedIn } = useSession();
     const [logoutModal, setLogoutModal] = useState(false);
-    const [sidebaropen, setSidebaropen] = React.useState(true);
+    const [sidebaropen, setSidebaropen] = useState(true);
     const [query, setQuery] = useState('')
     const [results, setResults] = useState([])
-    
+
     const onSearch = (e) => {
         const term = e.target.value.toLowerCase()
         setQuery(term)
         const filteredResults = SearchQueryData.filter((link) => {
             const { label, navlink } = link
-            console.log(label, navlink)
             return label.toLowerCase().includes(term) || navlink.toLowerCase().includes(term)
         })
         setResults(filteredResults)
     }
 
     if (router.asPath.includes("/auth")) return
-    else if (!admin || !admin._id || admin._id.length < 18) router.replace("/auth/login")
+    else if (!isLoggedIn()) router.replace("/auth/login")
     else return <div className="flex-col bg-[#F4F4F4] overflow-x-hidden overflow-y-scroll font_futura ">
         <Logout show={logoutModal} setLogout={setLogoutModal} />
         <div className={`fixed ${sidebaropen ? "w-[250px]" : "w-[80px]"} duration-300 ${sidebaropen && "rounded-r-[25px]"} bg-white h-screen`} >
@@ -123,9 +120,9 @@ export default function SidebarLayout({ children }) {
                 <div className='flex items-center'>
 
                     <div className="group relative px-2 py-1 border border-gray-300 rounded-full flex items-center cursor-pointer" tabIndex={3}>
-                        <span className="inline-block w-9 aspect-square mr-3 border border-gray-400 rounded-full overflow-hidden">
+                        {admin?.image ? <span className="inline-block w-9 aspect-square mr-3 border border-gray-400 rounded-full overflow-hidden">
                             <Image src={process.env.NEXT_PUBLIC_BASE_IMG_URL + admin.image + "?timestamp=123"} className="w-full h-full object-cover" alt="user avatar" width={80} height={80} />
-                        </span>
+                        </span> : null}
                         <DownArowSmallIcon />
                         <CardAdmin classes="w-[150px] p-5 origin-top scale-0 group-focus-within:scale-100 duration-300 absolute -bottom-1 translate-y-full translate-x-[-30%]" round="rounded-[15px]" >
                             <div className="flex flex-col gap-3 text-sm" >

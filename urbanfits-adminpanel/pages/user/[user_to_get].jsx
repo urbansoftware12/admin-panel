@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import CardAdmin from "@/components/cards/cardadmin";
 import DeleteAction from "@/components/modals/deleteAction";
 import Image from "next/image";
@@ -14,7 +14,6 @@ import countryCodes from "@/mock/countryCodes";
 import { useFormik } from 'formik';
 import * as Yup from 'yup'
 import { useRouter } from "next/router";
-import useSession from "@/hooks/useSession";
 import useUser from "@/hooks/useUser";
 import timeAgo from "@/utils/timestamp_duration";
 import uploadImage from "@/utils/uploadImage";
@@ -27,7 +26,6 @@ import toaster from "@/utils/toast_function";
 export default function UserProfile(props) {
     const { updateUser, getUserNotifications, getUserUfBalance, addPointsToUserWallet, resetUser2fa, usersLoading, deleteUsers } = useUser()
     const router = useRouter()
-    const { authHeader } = useSession()
     const [userData, setUserData] = useState(props.userData);
     const [userNotifics, setUserNotifics] = useState([]);
     const [checked, setChecked] = useState(1);
@@ -109,7 +107,7 @@ export default function UserProfile(props) {
                 const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/update/password-via-admin`, {
                     ...values,
                     user_id: userData._id
-                }, authHeader)
+                })
                 toaster("success", data.msg)
                 passHandleReset()
             } catch (error) {

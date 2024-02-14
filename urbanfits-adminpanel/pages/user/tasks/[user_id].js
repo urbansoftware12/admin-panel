@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Link from "next/link";
 import LinkBtn from '@/components/buttons/link_btn';
 import Image from "next/image";
 import useUser from '@/hooks/useUser';
-import useSession from '@/hooks/useSession';
-import mongoose from "mongoose";
+import {isValidObjectId} from "mongoose";
 import axios from "axios";
 
 const TaskItem = ({ task, userId, setUserTasks }) => {
@@ -62,7 +61,7 @@ export default function UserUfTasks({ tasksDoc }) {
                     </div>
                 </section>
             </nav>
-            <LinkBtn href={`/user/${tasksDoc.user_id._id}?auth_token=${useSession.getState().authToken}`}>View {tasksDoc.user_id.username}'s Profile</LinkBtn>
+            <LinkBtn href={`/user/${tasksDoc.user_id._id}`}>View {tasksDoc.user_id.username}'s Profile</LinkBtn>
         </div>
 
         <section className="bg-white equillibrium_shadow mt-5 px-5 py-8 rounded-3xl grid grid-cols-2 gap-6">
@@ -72,7 +71,7 @@ export default function UserUfTasks({ tasksDoc }) {
 }
 export async function getServerSideProps(context) {
     const { user_id } = await context.query
-    if (!mongoose.Types.ObjectId.isValid(user_id)) return {
+    if (!isValidObjectId(user_id)) return {
         redirect: {
             destination: '/403',
             permanent: false,

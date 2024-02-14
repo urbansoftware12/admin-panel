@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import Button from "@/components/buttons/simple_btn";
-import { BasketIcon } from "@/public/sidebaricons/BasketIcon";
 import useSession from "@/hooks/useSession";
 import CustomTab from "@/components/CustomTabs/CustomTab";
 import uploadImage from '@/utils/uploadImage'
@@ -15,9 +14,9 @@ const TwoFa = dynamic(() => import('@/components/modals/twoFa'));
 
 
 export default function Profile({ children }) {
-    const { admin, updateAdmin } = useSession()
-    const [mfaModa, setMfaModa] = useState(false)
-    const [loading, setLoading] = useState(false)
+    const { admin, updateAdmin } = useSession();
+    const [mfaModa, setMfaModa] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [imgSpinner, setImgSpinner] = useState(null);
     const [pfp, setPfp] = useState(admin?.image ? admin.image : process.env.NEXT_PUBLIC_DEFAULT_PFP);
 

@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import CardAdmin from "@/components/cards/cardadmin";
 import Spinner from '@/components/loaders/spinner';
 import Button from "@/components/buttons/simple_btn";
 import Image from 'next/image';
 import Link from 'next/link';
-import useSession from '@/hooks/useSession';
 import useProduct from '@/hooks/useProduct';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -58,9 +57,6 @@ const BundleItem = (props) => {
 
 export default function CreateBundles() {
     const { selectedProducts } = useProduct()
-    const { authHeader } = useSession()
-    const [loading, setLoading] = useState(false)
-
     const validationSchema = Yup.object().shape({
         products: Yup.array().of(
             Yup.object().shape({
@@ -85,7 +81,7 @@ export default function CreateBundles() {
                 return setLoading(false)
             }
             try {
-                const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/products/createbundle`, { products }, authHeader)
+                const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/products/createbundle`, { products })
                 toaster("success", data.msg)
             } catch (error) {
                 console.log(error)

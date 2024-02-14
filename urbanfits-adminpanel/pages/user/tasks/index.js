@@ -1,23 +1,19 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import Link from "next/link";
 import CardAdmin from "@/components/cards/cardadmin";
 import Spinner from "@/components/loaders/spinner";
-import Button from "@/components/buttons/simple_btn";
 import { SearchIcon } from "@/public/sidebaricons/SearchIcon";
-import useSession from "@/hooks/useSession";
 import useUser from "@/hooks/useUser";
-import toaster from "@/utils/toast_function";
 import LinkBtn from "@/components/buttons/link_btn";
 import { userTasksTableColumns } from "@/mock/tablesdata";
 
 const Userlist = () => {
-    const { authToken } = useSession()
     const { getAllUsersTasks, usersLoading } = useUser()
     const [query, setQuery] = useState('')
     const [tasks, setTasks] = useState([])
     const [currentPage, setCurrentPage] = useState(1)
-    const [actionsTip, setActionsTip] = useState(false)
+    // const [actionsTip, setActionsTip] = useState(false)
 
     useEffect(() => {
         getAllUsersTasks(currentPage, (data) => setTasks(data.tasks))
@@ -116,7 +112,7 @@ const Userlist = () => {
                             },
                             {
                                 name: "View User",
-                                link: `/user/${user._id}?auth_token=${authToken}`,
+                                link: `/user/${user._id}`,
                                 onClick: () => { }
                             },
                             {

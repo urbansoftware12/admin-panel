@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { BellIcon } from "@/public/sidebaricons/BellIcon";
-import useSession from '@/hooks/useSession';
 import useNotification from '@/hooks/useNotification';
 import BounceLoader from './loaders/bounceLoader';
 
 const NotificationItem = (props) => {
-    const { authToken } = useSession()
     const { _id, category, seen, seen_by, data } = props.notification;
     const [description, setDescription] = useState(false)
     const statusColors = {
@@ -21,7 +19,7 @@ const NotificationItem = (props) => {
         <p className="text-[10px] text-left">{data.msg} {data.href ? <Link href={data.href} className="underline decoration-blue-500">View</Link> : null}</p>
         <div className={`w-full ${data.description && "mt-1"} flex justify-between`}>
             {data.description ? <button onClick={() => setDescription(prev => !prev)} className="px-2 py-px self-end border border-slate-500 rounded-xl text-[10px]"><i className="fa-solid fa-chevron-down" />&nbsp;View description</button> : <i />}
-            {seen_by?.admin_id ? <span className="bg-gray-400 text-white px-2 py-px self-end rounded-xl text-[10px]">Marked read by <Link href={`/user/${seen_by.admin_id}?auth_token=${authToken}`} className="underline decoration-blue-500">@{seen_by.name}</Link></span>
+            {seen_by?.admin_id ? <span className="bg-gray-400 text-white px-2 py-px self-end rounded-xl text-[10px]">Marked read by <Link href={`/user/${seen_by.admin_id}`} className="underline decoration-blue-500">@{seen_by.name}</Link></span>
                 : <button onClick={() => props.markRead([{ _id, seen }])} className="px-2 py-px self-end border border-slate-500 rounded-xl text-[10px]"><i className="fa-solid fa-check" />&nbsp;Mark as read</button>}
         </div>
         {data.description ? <div onClick={() => navigator.clipboard.writeText(data.description)} title='Copy Text' style={description ? { border: `1px solid ${statusColors[data.type].border}` } : {}} className={`w-full ${description ? "max-h-[10rem] mt-2 p-2" : "max-h-0"} text-left bg-white cursor-pointer rounded-lg hover:bg-gray-100 text-[10px] transition-all overflow-y-auto scrollbar_x`}>{data.description}</div> : null}

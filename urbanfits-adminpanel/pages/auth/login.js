@@ -1,53 +1,20 @@
-import React, { useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import AuthPage from '.'
 import Link from 'next/link'
 import Button from '@/components/buttons/simple_btn'
 import Head from 'next/head'
 import Tooltip from '@/components/tooltips/tooltip'
-import toaster from '@/utils/toast_function'
 import AlertPage from '@/components/alertPage'
-import axios from 'axios'
 import { useRouter } from 'next/router'
 import useSession from '@/hooks/useSession'
 import * as Yup from 'yup'
 import { useFormik } from 'formik'
-import jwt from 'jsonwebtoken';
 
-export const metadata = {
-    title: "Urban Fits - Login"
-}
 export default function Login() {
     const router = useRouter()
-    const [loading, setLoading] = useState(false)
-    const { admin, updateAdmin } = useSession()
+    const { isLoggedIn, signIn, adminLoading } = useSession();
     const [showPass, setShowPass] = useState(false)
-
     const passRef = useRef()
-
-    const onsubmit = async (values) => {
-        try {
-            setLoading(true)
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/admin/login`, values)
-            if (data.redirect_url && !data.payload) router.replace(data.redirect_url)
-            else if (data.payload) {
-                await updateAdmin(data.payload, true)
-                const userData = jwt.decode(data.payload)?._doc
-                if (userData.role === "administrator") {
-                    router.replace('/')
-                    toaster("success", data.msg)
-                } else return setLoading(false)
-            }
-            else {
-                const { data } = res.response
-                toaster("error", data.msg)
-            }
-        }
-        catch (error) {
-            console.log(error)
-            toaster("error", error.response.data.msg)
-        }
-        setLoading(false)
-    }
 
     const loginSchema = Yup.object({
         email: Yup.mixed().test('valid', 'Invalid email or username', function (value) {
@@ -63,15 +30,13 @@ export default function Login() {
     const { values, errors, touched, handleBlur, handleChange, handleReset, handleSubmit } = useFormik({
         initialValues: initialSignupValues,
         validationSchema: loginSchema,
-        onSubmit: onsubmit
+        onSubmit: values => signIn(values, null, router)
     })
 
-    const sessionValidity = (e) => localStorage.setItem('remember_me', e.target.checked)
-
-    if (admin && admin.email) return <AlertPage type="success" heading="You are signed in!" />
-    return <>
-        <Head><title>Urban Fits - Login</title></Head>
-        <AuthPage loading={loading} mblNav="/auth/signup" mblNavName="Register">
+    if (isLoggedIn()) return <AlertPage type="success" heading="You are signed in!" />
+    else return <>
+        <Head><title>UF Admin Panel - Login</title></Head>
+        <AuthPage loading={adminLoading} mblNav="/auth/signup" mblNavName="Register">
             <form className="w-full h-full lg:h-auto bg-white p-2 lg:p-0 font_futura text-base flex flex-col justify-between md:justify-around lg:block" onReset={handleReset} onSubmit={handleSubmit} >
                 <section className="w-full mb-6 md:mb-0">
                     <h1 className="lg:hidden text-[22px] mb-5 text-left font_futura">Login</h1>
@@ -98,14 +63,14 @@ export default function Login() {
                         <div className="w-full flex justify-between items-center text-gray-400 text-sm">
                             <div className='flex items-center gap-x-2'>
                                 <span>
-                                    <input className='rounded' type="checkbox" id="accept_policies" name="accept_policies" value={values.accept_policies} onChange={(e) => { handleChange(e); sessionValidity(e) }} />
+                                    <input className='rounded' type="checkbox" id="accept_policies" name="accept_policies" value={values.accept_policies} onChange={handleChange} />
                                 </span>
                                 <label htmlFor='accept_policies' className="w-full -translate-y-0.5 cursor-pointer text-gray-400">Remember me</label>
                             </div>
                             <Link href="/auth/resetpassword">Forgot Password?</Link>
                         </div>
                     </div>
-                    <Button loading={loading} my="my-4" classes='w-full' type="submit">Login</Button>
+                    <Button loading={adminLoading} my="my-4" classes='w-full' type="submit">Login</Button>
                 </section>
             </form>
         </AuthPage>

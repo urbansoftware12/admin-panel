@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import AuthPage from '.'
 import Link from 'next/link'
 import Button from '@/components/buttons/simple_btn'
@@ -12,8 +12,7 @@ import { useRouter } from 'next/router'
 
 export default function ForgotPassword() {
     const router = useRouter()
-    const { admin } = useSession()
-    const [loading, setLoading] = useState(false)
+    const { admin, adminLoading } = useSession()
     const [otp, setOtp] = useState('')
     const [otpId, setOtpId] = useState(null)
     const [resendOption, setResendOption] = useState(
@@ -35,49 +34,43 @@ export default function ForgotPassword() {
         }),
         onSubmit: async (values) => {
             try {
-                setLoading(true)
-                const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/user/forgotpassword`, values)
+                useSession.setState({ userLoading: true });
+                const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/auth/otp/forgot-password`, values)
                 if (data.success && data.otp_id) {
                     setOtpId(data.otp_id)
-                    setResendOption(<span className='w-full flex justify-between items-center text-xs md:text-sm text-gray-400'> Didn&apos;t get the email? <button type='submit' className="border-b border-b-yellow-700">Resend Code</button></span>)
+                    setResendOption(<span className='w-full flex justify-between items-center text-xs md:text-sm text-gray-400'> Didn't get the email? <button type='submit' className="border-b border-b-yellow-700">Resend Code</button></span>)
                     toaster("success", data.msg)
                 }
-                else {
-                    const { data } = res.response
-                    if (data) toaster("error", data.msg)
-                }
+                else if (data) toaster("error", res.response.msg)
             }
             catch (error) {
                 console.log(error)
-                setLoading(false)
-                toaster("error", error.response.data.msg)
-            }
-            return setLoading(false)
+                toaster("error", error.response?.data?.msg || "Network Error")
+            } finally { useSession.setState({ userLoading: false }); }
         }
     })
 
     const onVerify = async () => {
         if (!otpId) return;
-        setLoading(true)
+        useSession.setState({ userLoading: true });
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/auth-otp-and-reset-password`, {
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/auth/otp/change-password`, {
                 otp_id: otpId,
                 otp
             })
             if (data.success) {
-                router.push('/auth/login')
+                router.replace('/auth/login')
                 toaster("success", data.msg)
             }
             else toaster("error", "Something went wrong, please try again later.")
         } catch (error) {
             console.log(error)
-            toaster("error", error.response.data.msg)
-        }
-        setLoading(false)
+            toaster("error", error.response?.data?.msg || "Network Error")
+        } finally { useSession.setState({ userLoading: false }); }
     }
 
     return <>
-        <AuthPage loading={loading} mblNav="/auth/login" mblNavName="Sign in" >
+        <AuthPage loading={adminLoading} mblNav="/auth/login" mblNavName="Sign in" >
             <form className="w-full h-full lg:h-auto bg-white p-2 lg:p-0 font_futura text-base flex flex-col justify-between md:justify-around items-center lg:justify-center" onReset={handleReset} onSubmit={handleSubmit} >
                 <section className="w-full mb-6 md:mb-0">
                     <h1 className="lg:hidden text-[22px] mb-5 text-left font_futura">Forgot Password</h1>

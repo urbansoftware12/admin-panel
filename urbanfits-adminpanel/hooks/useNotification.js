@@ -9,10 +9,9 @@ const useNotification = create((set, get) => ({
     adminNotificLoading: false,
 
     getAdminNotifics: async () => {
-        const { authHeader } = useSession.getState()
         set(() => ({ adminNotificLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/admin/notifications/get`, authHeader)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/admin/notifications/get`)
             set(() => ({ adminNotifics: data.notifications }))
         } catch (error) {
             console.log(error)
@@ -22,7 +21,7 @@ const useNotification = create((set, get) => ({
     },
 
     markRead: async (notifications) => {
-        const { admin, authHeader } = useSession.getState()
+        const { admin } = useSession.getState()
         if (!admin) return
         try {
             let updatedNotifics = structuredClone(get().adminNotifics);
@@ -38,7 +37,7 @@ const useNotification = create((set, get) => ({
             }
             set(() => ({ adminNotifics: updatedNotifics }))
 
-            await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/admin/notifications/mark-read`, { notifications: notifications.map(n=> n._id) }, authHeader)
+            await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/admin/notifications/mark-read`, { notifications: notifications.map(n=> n._id) })
         } catch (error) {
             console.log(error)
             if (error.response) toaster("error", error.response.data.msg)

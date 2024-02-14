@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import '@/styles/globals.css'
 import SidebarLayout from '@/components/sidebar-layout';
 import Link from "next/link";
@@ -12,15 +12,15 @@ import toaster from "@/utils/toast_function";
 import { pusherClient, initBeamsClient } from "@/utils/pusher";
 
 function App({ Component, pageProps }) {
-  const [progress, setProgress] = useState(0)
-  const { admin, emitPresenceEvent, logOut } = useSession();
   const router = useRouter()
+  const [progress, setProgress] = useState(0)
+  const { admin, getMe, emitPresenceEvent, isLoggedIn, logOut } = useSession();
   const adminRoles = ["administrator", "author", "editor"]
 
   useEffect(() => {
     (() => {
-      if (!admin || !admin._id) return router.replace("/auth/login")
-      else if (!adminRoles.includes(admin.role)) return logOut()
+      if (!isLoggedIn()) return router.replace("/auth/login")
+      getMe();
       emitPresenceEvent()
 
       const adminChannel = pusherClient.subscribe('admin-channel')
