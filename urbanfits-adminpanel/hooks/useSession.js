@@ -8,17 +8,9 @@ import { parse } from "cookie"
 const useSession = create(persist((set, get) => ({
     admin: null,
     adminLoading: false,
-    authToken: null,
-    authHeader: {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer null`
-        }
-    },
-    country: { name: "United Arab Emirates", code: "+971", country: "ae", src: "https://urban-fits.s3.eu-north-1.amazonaws.com/country-flags/AE.jpg" },
+
     isLoggedIn: () => {
         const { "is_logged_in": isLoggedIn } = parse(document.cookie);
-        console.log("the login cookie: ", isLoggedIn)
         return isLoggedIn && isLoggedIn === "true";
     },
     setGeoSelectedByUser: (bool) => set(() => ({ geo_selected_by_user: bool })),
@@ -29,7 +21,7 @@ const useSession = create(persist((set, get) => ({
         if (!isLoggedIn()) return;
         set(() => ({ adminLoading: true }));
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/me`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/me`, { withCredentials: true })
             await updateAdmin(data.payload, true)
         }
         catch (error) {
@@ -43,9 +35,8 @@ const useSession = create(persist((set, get) => ({
         if (isLoggedIn()) return toaster("info", "You are already logged in.");
         set(() => ({ adminLoading: true }));
         try {
-            const axiosData = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/auth/login`, credentials)
+            const axiosData = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/auth/login`, credentials, { withCredentials: true })
             const { data } = axiosData;
-            console.log("the login data: ", data, axiosData)
             if (data.redirect_url && !data.payload) router.push(data.redirect_url)
             else if (data.payload) {
                 await updateAdmin(data.payload, true)
@@ -74,7 +65,7 @@ const useSession = create(persist((set, get) => ({
         }
         else {
             try {
-                const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/update`, valuesObj)
+                const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/update`, valuesObj, { withCredentials: true })
                 const userData = jwt.decode(data.payload)
                 if (userData.role !== "administrator") return toaster("error", "403 Forbidden. Only administrator allowed.")
                 else {
@@ -92,17 +83,14 @@ const useSession = create(persist((set, get) => ({
         if (!admin) return
         try {
             axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/presence`, {
-                event: {
-                    name: event_name,
-                    user_id: admin._id
-                }
-            })
+                event: { name: event_name }
+            }, { withCredentials: true })
         } catch (e) { console.log("Error emitting presence event: ", e) }
     },
     logOut: async (router) => {
         try {
-            await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/auth/logout`);
-            router.replace("/");
+            await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/auth/logout`, {}, { withCredentials: true });
+            router.replace("/auth/login");
         } catch (e) { console.log("Coouldn't log out.", e) }
         finally {
             localStorage.clear()
@@ -113,7 +101,7 @@ const useSession = create(persist((set, get) => ({
     },
     matchOtpAndUpdate: async (values) => {
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/auth-otp-and-change-email`, values)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/auth-otp-and-change-email`, values, { withCredentials: true })
             const userData = jwt.decode(data.payload)?._doc
             delete userData.password
             set(() => ({ admin: userData }))
@@ -125,6 +113,6 @@ const useSession = create(persist((set, get) => ({
         }
     }
 }),
-    { name: "authToken", storage: createJSONStorage(() => sessionStorage) }
+    { name: "user-data", storage: createJSONStorage(() => sessionStorage) }
 ))
 export default useSession

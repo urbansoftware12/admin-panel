@@ -11,7 +11,7 @@ const useNotification = create((set, get) => ({
     getAdminNotifics: async () => {
         set(() => ({ adminNotificLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/admin/notifications/get`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/admin/notifications/get`, { withCredentials: true })
             set(() => ({ adminNotifics: data.notifications }))
         } catch (error) {
             console.log(error)
@@ -37,7 +37,7 @@ const useNotification = create((set, get) => ({
             }
             set(() => ({ adminNotifics: updatedNotifics }))
 
-            await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/admin/notifications/mark-read`, { notifications: notifications.map(n=> n._id) })
+            await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/admin/notifications/mark-read`, { notifications: notifications.map(n => n._id) }, { withCredentials: true })
         } catch (error) {
             console.log(error)
             if (error.response) toaster("error", error.response.data.msg)

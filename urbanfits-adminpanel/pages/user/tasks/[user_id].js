@@ -3,7 +3,7 @@ import Link from "next/link";
 import LinkBtn from '@/components/buttons/link_btn';
 import Image from "next/image";
 import useUser from '@/hooks/useUser';
-import {isValidObjectId} from "mongoose";
+import { isValidObjectId } from "mongoose";
 import axios from "axios";
 
 const TaskItem = ({ task, userId, setUserTasks }) => {
@@ -78,7 +78,7 @@ export async function getServerSideProps(context) {
         }
     };
     try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/tasks/get/user-tasks?user_id=${user_id}`)
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/tasks/get/user-tasks-via-admin?user_id=${user_id}`, { withCredentials: true })
         return { props: { tasksDoc: data.tasks } }
     }
     catch (error) {

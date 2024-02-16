@@ -56,7 +56,7 @@ export default function AddUser() {
         onSubmit: async (values) => {
             try {
                 setLoading(true)
-                const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/user/signup`, { ...values, accept_policies: true, image: undefined })
+                const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/user/signup`, { ...values, accept_policies: true, image: undefined }, { withCredentials: true })
                 if (data.redirect_url && data.otp_id) {
                     console.log(data)
                     toaster("success", data.msg)
@@ -78,7 +78,7 @@ export default function AddUser() {
             const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/user/signup/callback`, {
                 otp_id: otpId,
                 otp
-            })
+            }, { withCredentials: true })
             if (values.image) {
                 const imgUrl = await uploadImage(values.image, `user-profiles/${data.user_id}`)
                 await updateUser(data.user_id, { image: imgUrl })

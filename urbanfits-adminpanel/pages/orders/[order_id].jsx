@@ -192,7 +192,7 @@ export async function getServerSideProps(context) {
         },
     };
     try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/orders/get-one?order_id=${order_id}`)
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/orders/get-one?order_id=${order_id}`, { withCredentials: true })
         return { props: { order: data.order } }
     }
     catch (error) {

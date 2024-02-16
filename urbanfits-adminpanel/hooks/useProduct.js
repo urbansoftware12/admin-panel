@@ -19,7 +19,7 @@ const useProduct = create((set, get) => ({
         try {
             if (category_id) {
                 console.log(page, category_id)
-                const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/products/get/bycategory?id=${category_id}&page=${page}`)
+                const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/products/get/bycategory?id=${category_id}&page=${page}`, { withCredentials: true })
                 set(() => ({
                     products: data.products,
                     totalProducts: data.totalProducts,
@@ -28,7 +28,7 @@ const useProduct = create((set, get) => ({
                 return data.products
             }
             else {
-                const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/products/get/many?page=${page}`)
+                const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/products/get/many?page=${page}`, { withCredentials: true })
                 set(() => ({
                     products: data.products,
                     totalProducts: data.totalProducts,
@@ -46,7 +46,7 @@ const useProduct = create((set, get) => ({
     getOneProduct: async (product_id, callback) => {
         set(() => ({ productLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/products/get/one?id=${product_id}`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/products/get/one?id=${product_id}`, { withCredentials: true })
             set(() => ({ productLoading: false }))
             if (callback) callback(data.product)
             return data.product
@@ -64,7 +64,7 @@ const useProduct = create((set, get) => ({
             productLoading: true
         }))
         try {
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/products/create`, productToCreate)
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/products/create`, productToCreate, { withCredentials: true })
             set(() => ({ productLoading: false }))
             return data.product
         } catch (error) {
@@ -79,7 +79,7 @@ const useProduct = create((set, get) => ({
 
         set(() => ({ productLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/products/update?id=${id}`, updatedProduct)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/products/update?id=${id}`, updatedProduct, { withCredentials: true })
             set(() => ({
                 productLoading: false,
                 productInfo: data.product
@@ -98,7 +98,7 @@ const useProduct = create((set, get) => ({
 
         set(() => ({ productLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/products/delete`, { products: productsToDelete })
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/products/delete`, { products: productsToDelete }, { withCredentials: true })
             await get().getProducts(1)
             toaster(data.deletedCount < 1 ? "info" : "success", data.msg)
         } catch (error) {

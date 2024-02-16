@@ -19,22 +19,20 @@ import timeAgo from "@/utils/timestamp_duration";
 import uploadImage from "@/utils/uploadImage";
 import { EncrytOrDecryptData } from "@/utils/data_handle-functions";
 import axios from "axios";
-import mongoose from "mongoose";
 import Link from "next/link";
 import toaster from "@/utils/toast_function";
 
-export default function UserProfile(props) {
-    const { updateUser, getUserNotifications, getUserUfBalance, addPointsToUserWallet, resetUser2fa, usersLoading, deleteUsers } = useUser()
+export default function UserProfile() {
+    const { getUser, updateUser, getUserNotifications, getUserUfBalance, addPointsToUserWallet, resetUser2fa, usersLoading, deleteUsers } = useUser()
     const router = useRouter()
-    const [userData, setUserData] = useState(props.userData);
+    const [userData, setUserData] = useState(null);
     const [userNotifics, setUserNotifics] = useState([]);
+    const [history, setHistory] = useState(null)
     const [checked, setChecked] = useState(1);
     const [loading, setLoading] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [notificLoading, setNotificLoading] = useState(false);
-    const userPfp = userData?.image?.includes("googleuser") ? userData.image : process.env.NEXT_PUBLIC_BASE_IMG_URL + userData.image
-
-    const handlemenueclick = (id) => setChecked(id);
+    const userPfp = userData?.image?.includes("googleuser") ? userData.image : process.env.NEXT_PUBLIC_BASE_IMG_URL + userData?.image
 
     const validatedSchema = Yup.object({
         image: Yup.object().nullable(0),
@@ -66,14 +64,14 @@ export default function UserProfile(props) {
     const { values, errors, touched, handleBlur, handleChange, handleReset, handleSubmit, setFieldValue, setValues } = useFormik({
         initialValues: {
             image: userData?.image || '',
-            firstname: userData.firstname || '',
-            lastname: userData.lastname || '',
-            gender: userData.gender || '',
-            role: userData.role || 'customer',
-            username: userData.username || '',
-            email: userData.email || '',
-            phone_prefix: userData.phone_prefix || 'Select Country Code',
-            phone_number: userData.phone_number || ''
+            firstname: userData?.firstname || '',
+            lastname: userData?.lastname || '',
+            gender: userData?.gender || '',
+            role: userData?.role || 'customer',
+            username: userData?.username || '',
+            email: userData?.email || '',
+            phone_prefix: userData?.phone_prefix || 'Select Country Code',
+            phone_number: userData?.phone_number || ''
         },
         validationSchema: validatedSchema,
         onSubmit: async (values) => {
@@ -107,7 +105,7 @@ export default function UserProfile(props) {
                 const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/update/password-via-admin`, {
                     ...values,
                     user_id: userData._id
-                })
+                }, { withCredentials: true })
                 toaster("success", data.msg)
                 passHandleReset()
             } catch (error) {
@@ -147,29 +145,62 @@ export default function UserProfile(props) {
         },
     })
 
-    const getNotificIcon = (category) => {
-        if (category == "account") return <AvatarSIcon />
-        if (category == "order") return <CartLIcon />
-        if (category == "reward") return <DiamondLIcon />
+    const notificIcons = {
+        account: <AvatarSIcon />,
+        order: <CartLIcon />,
+        reward: <DiamondLIcon />
+
     }
 
-    const getNotifics = async () => {
+    const getNotifics = async (user_id) => {
         setNotificLoading(true)
-        const notifics = await getUserNotifications(userData._id)
+        const notifics = await getUserNotifications(user_id)
         setUserNotifics(notifics)
         setNotificLoading(false)
     }
     const handleSectionPosition = (checked) => {
         if (checked == 1) return "translate-x-0"
-        if (checked == 2) return "-translate-x-1/3"
-        if (checked == 3) return "-translate-x-[66.66%]"
+        if (checked == 2) return "-translate-x-[25%]"
+        if (checked == 3) return "-translate-x-[50%]"
+        if (checked == 4) return "-translate-x-[75%]"
     }
-    useEffect(() => {
-        getUserUfBalance(userData._id, userData.uf_wallet.card_number, (uf_balance) => setUserData((prevState) => ({ ...prevState, uf_balance })))
-        getNotifics()
-    }, [])
+    const groupHistoryByYearAndMonth = (history) => {
+        if (!history) return null
+        const groupedHistory = {};
 
-    return <>
+        history.forEach((record) => {
+            const { year, month } = record;
+            const key = `${year}-${month}`;
+
+            if (!groupedHistory[key]) {
+                groupedHistory[key] = {
+                    year,
+                    month,
+                    records: [],
+                };
+            }
+            groupedHistory[key].records.push(record);
+        });
+
+        const groupedRecords = Object.values(groupedHistory);
+        return groupedRecords;
+    };
+    const UfPointsNames = { daily_checkin: "Daily Checkin", prize_wheel: "Prize Wheel", signup: "Sign Up", place_order: "Place Order", uf_task: "UF Task", additional_reward: "Other", deduction: "Deduction" };
+    const groupedRecords = history ? groupHistoryByYearAndMonth(history) : [];
+
+    useEffect(() => {
+        (async () => {
+            if (!router.query.user_to_get) router.replace("/404")
+            const user_data = await getUser(router.query.user_to_get);
+            if (!user_data) return router.replace("/404")
+            setUserData(user_data.user)
+            setHistory(user_data.points_history)
+            getNotifics(user_data._id)
+        })()
+    }, [router.isReady])
+
+    if (!userData) return <main className="w-full h-[80vh] flex justify-center items-center text-sm">Loading...</main>
+    else return <>
         {loading || usersLoading ? <Loader /> : null}
         <DeleteAction
             show={deleteModal}
@@ -228,24 +259,28 @@ export default function UserProfile(props) {
                 </div>
             </section>
             <section className="col-span-4 p-10 !pt-0 overflow-hidden">
-                <div className="flex gap-[62px] z-[-1] text-base ">
-                    <button className={`w-20 px-4 flex flex-col justify-between items-center`} onClick={() => handlemenueclick(1)}>
+                <div className="w-full flex justify-between text-base ">
+                    <button className={`w-20 px-4 flex flex-col justify-between items-center`} onClick={() => setChecked(1)}>
                         Profile
                         <span className={`${checked == 1 ? "w-full" : 'w-0'} h-1 mt-3 bg-gold-land transition-all duration-300`} />
                     </button>
-                    <button className={`w-20 px-4 flex flex-col justify-between items-center`} onClick={() => handlemenueclick(2)}>
+                    <button className={`w-20 px-4 flex flex-col justify-between items-center`} onClick={() => setChecked(2)}>
                         Setting
                         <span className={`${checked == 2 ? "w-full" : 'w-0'} h-1 mt-3 bg-gold-land transition-all duration-300`} />
                     </button>
-                    <button className={`w-40 px-4 flex flex-col justify-between items-center`} onClick={() => handlemenueclick(3)}>
+                    <button className={`w-40 px-4 flex flex-col justify-between items-center`} onClick={() => setChecked(3)}>
                         Add UF-Points
                         <span className={`${checked == 3 ? "w-full" : 'w-0'} h-1 mt-3 bg-gold-land transition-all duration-300`} />
+                    </button>
+                    <button className={`w-40 px-4 flex flex-col justify-between items-center`} onClick={() => setChecked(4)}>
+                        Points History
+                        <span className={`${checked == 4 ? "w-full" : 'w-0'} h-1 mt-3 bg-gold-land transition-all duration-300`} />
                     </button>
                 </div>
                 <hr className="h-px border-none bg-gray-200 translate-y-[-1px]" />
 
-                <div className={`w-[300%] flex justify-between transition-all duration-700 ${handleSectionPosition(checked)}`}>
-                    <section className={`w-1/3 ${checked !== 1 && "opacity-0"} transition-all duration-500`}>
+                <div className={`w-[400%] flex justify-between transition-all duration-700 ${handleSectionPosition(checked)}`}>
+                    <section className={`w-1/4 ${checked !== 1 && "opacity-0"} transition-all duration-500`}>
                         <div className="mt-10 grid grid-cols-3 gap-10">
                             <CardAdmin classes="px-5 py-[25px] ">
                                 <div className="flex gap-5">
@@ -282,10 +317,10 @@ export default function UserProfile(props) {
                             </CardAdmin>
                         </div>
 
-                        <CardAdmin classes=" p-[30px] mt-[40px] ">
+                        <CardAdmin classes="p-[30px] mt-[40px]">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-[22px]">Latest Notifications</h3>
-                                <button className={`fa-solid fa-arrows-rotate ${notificLoading ? "fa-spin" : null}`} type="button" onClick={getNotifics}></button>
+                                <button className={`fa-solid fa-arrows-rotate ${notificLoading ? "fa-spin" : null}`} type="button" onClick={() => getNotifics(userData?._id)}></button>
                             </div>
 
                             <hr className="mt-10" />
@@ -296,7 +331,7 @@ export default function UserProfile(props) {
                                     userNotifics.map((notific, i) => (
                                         <div key={i} className="w-full flex gap-x-4 items-center">
                                             <div className="w-[50px] h-[50px] flex justify-center items-center bg-gold rounded-[10px] ">
-                                                {getNotificIcon(notific.category)}
+                                                {notificIcons[notific.category]}
                                             </div>
 
                                             <div className="flex-1 flex flex-col">
@@ -313,7 +348,7 @@ export default function UserProfile(props) {
                             </div>
                         </CardAdmin>
                     </section>
-                    <CardAdmin classes={`w-1/3 p-[30px] mt-10 ${checked !== 2 && "opacity-0 max-h-40"} transition-all duration-500 overflow-hidden`}>
+                    <CardAdmin classes={`w-1/4 p-[30px] mt-10 ${checked !== 2 && "opacity-0 max-h-40"} transition-all duration-500 overflow-hidden`}>
                         <form className="space-y-5" onSubmit={handleSubmit} onReset={handleReset}>
                             <div className="w-full flex gap-5 items-center">
                                 <p>User Image</p>
@@ -397,7 +432,7 @@ export default function UserProfile(props) {
                             <Button type="submit" font='font_urbanist_medium'>Update User Password</Button>
                         </form> : <span className="text-sm text-gray-500">This user's account is associated with Google registration provider, you cannot change the password of such users who signed up with google as they don't need password to login.</span>}
                     </CardAdmin>
-                    <CardAdmin classes={`w-1/3 p-[30px] mt-10 ${checked !== 3 && "opacity-0 h-0"} transition-all duration-500 overflow-clip`}>
+                    <CardAdmin classes={`w-1/4 p-[30px] mt-10 ${checked !== 3 && "opacity-0 h-0"} transition-all duration-500 overflow-clip`}>
                         <form onSubmit={ptsHandleSubmit} className="w-full space-y-5">
                             <div className="mb-5 grid grid-cols-2 gap-5">
                                 <InputSelect defaultValue="Select source" value={ptsValues.source} onChange={(e) => { ptsHandleChange(e); setPtsFieldValue("notific_params.type", e.target.value) }} name="source" label="Source of points" error={ptsErrors.source && ptsTouched.source ? ptsErrors.source : null}>
@@ -435,35 +470,55 @@ export default function UserProfile(props) {
                             <Button classes="w-full" type="submit">Submit</Button>
                         </form>
                     </CardAdmin>
+                    <CardAdmin classes={`w-1/4 p-[30px] mt-10 ${checked !== 4 && "opacity-0 h-0"} transition-all duration-500 overflow-clip`}>
+                        <h3 className="mb-4 text-[22px]">Points Transations</h3>
+                        <section className="w-full gap-y-4">
+                            <div className="w-full mb-4 text-sm grid grid-cols-5 place-content-center place-items-center font_urbanist_bold">
+                                <span className="place-self-start">Source</span>
+                                <span>Earned</span>
+                                <span>Spent</span>
+                                <span>Expires At</span>
+                                <span>Total Balance</span>
+                            </div>
+                            {groupedRecords ? groupedRecords.map((recordObj, index) => <section key={index} className="group outline-none accordion-section mb-7" tabIndex={1} >
+                                <nav className="group flex justify-between py-3 items-center border-b border-b-gray-300 transition ease duration-500 cursor-pointer pr-10 relative">
+                                    <h2 className="group-focus:text-black text-sm font_urbanist_medium capitalize transition ease duration-500">{recordObj.month}&nbsp;{recordObj.year}</h2>
+                                    <i className={`group-focus:-rotate-180 absolute top-1/2 -translate-y-1/2 right-0 mb-auto ml-auto mt-2 mr-2 transform transition ease duration-500`}>
+                                        <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M0.718574 1.26652C0.471471 0.976974 0.475731 0.51076 0.729225 0.226124C0.852776 0.0862599 1.01361 0.0163273 1.1755 0.0163274C1.34166 0.0163274 1.50675 0.0899399 1.63136 0.238392L4.99708 4.20367L8.44587 0.231032C8.6951 -0.0536042 9.09984 -0.054831 9.35014 0.232259C9.59831 0.520576 9.59831 0.985564 9.34907 1.27388L5.44336 5.77162C5.323 5.90903 5.1611 5.98633 4.99175 5.98633L4.98749 5.98633C4.81708 5.9851 4.65305 5.90535 4.53483 5.76426L0.718574 1.26652Z" fill="#C4C4C4" />
+                                        </svg>
+                                    </i>
+                                </nav>
+                                <nav className="group-focus:max-h-[50vh] max-h-0 rounded overflow-x-hidden overflow-y-auto duration-500">
+                                    {recordObj.records.map((record, i) => {
+                                        const createdDate = new Date(record.createdAt);
+                                        const expiryDate = record.expiration_date ? new Date(record.expiration_date) : null;
+                                        const expiryText = (expiryDate) => {
+                                            if (expiryDate) {
+                                                if (new Date().getTime() < expiryDate.getTime()) return <span className="px-2 py-px bg-green-100 text-green-600 text-[10px] rounded-3xl">{expiryDate.getDate() + "/" + (expiryDate.getMonth() + 1) + "/" + expiryDate.getFullYear()}</span>;
+                                                else return <span className="px-2 py-px rounded-3xl bg-gray-200 text-gotham-black text-[10px]">expired</span>;
+                                            } else return <i className="fa-solid fa-infinity text-xs text-gotham-black" />
+                                        }
+                                        return <section key={i} className=" bg-white border-b border-b-gray-300 grid grid-cols-5 text-xs">
+                                            <div className="w-full flex items-center">
+                                                <span className="mr-8 py-4 flex flex-col text-[10px]">
+                                                    <h6 className="font_copper text-xs capitalize">{UfPointsNames[record.source]}</h6>
+                                                    {createdDate.getDate() + "/" + (createdDate.getMonth() + 1) + "/" + createdDate.getFullYear()}
+                                                </span>
+                                            </div>
+                                            <span className="w-full flex justify-center items-center text-green-400">+{record.points}</span>
+                                            <span className="w-full flex justify-center items-center text-red-400">-{record.spent}</span>
+                                            <span className="w-full flex justify-center items-center">{expiryText(expiryDate)}</span>
+                                            <span className="w-full flex justify-center items-center">{record.total_balance}</span>
+                                        </section>
+                                    })}
+                                </nav>
+                            </section>
+                            ) : null}
+                        </section>
+                    </CardAdmin>
                 </div>
             </section>
         </CardAdmin>
     </>
 };
-export async function getServerSideProps(context) {
-    const { auth_token, user_to_get } = await context.query
-    if (!auth_token || !mongoose.Types.ObjectId.isValid(user_to_get)) return {
-        redirect: {
-            destination: '/403',
-            permanent: false,
-        }
-    };
-    try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/byid?user_to_get=${user_to_get}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${auth_token}`
-            }
-        })
-        return { props: { userData: data.user } }
-    }
-    catch (error) {
-        console.error(error);
-        return {
-            redirect: {
-                destination: '/404',
-                permanent: false,
-            }
-        };
-    }
-}

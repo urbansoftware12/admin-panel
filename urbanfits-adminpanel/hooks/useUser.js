@@ -16,7 +16,7 @@ const useUser = create((set, get) => ({
         if (!admin) return
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/many?page=${page}`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/many?page=${page}`, { withCredentials: true })
             set(() => ({
                 users: data.users,
                 totalUsers: data.totalUsers,
@@ -29,11 +29,23 @@ const useUser = create((set, get) => ({
         set(() => ({ usersLoading: false }))
     },
 
+    getUser: async (user_id) => {
+        if (!admin) return
+        set(() => ({ usersLoading: true }))
+        try {
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/byid?user_to_get=${user_id}`, { withCredentials: true })
+            return data
+        } catch (error) {
+            console.log(error)
+            if (error.response) toaster("error", error.response?.data?.msg || "Network Error")
+        } finally { set(() => ({ usersLoading: false })) }
+    },
+
     getAllUsersTasks: async (page = 1, callback) => {
         if (!admin) return
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/tasks/get/all?page=${page}`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/tasks/get/all?page=${page}`, { withCredentials: true })
             if (callback) callback(data)
         } catch (error) {
             console.log(error)
@@ -47,7 +59,7 @@ const useUser = create((set, get) => ({
         if (!admin) return
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/tasks/approve?`, taskData)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/tasks/approve?`, taskData, { withCredentials: true })
             if (callback) callback(data)
             toaster("success", data.msg)
         } catch (error) {
@@ -62,7 +74,7 @@ const useUser = create((set, get) => ({
         if (!admin) return
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/online-users`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/online-users`, { withCredentials: true })
             set(() => ({ totalOnline: data.online_users }))
         } catch (error) { console.log(error) }
         set(() => ({ usersLoading: false }))
@@ -71,7 +83,7 @@ const useUser = create((set, get) => ({
     getUserUfBalance: async (user_id, card_number, callback) => {
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/uf-wallet/get-balance?user_id=${user_id}&card_number=${card_number}`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/uf-wallet/get-balance?user_id=${user_id}&card_number=${card_number}`, { withCredentials: true })
             set(() => ({ usersLoading: false }))
             callback(data.balance)
             return data.balance
@@ -82,7 +94,7 @@ const useUser = create((set, get) => ({
     addPointsToUserWallet: async (pointsData, callback) => {
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/user/uf-wallet/add-points`, pointsData)
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/user/uf-wallet/add-points`, pointsData, { withCredentials: true })
             set(() => ({ usersLoading: false }))
             callback(data)
             return toaster("success", data.msg)
@@ -92,7 +104,7 @@ const useUser = create((set, get) => ({
 
     getUserNotifications: async (user_id) => {
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/notifications/get?user_id=${user_id}`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/notifications/get?user_id=${user_id}`, { withCredentials: true })
             return data.notification_data.notifications
         } catch (error) {
             console.log(error)
@@ -119,7 +131,7 @@ const useUser = create((set, get) => ({
         if (!admin) return
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/2fa/reset-user-2fa?user_id=${user_id}`)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/2fa/reset-user-2fa?user_id=${user_id}`, {}, { withCredentials: true })
             toaster("success", data.msg)
             set(() => ({ usersLoading: false }))
             return data.user
@@ -135,7 +147,7 @@ const useUser = create((set, get) => ({
 
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/delete/via-admin`, { users: usersToDelete })
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/delete/via-admin`, { users: usersToDelete }, { withCredentials: true })
             toaster("success", data.msg)
         } catch (error) {
             console.log(error)

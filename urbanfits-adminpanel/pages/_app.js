@@ -14,31 +14,33 @@ import { pusherClient, initBeamsClient } from "@/utils/pusher";
 function App({ Component, pageProps }) {
   const router = useRouter()
   const [progress, setProgress] = useState(0)
-  const { admin, getMe, emitPresenceEvent, isLoggedIn, logOut } = useSession();
-  const adminRoles = ["administrator", "author", "editor"]
+  const { admin, getMe, emitPresenceEvent, isLoggedIn } = useSession();
 
   useEffect(() => {
-    (() => {
-      if (!isLoggedIn()) return router.replace("/auth/login")
-      getMe();
-      emitPresenceEvent()
+    getMe();
 
+    window.addEventListener("beforeunload", () => emitPresenceEvent("user_left"))
+    return () => {
+      window.removeEventListener("beforeunload", () => emitPresenceEvent("user_left"));
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isLoggedIn() && admin) {
+      emitPresenceEvent()
+      initBeamsClient()
       const adminChannel = pusherClient.subscribe('admin-channel')
       adminChannel.bind('new-notification', (notific_data) => {
         useNotification.setState({ adminNotifics: [notific_data, ...useNotification.getState().adminNotifics] })
         toaster(notific_data.data?.type || "info", <span>{notific_data.data.msg}{notific_data.data?.href && <Link className="underline" href={notific_data.data.href}>&nbsp;Inspect</Link>}</span>, 'bottom-left')
       })
-      initBeamsClient()
-    })()
-
-    const ignitePresence = () => emitPresenceEvent("user_left")
-    window.addEventListener("beforeunload", ignitePresence)
+    } else if (!isLoggedIn()) router.replace("/auth/login")
 
     return () => {
       pusherClient.unsubscribe('admin-channel')
-      window.removeEventListener("beforeunload", ignitePresence);
     }
   }, [admin])
+
   useEffect(() => {
     router.events.on("routeChangeStart", () => setProgress(77))
     router.events.on("routeChangeComplete", () => setProgress(100))

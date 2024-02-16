@@ -14,7 +14,7 @@ const useCoupon = create((set, get) => ({
         if (!admin) return
         set(() => ({ couponLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/coupon/get/many`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/coupon/get/many`, { withCredentials: true })
             callback(data.coupons)
             set(() => ({ couponLoading: false }))
             return data.coupons
@@ -28,7 +28,7 @@ const useCoupon = create((set, get) => ({
     getOneCoupon: async (coupon_id, callback) => {
         set(() => ({ couponLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/coupon/get/one?id=${coupon_id}`)
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/coupon/get/one?id=${coupon_id}`, { withCredentials: true })
             set(() => ({ couponLoading: false }))
             if (callback) callback(data.product)
             return data.product
@@ -44,7 +44,7 @@ const useCoupon = create((set, get) => ({
 
         set(() => ({ couponLoading: true }))
         try {
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/coupon/create`, couponToCreate)
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/coupon/create`, couponToCreate, { withCredentials: true })
             if (callback) callback(data)
             toaster("success", data.msg)
             set(() => ({ couponLoading: false }))
@@ -59,7 +59,7 @@ const useCoupon = create((set, get) => ({
     deleteCoupon: async (coupon_id, callback) => {
         set(() => ({ couponLoading: true }))
         try {
-            const { data } = await axios.delete(`${process.env.NEXT_PUBLIC_HOST}/api/coupon/delete?coupon_id=${coupon_id}`)
+            const { data } = await axios.delete(`${process.env.NEXT_PUBLIC_HOST}/api/coupon/delete?coupon_id=${coupon_id}`, { withCredentials: true })
             set(() => ({ couponLoading: false }))
             toaster("success", data.msg)
             get().getCoupons()
