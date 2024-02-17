@@ -119,15 +119,15 @@ export const sidebarItems = [
     subrows: [
       {
         label: "General Settings",
-        navlink: "/accounts/generalsetting",
+        navlink: "/settings/general/",
       },
       {
         label: "Account Settings",
-        navlink: "/accounts/accountsetting",
+        navlink: "/settings/account",
       },
       {
         label: "Inventory Managment",
-        navlink: "/accounts/inventorymanagement",
+        navlink: "/settings/inventory",
       },
     ],
   },
@@ -298,15 +298,15 @@ export const SearchQueryData = [
   },
   {
     label: "General Settings",
-    navlink: "/accounts/generalsetting",
+    navlink: "/settings/general/",
   },
   {
     label: "Account Settings",
-    navlink: "/accounts/accountsetting",
+    navlink: "/settings/account",
   },
   {
     label: "Inventory Managment",
-    navlink: "/accounts/inventorymanagement",
+    navlink: "/settings/inventory",
   },
   {
     label: "All Payment Methods",

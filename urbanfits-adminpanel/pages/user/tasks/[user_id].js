@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import Link from "next/link";
 import LinkBtn from '@/components/buttons/link_btn';
 import Image from "next/image";
 import useUser from '@/hooks/useUser';
-import { isValidObjectId } from "mongoose";
-import axios from "axios";
+import Spinner from '@/components/loaders/spinner';
 
 const TaskItem = ({ task, userId, setUserTasks }) => {
     const { approveTask } = useUser()
@@ -45,10 +45,21 @@ const TaskItem = ({ task, userId, setUserTasks }) => {
     </div>
 }
 
-export default function UserUfTasks({ tasksDoc }) {
-    const [userTasks, setUserTasks] = useState(tasksDoc)
-    console.log(userTasks)
-    return <>
+export default function UserUfTasks() {
+    const router = useRouter();
+    const { getUserTasks } = useUser();
+    const [userTasks, setUserTasks] = useState(null)
+
+    useEffect(() => {
+        const { user_id } = router.query;
+        console.log("the user id: ", user_id);
+        if (router.query && user_id?.length > 18) {
+            getUserTasks(user_id, router, (tasksDocs) => setUserTasks(tasksDocs))
+        }
+    }, [router.query])
+
+    if (!userTasks) return <main className="w-full h-[80vh] flex justify-center items-center text-sm"><Spinner forBtn variant="border-black" /></main>
+    else return <>
         <div className="w-full mt-[15px] flex justify-between items-center">
             <nav>
                 <p className="font_futura not-italic text-[22px]  font-medium text-black">{userTasks?.user_id?.firstname || userTasks?.user_id?.username}'s Tasks</p>
@@ -61,33 +72,11 @@ export default function UserUfTasks({ tasksDoc }) {
                     </div>
                 </section>
             </nav>
-            <LinkBtn href={`/user/${tasksDoc.user_id._id}`}>View {tasksDoc.user_id.username}'s Profile</LinkBtn>
+            <LinkBtn href={`/user/${userTasks.user_id._id}`}>View {userTasks.user_id.username}'s Profile</LinkBtn>
         </div>
 
         <section className="bg-white equillibrium_shadow mt-5 px-5 py-8 rounded-3xl grid grid-cols-2 gap-6">
             {userTasks.tasks.map(task => <TaskItem task={task} userId={userTasks.user_id._id} setUserTasks={setUserTasks} />)}
         </section>
     </>
-}
-export async function getServerSideProps(context) {
-    const { user_id } = await context.query
-    if (!isValidObjectId(user_id)) return {
-        redirect: {
-            destination: '/403',
-            permanent: false,
-        }
-    };
-    try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/tasks/get/user-tasks-via-admin?user_id=${user_id}`, { withCredentials: true })
-        return { props: { tasksDoc: data.tasks } }
-    }
-    catch (error) {
-        console.error(error);
-        return {
-            redirect: {
-                destination: '/404',
-                permanent: false,
-            }
-        };
-    }
 }

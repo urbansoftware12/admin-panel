@@ -105,6 +105,7 @@ export default function SidebarLayout({ children }) {
                         <SearchIcon />
                         <input
                             autoComplete="off"
+                            aria-autocomplete="none"
                             type="text"
                             name="search_box"
                             id="search"
@@ -121,7 +122,7 @@ export default function SidebarLayout({ children }) {
 
                     <div className="group relative px-2 py-1 border border-gray-300 rounded-full flex items-center cursor-pointer" tabIndex={3}>
                         {admin?.image ? <span className="inline-block w-9 aspect-square mr-3 border border-gray-400 rounded-full overflow-hidden">
-                            <Image src={process.env.NEXT_PUBLIC_BASE_IMG_URL + admin.image + "?timestamp=123"} className="w-full h-full object-cover" alt="user avatar" width={80} height={80} />
+                            <Image src={admin?.image ? (process.env.NEXT_PUBLIC_BASE_IMG_URL + admin.image + "?timestamp=123") : process.env.NEXT_PUBLIC_DEFAULT_PFP} className="w-full h-full object-cover" alt="user avatar" width={80} height={80} />
                         </span> : null}
                         <DownArowSmallIcon />
                         <CardAdmin classes="w-[150px] p-5 origin-top scale-0 group-focus-within:scale-100 duration-300 absolute -bottom-1 translate-y-full translate-x-[-30%]" round="rounded-[15px]" >
@@ -136,16 +137,16 @@ export default function SidebarLayout({ children }) {
                     <button className="group relative">
                         <SettingIcon />
                         <CardAdmin classes="absolute w-[150px] p-[20px] origin-top-right scale-0 group-focus-within:scale-100 duration-300 absolute -bottom-2 right-1 translate-y-full" round="rounded-[15px]" >
-                            <div className="flex flex-col items-start gap-y-3 text-xs" >
-                                <Link href='/admin'>My Account</Link>
-                                <Link href='/profile/securitysettings'>Security</Link>
-                                <Link href='/profile/authentication'>2FA Authentication</Link>
+                            <div className="flex flex-col items-start gap-y-3 text-sm" >
+                                <Link href='/settings/general'>General Settings</Link>
+                                <Link href='/settings/accounts'>Accounts Settings</Link>
+                                <Link href='/settings/inventory'>Inventory Settings</Link>
                             </div>
                         </CardAdmin>
                     </button>
                 </div>
             </div>
-            <hr className={`mt-[20px]`} />
+            <hr className="mt-5" />
             {/* ////////////////////////////Children START //////////////////////////////////////////////////////// */}
             {query == '' ? children :
                 <div className="w-full mt-10 p-5 flex flex-col gap-y-4">

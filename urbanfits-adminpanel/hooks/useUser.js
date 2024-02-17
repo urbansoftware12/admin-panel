@@ -29,14 +29,15 @@ const useUser = create((set, get) => ({
         set(() => ({ usersLoading: false }))
     },
 
-    getUser: async (user_id) => {
-        if (!admin) return
+    getUser: async (user_id, router) => {
+        if (!admin || !user_id) return
         set(() => ({ usersLoading: true }))
         try {
             const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/get/byid?user_to_get=${user_id}`, { withCredentials: true })
             return data
         } catch (error) {
             console.log(error)
+            router.replace("/404")
             if (error.response) toaster("error", error.response?.data?.msg || "Network Error")
         } finally { set(() => ({ usersLoading: false })) }
     },
@@ -49,10 +50,20 @@ const useUser = create((set, get) => ({
             if (callback) callback(data)
         } catch (error) {
             console.log(error)
-            if (error.response) toaster("error", error.response.data.msg)
-            toaster("error", "Network Error")
+            if (error.response) toaster("error", error.response?.data?.msg || "Network Error")
+        } finally { set(() => ({ usersLoading: false })) }
+    },
+
+    getUserTasks: async (user_id, router, callback) => {
+        if (!admin || !user_id) return
+        try {
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/tasks/get/user-tasks-via-admin?user_id=${user_id}`, { withCredentials: true })
+            if (callback) callback(data.tasks)
+        } catch (error) {
+            console.log(error)
+            router.replace("/404")
+            if (error.response) toaster("error", error.response?.data?.msg || "Network Error")
         }
-        set(() => ({ usersLoading: false }))
     },
 
     approveTask: async (taskData, callback) => {

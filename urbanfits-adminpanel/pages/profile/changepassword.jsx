@@ -26,6 +26,7 @@ export default function ChangePassword() {
           <div className=" flex flex-col gap-[19px]">
             <InputText
               autoComplete="off"
+              aria-autocomplete="none"
               label="Old Password"
               width="w-[100%]"
               placeholder="Old Password"

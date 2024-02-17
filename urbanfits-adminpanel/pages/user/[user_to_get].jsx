@@ -5,6 +5,7 @@ import Image from "next/image";
 import Button from "@/components/buttons/simple_btn";
 import Loader from "@/components/loaders/loader";
 import BounceLoader from "@/components/loaders/bounceLoader";
+import Spinner from "@/components/loaders/spinner";
 import { AvatarSIcon } from "@/public/icons/AvatarSIcon";
 import { CartLIcon } from "@/public/sidebaricons/CartLIcon";
 import { DiamondLIcon } from "@/public/icons/DiamondLIcon";
@@ -189,17 +190,15 @@ export default function UserProfile() {
     const groupedRecords = history ? groupHistoryByYearAndMonth(history) : [];
 
     useEffect(() => {
-        (async () => {
-            if (!router.query.user_to_get) router.replace("/404")
-            const user_data = await getUser(router.query.user_to_get);
-            if (!user_data) return router.replace("/404")
+        if (router.query.user_to_get) (async () => {
+            const user_data = await getUser(router.query.user_to_get, router);
             setUserData(user_data.user)
             setHistory(user_data.points_history)
             getNotifics(user_data._id)
         })()
     }, [router.isReady])
 
-    if (!userData) return <main className="w-full h-[80vh] flex justify-center items-center text-sm">Loading...</main>
+    if (!userData) return <main className="w-full h-[80vh] flex justify-center items-center text-sm"><Spinner forBtn variant="border-black" /></main>
     else return <>
         {loading || usersLoading ? <Loader /> : null}
         <DeleteAction

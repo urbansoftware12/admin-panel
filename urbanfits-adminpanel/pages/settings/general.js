@@ -1,8 +1,8 @@
 import React from "react";
 import CardAdmin from "@/components/cards/cardadmin";
 import countryCodes from "@/mock/countryCodes";
-import { InputText } from "@/components/InputText";
-import { QuestionIcon } from "@/public/icons/QuestionIcon";
+// import { InputText } from "@/components/InputText";
+// import { QuestionIcon } from "@/public/icons/QuestionIcon";
 import { InputSelect } from "@/components/InputSelect";
 import { RightArrowIcon } from "@/public/sidebaricons/RightArrowIcon";
 import { useFormik } from "formik";
@@ -49,9 +49,9 @@ export default function Generalsetting() {
       </li>
     </div>
 
-    <CardAdmin classes="p-[40px] mt-[20px] " round="rounded-[25px]">
+    <CardAdmin classes="p-10 mt-5 " round="rounded-[25px]">
       <div className="font_futura">
-        <p className="text-[22px] font-semibold "> Store Address</p>
+        {/* <p className="text-[22px] font-semibold "> Store Address</p>
 
         <p className="text-[14px] mt-[15px] mb-[30px] ">
           This is where your business is located. Tax rates and shipping rates
@@ -60,7 +60,7 @@ export default function Generalsetting() {
 
         <div className="grid grid-cols-2 gap-[40px] ">
           <div className="flex flex-col gap-[20px]  ">
-            {/* <InputText
+            <InputText
               label="Address Line 1"
               width="  w-[100%]"
               placeholder=" "
@@ -99,11 +99,11 @@ export default function Generalsetting() {
               error={errors.postalcode && touched.postalcode ?
                 (errors.postalcode) : null
               }
-            /> */}
+            />
           </div>
           <div>
             <div className="flex flex-col gap-[20px]  ">
-              {/* <InputText
+              <InputText
                 label="Address Line 2"
                 width="  w-[100%]"
                 placeholder=" "
@@ -115,7 +115,7 @@ export default function Generalsetting() {
                 error={errors.addressline2 && touched.addressline2 ?
                   (errors.addressline2) : null
                 }
-              /> */}
+              />
 
               <InputSelect defaultValue="Select country code" value={values.phone_prefix} onChange={handleChange} name="phone_prefix" label="Phone Prefix" error={errors.phone_prefix && touched.phone_prefix ? errors.phone_prefix : null}>
                 <option disabled>Select phone prefix</option>
@@ -126,9 +126,9 @@ export default function Generalsetting() {
               </InputSelect>
             </div>
           </div>
-        </div>
+        </div> */}
 
-        <p className="text-[22px] font-[500] mt-[60px] mb-[30px] ">
+        <p className="text-[22px] mb-5 ">
           Selling Options
         </p>
 
