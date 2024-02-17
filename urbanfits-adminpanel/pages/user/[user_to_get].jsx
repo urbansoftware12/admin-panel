@@ -4,7 +4,6 @@ import DeleteAction from "@/components/modals/deleteAction";
 import Image from "next/image";
 import Button from "@/components/buttons/simple_btn";
 import Loader from "@/components/loaders/loader";
-import BounceLoader from "@/components/loaders/bounceLoader";
 import Spinner from "@/components/loaders/spinner";
 import { AvatarSIcon } from "@/public/icons/AvatarSIcon";
 import { CartLIcon } from "@/public/sidebaricons/CartLIcon";
@@ -24,15 +23,13 @@ import Link from "next/link";
 import toaster from "@/utils/toast_function";
 
 export default function UserProfile() {
-    const { getUser, updateUser, getUserNotifications, getUserUfBalance, addPointsToUserWallet, resetUser2fa, usersLoading, deleteUsers } = useUser()
+    const { getUser, updateUser, getUserUfBalance, addPointsToUserWallet, resetUser2fa, usersLoading, deleteUsers } = useUser()
     const router = useRouter()
     const [userData, setUserData] = useState(null);
-    const [userNotifics, setUserNotifics] = useState([]);
     const [history, setHistory] = useState(null)
     const [checked, setChecked] = useState(1);
     const [loading, setLoading] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
-    const [notificLoading, setNotificLoading] = useState(false);
     const userPfp = userData?.image?.includes("googleuser") ? userData.image : process.env.NEXT_PUBLIC_BASE_IMG_URL + userData?.image
 
     const validatedSchema = Yup.object({
@@ -150,14 +147,6 @@ export default function UserProfile() {
         account: <AvatarSIcon />,
         order: <CartLIcon />,
         reward: <DiamondLIcon />
-
-    }
-
-    const getNotifics = async (user_id) => {
-        setNotificLoading(true)
-        const notifics = await getUserNotifications(user_id)
-        setUserNotifics(notifics)
-        setNotificLoading(false)
     }
     const handleSectionPosition = (checked) => {
         if (checked == 1) return "translate-x-0"
@@ -194,7 +183,6 @@ export default function UserProfile() {
             const user_data = await getUser(router.query.user_to_get, router);
             setUserData(user_data.user)
             setHistory(user_data.points_history)
-            getNotifics(user_data._id)
         })()
     }, [router.isReady])
 
@@ -317,17 +305,11 @@ export default function UserProfile() {
                         </div>
 
                         <CardAdmin classes="p-[30px] mt-[40px]">
-                            <div className="flex justify-between items-center">
-                                <h3 className="text-[22px]">Latest Notifications</h3>
-                                <button className={`fa-solid fa-arrows-rotate ${notificLoading ? "fa-spin" : null}`} type="button" onClick={() => getNotifics(userData?._id)}></button>
-                            </div>
-
+                            <h3 className="text-[22px]">Latest Notifications</h3>
                             <hr className="mt-10" />
-
                             <div className={`${checked !== 1 && "max-h-40"} flex flex-col gap-y-7 mt-10 transition-all duration-300 overflow-clip`}>
-                                {notificLoading ? <div className="flex justify-center"><BounceLoader /></div> : null}
-                                {!userNotifics ? <div className="w-full text-center h-40">No notifications to show :/</div> :
-                                    userNotifics.map((notific, i) => (
+                                {!userData?.notifications ? <div className="w-full text-center h-40">No notifications to show :/</div> :
+                                    userData.notifications.notifications?.map((notific, i) => (
                                         <div key={i} className="w-full flex gap-x-4 items-center">
                                             <div className="w-[50px] h-[50px] flex justify-center items-center bg-gold rounded-[10px] ">
                                                 {notificIcons[notific.category]}

@@ -12,11 +12,12 @@ const NotificationItem = (props) => {
         "info": { bg: "#eff6ff", border: "#93c5fd" },
         "error": { bg: "#fef2f2", border: "#fca5a5" }
     }
+    const date = new Date(props.notification.createdAt);
     return <div key={props.key} style={{ border: `1px solid ${statusColors[data.type].border}`, background: !seen ? statusColors[data.type].bg : '' }} className="relative w-full flex flex-col items-start mb-2 px-4 py-2 rounded-lg overflow-x-hidden">
         <span style={{ background: statusColors[data.type].border }} className="absolute top-1 right-2 px-1 py-px text-white text-[8px] rounded-xl">{category}</span>
         <span className="text-xs">{data.title}</span>
 
-        <p className="text-[10px] text-left">{data.msg} {data.href ? <Link href={data.href} className="underline decoration-blue-500">View</Link> : null}</p>
+        <p className="text-[10px] text-left">{data.msg} {date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear()} {date.getHours() + ":" + date.getMinutes()}&nbsp;&nbsp;&nbsp;&nbsp; {data.href ? <Link href={data.href} className="underline decoration-blue-500">View</Link> : null}</p>
         <div className={`w-full ${data.description && "mt-1"} flex justify-between`}>
             {data.description ? <button onClick={() => setDescription(prev => !prev)} className="px-2 py-px self-end border border-slate-500 rounded-xl text-[10px]"><i className="fa-solid fa-chevron-down" />&nbsp;View description</button> : <i />}
             {seen_by?.admin_id ? <span className="bg-gray-400 text-white px-2 py-px self-end rounded-xl text-[10px]">Marked read by <Link href={`/user/${seen_by.admin_id}`} className="underline decoration-blue-500">@{seen_by.name}</Link></span>
