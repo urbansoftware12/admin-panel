@@ -11,8 +11,7 @@ import axios from 'axios';
 import toaster from '@/utils/toast_function';
 
 const BundleItem = (props) => {
-    const { index, errors, handleChange, handleRemoveProduct } = props
-    const { getOneProduct, productLoading } = useProduct()
+    const { index, errors, handleChange, handleRemoveProduct, getOneProduct, productLoading } = props;
     const [foundProduct, setFoundProduct] = useState(null)
     useEffect(() => {
         if (props.value && props.value.length > 18) getOneProduct(props.value)
@@ -56,7 +55,7 @@ const BundleItem = (props) => {
 
 
 export default function CreateBundles() {
-    const { selectedProducts } = useProduct()
+    const { selectedProducts, getOneProduct, productLoading } = useProduct();
     const validationSchema = Yup.object().shape({
         products: Yup.array().of(
             Yup.object().shape({
@@ -127,13 +126,15 @@ export default function CreateBundles() {
                         key={index}
                         index={index}
                         value={product.id}
+                        getOneProduct={getOneProduct}
+                        productLoading={productLoading}
                         errors={errors}
                         handleChange={handleChange}
                         handleRemoveProduct={handleRemoveProduct}
                     />
                 ))}
                 <button type="button" className='group text-xs text-white bg-slate-400 px-2 py-1 rounded-md my-4 transition-all duration-300' onClick={handleAddProduct}><i className="fa-solid fa-plus text-white group-hover:rotate-90 group-hover:mr-1 transition-all duration-300" />&nbsp;add another one</button>
-                <Button loading={loading} disabled={loading} type="submit">Create Bundle</Button>
+                <Button loading={productLoading} disabled={productLoading} type="submit">Create Bundle</Button>
             </form>
         </CardAdmin>
     </>

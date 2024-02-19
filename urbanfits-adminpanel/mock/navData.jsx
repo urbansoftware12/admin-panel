@@ -114,7 +114,7 @@ export const sidebarItems = [
     icon: <ProductIcon />,
   },
   {
-    label: "Account",
+    label: "Settings",
     icon: <AccountIcon />,
     subrows: [
       {
@@ -123,7 +123,7 @@ export const sidebarItems = [
       },
       {
         label: "Account Settings",
-        navlink: "/settings/account",
+        navlink: "/settings/accounts",
       },
       {
         label: "Inventory Managment",
@@ -302,7 +302,7 @@ export const SearchQueryData = [
   },
   {
     label: "Account Settings",
-    navlink: "/settings/account",
+    navlink: "/settings/accounts",
   },
   {
     label: "Inventory Managment",

@@ -97,7 +97,7 @@ export default function CreateCoupon() {
                     <p className="text-[22px]">Add New Coupon</p>
                     <InputText name="name" value={values.name} onChange={handleChange} onBlur={handleBlur} error={errors.name && touched.name ? errors.name : null} h="h-[56px]" placeholder="Coupon Name" />
                     <InputText name="coupon_code" value={values.coupon_code} onChange={handleChange} onBlur={handleBlur} error={errors.coupon_code && touched.coupon_code ? errors.coupon_code : null} h="h-[56px]" placeholder="Coupon Code (Case Sensitive)" />
-                    <p className="text-xs text-red-600">WARNING: After coupon creation, the Coupon Code won't be shown again and will be hashed forever for security, please proceed by saving the Coupon Code in a save place.</p>
+                    <p className="text-xs text-red-600">WARNING: After coupon creation, the Coupon Code won't be shown again and will be hashed forever for security, please proceed by saving the Coupon Code in a secure place.</p>
 
                     <InputTextArea
                         mt="mt-[0px]"
