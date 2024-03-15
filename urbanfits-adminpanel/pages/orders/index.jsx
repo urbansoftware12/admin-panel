@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { SearchIcon } from '@/public/sidebaricons/SearchIcon';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Button from '@/components/buttons/simple_btn';
 import LinkBtn from '@/components/buttons/link_btn';
 import CardAdmin from "@/components/cards/cardadmin";
@@ -12,6 +13,7 @@ import { CSVLink } from "react-csv";
 import { ordersTableColumns } from '@/mock/tablesdata';
 
 export default function AllOrders() {
+    const router = useRouter();
     const { orders, getOrders, totalOrders, selectedOrders, setSelectedOrders, orderLoading, deleteOrders } = useOrder()
     const [deleteModal, setDeleteModal] = useState(null)
     const [query, setQuery] = useState('')
@@ -153,15 +155,23 @@ export default function AllOrders() {
                         id: order._id,
                         name: order?.order_items[0]?.name || order?.gift_cards[0]?.name,
                         image: order?.order_items[0]?.image || order?.gift_cards[0]?.bg,
-                        price: order.price_details.total_price + order.price_details.shipping_fees + "د.إ",
+                        price: order.price_details.total + "د.إ",
                         status: order.order_status,
                         date: order.createdAt,
                         handleInfo: () => { },
                         infoLink: `/orders/${order._id}`,
                         actions: [
                             {
-                                name: "Copy ID",
+                                name: "Copy Reference",
                                 onClick: () => { navigator.clipboard.writeText(order._id) }
+                            },
+                            {
+                                name: "Copy Tracking no.",
+                                onClick: () => { navigator.clipboard.writeText(order.tracking_number) }
+                            },
+                            {
+                                name: "Track Order",
+                                onClick: () => { window.open(process.env.NEXT_PUBLIC_HOST + "/trackorder?order_id=" + order._id) }
                             },
                             {
                                 name: "Delete",

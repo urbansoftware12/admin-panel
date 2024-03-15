@@ -31,11 +31,26 @@ const useOrder = create((set, get) => ({
         return set(() => ({ orderLoading: false }))
     },
 
-    getOneOrder: async (order_id) => {
+    getOneOrder: async (order_id, callback) => {
         set(() => ({ orderLoading: true }))
         try {
             const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/orders/get-one?order_id=${order_id}`, { withCredentials: true })
             set(() => ({ orderLoading: false }))
+            if (callback) callback(data.order);
+            return data.order
+        } catch (error) {
+            console.log(error)
+            toaster("error", error.response.data.msg)
+        }
+        return set(() => ({ orderLoading: false }))
+    },
+
+    changeOrderStatus: async (order_id, order_status, callback) => {
+        set(() => ({ orderLoading: true }))
+        try {
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/orders/change-status?order_id=${order_id}&order_status=${order_status}`, { withCredentials: true })
+            set(() => ({ orderLoading: false }))
+            if (callback) callback(data.order);
             return data.order
         } catch (error) {
             console.log(error)

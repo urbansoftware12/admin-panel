@@ -8,6 +8,7 @@ import { VisaIcon } from "@/public/icons/VisaIcon";
 import { AmexIcon } from "@/public/icons/AmexIcon";
 import { MastercardIcon } from "@/public/icons/MastercardIcon";
 import { Dots3Icon } from "@/public/icons/Dots3Icon";
+import { orderStatuses } from "@/uf.config";
 
 export const userListTableColumns = [
   {
@@ -139,25 +140,24 @@ export const userTasksTableColumns = [
   }
 ]
 
-const orderStatusColors = { pending: { bg: "#a3a3a3", text: "#ffffff" }, readytoship: { bg: "#eede00", text: "#ffffff" }, shipped: { bg: "#f85b00", text: "#ffffff" }, returned: { bg: "#f30000", text: "#ffffff" }, delivered: { bg: "#00f37a", text: "#ffffff" } }
 export const ordersTableColumns = [
-  {
-    selector: row => row.id,
-    name: "ID",
-    cell: (row) => <div className="w-full group relative flex justify-start">
-      <span className='w-full whitespace-nowrap truncate cursor-default'>
-        {row.id}
-        <Infotip>{row.id}</Infotip>
-      </span>
-    </div>,
-    width: '10%',
-    sortable: true
-  },
+  // {
+  //   selector: row => row.id,
+  //   name: "ID",
+  //   cell: (row) => <div className="w-full group relative flex justify-start">
+  //     <span className='w-full whitespace-nowrap truncate cursor-default'>
+  //       {row.id}
+  //       <Infotip>{row.id}</Infotip>
+  //     </span>
+  //   </div>,
+  //   width: '10%',
+  //   sortable: true
+  // },
   {
     selector: row => row.item,
     name: "Item(s)",
     cell: (row) => <div className="flex items-center gap-x-2">
-      <span className={`${row.image?.endsWith("_metal_bg") && row.image} w-10 aspect-square rounded-lg overflow-hidden`}>
+      <span className={`${row.image?.endsWith("_metal_bg") && row.image} w-11 aspect-square my-2 rounded-lg overflow-hidden`}>
         {!row.image?.endsWith("_metal_bg") && <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={process.env.NEXT_PUBLIC_BASE_IMG_URL + row.image} />}
       </span>
       {row.name}
@@ -184,8 +184,22 @@ export const ordersTableColumns = [
   },
   {
     selector: row => row.status,
+    name: "Group",
+    cell: row => {
+      const { status, group } = row.status;
+      console.log("here is the status ", row.status)
+      return <span style={{ background: orderStatuses[status].bg, color: orderStatuses[status].text }} className="text-[10px] px-2 py-0.5 rounded-full">{group}</span>
+    },
+    sortable: true,
+  },
+  {
+    selector: row => row.status,
     name: "Status",
-    cell: row => { const lowerStatus = row.status.toLowerCase(); return <span style={{ background: orderStatusColors[lowerStatus].bg, color: orderStatusColors[lowerStatus].text }} className="text-xs px-2 py-0.5 rounded-full">{row.status}</span> },
+    cell: row => {
+      const { status, group } = row.status;
+      console.log("here is the status ", row.status)
+      return <span style={{ background: orderStatuses[status].bg, color: orderStatuses[status].text }} className="text-[10px] px-2 py-0.5 rounded-full">{status.toLowerCase()}</span>
+    },
     sortable: true,
   },
   {
@@ -373,23 +387,12 @@ export const orderHistoryTableData = [
 
 export const orderProductDetailTableColumns = [
   {
-    selector: row => row.id,
-    name: "ID",
-    cell: (row) => <div className="w-full group relative flex justify-start">
-      <span className='w-full whitespace-nowrap truncate cursor-default'>
-        {row.id}
-        <Infotip>{row.id}</Infotip>
-      </span>
-    </div>,
-    width: '10%'
-  },
-  {
     selector: row => row.image,
     name: "Image",
-    cell: (row) => <span className='w-10 aspect-square rounded-lg overflow-hidden'>
+    cell: (row) => <span className='w-11 aspect-square rounded-lg overflow-hidden'>
       <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={process.env.NEXT_PUBLIC_BASE_IMG_URL + row.image} />
     </span>,
-    width: '10%',
+    width: '9%',
   },
   {
     selector: row => row.name,
@@ -398,7 +401,18 @@ export const orderProductDetailTableColumns = [
       <p className="text-sm text-black">{row.name}</p>
       Variant: {row.variant}
     </span>,
-    width: '35%',
+    width: '30%',
+  },
+  {
+    selector: row => row.sku,
+    cell: (row) => <div className="w-full group relative">
+      <button onClick={() => navigator.clipboard.writeText(row.sku)} className='w-full whitespace-nowrap text-left truncate'>
+        <Infotip>copy</Infotip>
+        {row.sku}
+      </button>
+    </div>,
+    name: "SKU",
+    width: '17%'
   },
   {
     selector: row => row.quantity,

@@ -352,6 +352,10 @@ input:checked+.slider:before {
   visibility: hidden;
 }
 
+.mini_scrollbar::-webkit-scrollbar {
+  width: 2px;
+}
+
 /*                                     CSS to hide scroll bar */
 
 .hide_scrollbar::-webkit-scrollbar {
@@ -454,9 +458,11 @@ input[type=range] {
   width: 200px;
   background-color: transparent;
 }
+
 input[type=range]:focus {
   outline-color: rgb(255, 202, 104);
 }
+
 input[type=range]::-webkit-slider-runnable-track {
   -webkit-appearance: none;
   appearance: none;
@@ -464,6 +470,7 @@ input[type=range]::-webkit-slider-runnable-track {
   background: -webkit-linear-gradient(90deg, #FAE892 0%, #B3903E 100%);
   background: linear-gradient(90deg, #FAE892 0%, #B3903E 100%);
 }
+
 input[type=range]::-moz-range-track {
   -moz-appearance: none;
   appearance: none;
@@ -471,6 +478,7 @@ input[type=range]::-moz-range-track {
   background: -moz-linear-gradient(90deg, #FAE892 0%, #B3903E 100%);
   background: linear-gradient(90deg, #FAE892 0%, #B3903E 100%);
 }
+
 input[type=range]::-ms-track {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -480,6 +488,7 @@ input[type=range]::-ms-track {
   background: -webkit-linear-gradient(90deg, #FAE892 0%, #B3903E 100%);
   background: linear-gradient(90deg, #FAE892 0%, #B3903E 100%);
 }
+
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -494,9 +503,11 @@ input[type=range]::-webkit-slider-thumb {
   box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.4);
   cursor: pointer;
 }
+
 input[type=range]::-webkit-slider-thumb:active {
   cursor: pointer;
 }
+
 input[type=range]::-moz-range-thumb {
   -moz-appearance: none;
   appearance: none;
@@ -511,9 +522,11 @@ input[type=range]::-moz-range-thumb {
   box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.4);
   cursor: pointer;
 }
+
 body input[type=range]::-moz-range-thumb:active {
   cursor: pointer;
 }
+
 body input[type=range]::-ms-thumb {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -529,6 +542,7 @@ body input[type=range]::-ms-thumb {
   box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.4);
   cursor: pointer;
 }
+
 body input[type=range]::-ms-thumb:active {
   cursor: pointer;
 }

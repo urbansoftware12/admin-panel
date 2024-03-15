@@ -24,17 +24,17 @@ const Userlist = () => {
             const { _id, firstname, email } = doc.user_id;
             return (firstname && firstname.toLowerCase().includes(query.toLowerCase())) || _id.includes(query) || email.toLowerCase().includes(query.toLowerCase())
         }
-        else return true
+        else if (doc.user_id?._id) return true
     });
 
     return <>
         <div className="flex mt-[15px] justify-between items-center ">
             <div>
-                <h2 className="font_futura text-[22px]">User List</h2>
+                <h2 className="font_futura text-[22px]">User Tasks</h2>
                 <div className="flex items-center mt-4 font_futura text-sm gap-x-3">
                     <Link href="/admin">Home</Link> <i className="fa-solid fa-chevron-right" />
                     <span >Users</span> <i className="fa-solid fa-chevron-right" />
-                    <span>Product List</span>
+                    <span>Tasks List</span>
                 </div>
             </div>
             <LinkBtn href="/user/add-user" my="0">Add User</LinkBtn>
@@ -96,12 +96,14 @@ const Userlist = () => {
                 columns={userTasksTableColumns}
                 data={filteredTasks?.map(taskDoc => {
                     const user = taskDoc.user_id;
+                    if (!user?._id) return
+                    console.log("Here is the user: ", user)
                     return {
                         ...user,
                         tasks: taskDoc.tasks,
                         id: user?._id,
-                        avatar: user.image.includes("googleuser") ? user.image : process.env.NEXT_PUBLIC_BASE_IMG_URL + user.image,
-                        name: user.firstname || user.username,
+                        avatar: user?.image ? (user.image?.includes("googleuser") ? user.image : process.env.NEXT_PUBLIC_BASE_IMG_URL + user.image) : process.env.NEXT_PUBLIC_DEFAULT_PFP,
+                        name: user?.firstname || user.username,
                         handleInfo: () => { },
                         infoLink: `/user/tasks/${user._id}`,
                         actions: [
