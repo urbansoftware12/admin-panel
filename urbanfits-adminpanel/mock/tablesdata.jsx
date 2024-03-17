@@ -777,35 +777,37 @@ export const productListTableColumns = [
   {
     selector: row => row.product,
     name: "Product",
-    cell: (row) => <span className='w-12 aspect-square rounded-lg overflow-hidden' >
+    cell: (row) => <span className='w-11 aspect-square my-2 rounded-lg overflow-hidden' >
       <Image className='w-full h-full object-cover' width={250} height={250} alt={row.name} src={row.product} />
     </span>,
     sortable: true,
-    width: '10%'
+    width: '9%'
   },
   {
     selector: row => row.name,
-    cell: row => <div className="w-full group relative flex justify-start">
+    cell: row => <div className="w-full group relative flex flex-col items-start justify-center">
       <span className='w-full whitespace-nowrap truncate cursor-default'>
-        {row.name}
         <Infotip>{row.name}</Infotip>
+        {row.name}
       </span>
+      <span className="text-xs">{row.price}د.إ</span>
     </div>,
     name: "Name",
     sortable: true,
+    width: '25%'
   },
-  {
-    selector: row => row.price,
-    name: "Price",
-    cell: (row) => `${row.price}د.إ`,
-    sortable: true,
-  },
-  {
-    selector: row => row.offer,
-    name: "Offer",
-    cell: (row) => `${row.offer}% off`,
-    sortable: true,
-  },
+  // {
+  //   selector: row => row.price,
+  //   name: "Price",
+  //   cell: (row) => `${row.price}د.إ`,
+  //   sortable: true,
+  // },
+  // {
+  //   selector: row => row.offer,
+  //   name: "Offer",
+  //   cell: (row) => `${row.offer}% off`,
+  //   sortable: true,
+  // },
   {
     selector: row => row.purchased,
     name: "Purchased",
