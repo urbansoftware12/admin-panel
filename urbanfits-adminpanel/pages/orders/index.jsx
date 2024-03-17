@@ -128,7 +128,7 @@ export default function AllOrders() {
                             width: "100%",
                             display: 'block',
                             overflowY: 'visible',
-                            paddingBottom: "6rem"
+                            paddingBottom: "8rem"
                         }
                     },
                     head: { style: { fontSize: '13px' } },
@@ -172,6 +172,10 @@ export default function AllOrders() {
                             {
                                 name: "Track Order",
                                 onClick: () => { window.open(process.env.NEXT_PUBLIC_HOST + "/trackorder?order_id=" + order._id) }
+                            },
+                            {
+                                name: "Shipping Label",
+                                onClick: () => { window.open(order.shipping_label_url) }
                             },
                             {
                                 name: "Delete",

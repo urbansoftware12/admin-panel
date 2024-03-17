@@ -116,7 +116,7 @@ export default function CreateBundles() {
                     <Link href="/addbundle">Create Bundle</Link>
                 </div>
             </div>
-            <Link href="/products/allproducts" ><Button my="my-0">All Products</Button></Link>
+            <Link href="/products" ><Button my="my-0">All Products</Button></Link>
         </div>
 
         <CardAdmin classes="px-8 py-10 mt-5 min-h-[50vh]">

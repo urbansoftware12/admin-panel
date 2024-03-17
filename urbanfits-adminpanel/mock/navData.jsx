@@ -26,7 +26,7 @@ export const sidebarItems = [
     subrows: [
       {
         label: "All Products",
-        navlink: "/products/allproducts",
+        navlink: "/products/",
       },
       {
         label: "Add New Product",
@@ -226,7 +226,7 @@ export const SearchQueryData = [
   },
   {
     label: "All Products",
-    navlink: "/products/allproducts",
+    navlink: "/products/",
   },
   {
     label: "Add New Product",

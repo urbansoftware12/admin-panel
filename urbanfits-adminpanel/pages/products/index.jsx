@@ -81,7 +81,7 @@ export default function AllProducts() {
                 <div className="flex items-center mt-4 font_futura text-sm gap-x-3">
                     <Link href="/">Home</Link> <i className="fa-solid fa-chevron-right" />
                     <span >Products</span> <i className="fa-solid fa-chevron-right" />
-                    <Link href="/allproducts">Product List</Link>
+                    <Link href="/products">Product List</Link>
                 </div>
             </div>
             <div className='flex gap-x-2'>
@@ -153,7 +153,7 @@ export default function AllProducts() {
                             width: "100%",
                             display: 'block',
                             overflowY: 'visible',
-                            paddingBottom: "6rem"
+                            paddingBottom: "8rem"
                         }
                     },
                     head: { style: { fontSize: '13px' } },
