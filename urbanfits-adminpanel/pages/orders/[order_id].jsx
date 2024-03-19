@@ -30,6 +30,16 @@ export default function OrderDetails() {
         else toaster("error", "Invalid Order Identifier.")
     }, [router.query])
 
+    const returnWindowData = (() => {
+        let date = new Date(order?.createdAt || new Date());
+        const currentDate = new Date();
+        date.setDate(date.getDate() + 30);
+        date = new Date(date);
+        let returnExpiry = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
+
+        if (currentDate.getTime() > date.getTime()) return { msg: "Return window closed on: " + returnExpiry, status: true };
+        else return { msg: "Return window close on: " + returnExpiry, status: false };
+    })()
 
     const date = new Date(order?.createdAt || 0);
     return <>
@@ -50,6 +60,7 @@ export default function OrderDetails() {
             <div>
                 <div className="px-[40px] pt-[57px] flex items-center justify-between ">
                     <p className="text-lg">Order Details</p>
+                    <div className="flex items-center leading-tight">Return Window:&nbsp; {returnWindowData.status ? <span className="px-2 py-0.5 rounded-2xl text-xs text-white bg-red-600">closed</span> : <span className="px-2 py-0.5 rounded-2xl text-white text-xs bg-green-500">available</span>}</div>
                     <div className="flex items-center text-lg">
                         Status:&nbsp;
                         <div className="px-2 py-1 rounded-2xl text-xs">
@@ -84,6 +95,7 @@ export default function OrderDetails() {
                             <span>Tracking No: </span><span>{order?.tracking_number}</span> <br />
                             <span>Status Group: </span><span>{order?.order_status?.group}</span> <br />
                             <span>Order Date: </span><span>{date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear()} | {date.toLocaleString('en-US', { hour: 'numeric', hour12: true }) + " : " + date.getMinutes()}</span> <br />
+                            <span>{returnWindowData.msg}</span> <br />
                         </div>
                     </nav>
                 </section>
