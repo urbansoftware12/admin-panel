@@ -123,19 +123,18 @@ const useUser = create((set, get) => ({
         }
     },
 
-    updateUser: async (user_id, valuesObj) => {
+    updateUser: async (user_id, valuesObj, callback) => {
         if (!admin) return
         set(() => ({ usersLoading: true }))
         try {
-            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/update/via-admin?user_id=${user_id}`, valuesObj)
+            const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/update/via-admin?user_id=${user_id}`, valuesObj, { withCredentials: true })
             toaster("success", data.msg)
             set(() => ({ usersLoading: false }))
-            return data.user
+            if (callback) callback(data.user)
         } catch (error) {
             console.log(error)
             if (error.response) toaster("error", error.response.data.msg)
-        }
-        set(() => ({ usersLoading: false }))
+        } finally { set(() => ({ usersLoading: false })) }
     },
 
     resetUser2fa: async (user_id) => {

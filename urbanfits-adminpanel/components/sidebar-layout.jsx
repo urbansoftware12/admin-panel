@@ -120,12 +120,13 @@ export default function SidebarLayout({ children }) {
 
                 <div className='flex items-center'>
 
-                    <div className="group relative px-2 py-1 border border-gray-300 rounded-full flex items-center cursor-pointer" tabIndex={3}>
+                    <div className="group relative px-2 py-1 bg-white border border-gray-300 rounded-full flex items-center cursor-pointer" tabIndex={3}>
                         {admin?.image ? <span className="inline-block w-9 aspect-square mr-3 border border-gray-400 rounded-full overflow-hidden">
                             <Image src={admin?.image ? (process.env.NEXT_PUBLIC_BASE_IMG_URL + admin.image + "?timestamp=123") : process.env.NEXT_PUBLIC_DEFAULT_PFP} className="w-full h-full object-cover" alt="user avatar" width={80} height={80} />
                         </span> : null}
+                        <span className="text-sm mr-2">{admin?.firstname || admin?.username}</span>
                         <DownArowSmallIcon />
-                        <CardAdmin classes="w-[150px] p-5 origin-top scale-0 group-focus-within:scale-100 duration-300 absolute -bottom-1 translate-y-full translate-x-[-30%]" round="rounded-[15px]" >
+                        <CardAdmin classes="w-[150px] p-5 origin-top-right scale-0 group-focus-within:scale-100 duration-300 absolute -bottom-1 translate-y-full translate-x-[-25%]" round="rounded-[15px]" >
                             <div className="flex flex-col gap-3 text-sm" >
                                 <Link href="/profile/myprofile">My Profile</Link>
                                 <Link href="/profile/authentication">Settings</Link>

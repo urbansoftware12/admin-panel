@@ -1,5 +1,8 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
+import useNotification from './useNotification';
 import { persist, createJSONStorage } from 'zustand/middleware'
+import PusherClient from "pusher-js"
+import { pusherClient } from '@/utils/pusher';
 import toaster from "@/utils/toast_function";
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
@@ -78,15 +81,32 @@ const useSession = create(persist((set, get) => ({
             }
         }
     },
-    emitPresenceEvent: async (event_name = "user_joined") => {
-        const { admin } = get()
-        if (!admin) return
-        try {
-            axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/presence`, {
-                event: { name: event_name }
-            }, { withCredentials: true })
-        } catch (e) { console.log("Error emitting presence event: ", e) }
+
+    emitPresenceEvent: () => {
+        const { admin } = get();
+        const presenceInstance = new PusherClient(process.env.NEXT_PUBLIC_PUSHER_KEY, {
+            cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
+            channelAuthorization: {
+                endpoint: `${process.env.NEXT_PUBLIC_HOST}/api/pusher/auth`,
+                params: {
+                    user_id: admin?._id,
+                    email: admin?.email
+                }
+            },
+        });
+        presenceInstance.subscribe("presence-urbanfits")
+        return () => presenceInstance.unsubscribe("presence-urbanfits");
     },
+
+    subscribeAdminChannel: () => {
+        const adminChannel = pusherClient.subscribe('admin-channel')
+        adminChannel.bind('new-notification', (notific_data) => {
+            useNotification.setState({ adminNotifics: [notific_data, ...useNotification.getState().adminNotifics] })
+            toaster(notific_data.data?.type || "info", <span>{notific_data.data.msg}{notific_data.data?.href && <Link className="underline" href={notific_data.data.href}>&nbsp;Inspect</Link>}</span>, 'bottom-left')
+        })
+        return () => adminChannel.unsubscribe('admin-channel');
+    },
+
     logOut: async (router) => {
         try {
             await axios.post(`${process.env.NEXT_PUBLIC_HOST}/api/auth/logout`, {}, { withCredentials: true });

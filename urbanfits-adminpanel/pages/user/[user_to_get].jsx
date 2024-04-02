@@ -79,9 +79,10 @@ export default function UserProfile() {
                 console.log(values.image)
                 imgUrl = await uploadImage(values.image, `user-profiles${userData._id}`)
             } else delete values.image
-            const newUserData = await updateUser(userData._id, { ...values, ...(imgUrl && { image: imgUrl }) })
-            setUserData(newUserData)
-            setLoading(false)
+            updateUser(userData._id, { ...values, ...(imgUrl && { image: imgUrl }) }, (updatedUser) => {
+                setUserData(updatedUser)
+                setLoading(false)
+            })
         }
     })
 
@@ -97,7 +98,6 @@ export default function UserProfile() {
             confirm_password: Yup.string().oneOf([Yup.ref("new_password"), null], "password must match").required("Please enter your password."),
         }),
         onSubmit: async (values) => {
-            console.log(values)
             setLoading(true)
             try {
                 const { data } = await axios.put(`${process.env.NEXT_PUBLIC_HOST}/api/user/update/password-via-admin`, {
@@ -113,7 +113,6 @@ export default function UserProfile() {
             setLoading(false)
         }
     })
-
 
     const { values: ptsValues, errors: ptsErrors, touched: ptsTouched, handleChange: ptsHandleChange, setFieldValue: setPtsFieldValue, handleReset: ptsHandleReset, handleSubmit: ptsHandleSubmit } = useFormik({
         initialValues: {
@@ -140,7 +139,7 @@ export default function UserProfile() {
                 (uf_balance) => setUserData((prevState) => ({ ...prevState, uf_balance }))
             ))
             ptsHandleReset()
-        },
+        }
     })
 
     const notificIcons = {
@@ -180,9 +179,10 @@ export default function UserProfile() {
 
     useEffect(() => {
         if (router.query.user_to_get) (async () => {
-            const user_data = await getUser(router.query.user_to_get, router);
-            setUserData(user_data.user)
-            setHistory(user_data.points_history)
+            const { user, points_history } = await getUser(router.query.user_to_get, router);
+            setUserData(user)
+            setValues(user)
+            setHistory(points_history)
         })()
     }, [router.isReady])
 
@@ -387,9 +387,8 @@ export default function UserProfile() {
                         </div>
                         {userData.two_fa_activation_date ? <div className="w-full min-h-[80px] p-4 border rounded-xl">
                             <div className="w-full flex items-center">
-                                Enable / Disable 2FA<label className="switch w-[45px] mx-4 md:w-11 h-6"><input type="checkbox" name='active_by_phone' checked={userData.two_fa_enabled || false} value={userData.two_fa_enabled} onChange={async () => {
-                                    const newUserData = await updateUser(userData._id, { two_fa_enabled: !userData.two_fa_enabled })
-                                    setUserData(newUserData)
+                                Enable / Disable 2FA<label className="switch w-[45px] mx-4 md:w-11 h-6"><input type="checkbox" name='active_by_phone' checked={userData.two_fa_enabled || false} value={userData.two_fa_enabled} onChange={() => {
+                                    updateUser(userData._id, { two_fa_enabled: !userData.two_fa_enabled }, (updatedUser) => setUserData(updatedUser))
                                 }} /><span className="slider"></span></label>
                             </div>
                             <div className="w-full mt-7 flex items-center gap-x-4">

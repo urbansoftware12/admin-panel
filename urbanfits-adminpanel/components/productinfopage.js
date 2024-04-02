@@ -80,7 +80,7 @@ const VariantItem = (props) => {
                                         {(((imgUrl?.size / 1024) / 100) * variant.compression_quality).toFixed(1)} kb
                                         {/* {((imgUrl?.size/1024)*((100-(100-variant.compression_quality))/100)).toFixed(1)} kb */}
                                     </span>
-                                    <DefaultOrPic src={imgUrl !== '' ? propsProduct ? process.env.NEXT_PUBLIC_BASE_IMG_URL + imgUrl : URL.createObjectURL(imgUrl) : ''} />
+                                    <DefaultOrPic src={imgUrl} />
                                 </div>
                             </div>
                         </div>
@@ -352,6 +352,7 @@ export default function ProductInfoPage(props) {
                         e.preventDefault();
                         const selectedFiles = e.dataTransfer.files;
                         const imagesArray = Array.from(selectedFiles);
+                        console.log("here is what you are looking for: ", typeof imagesArray[0])
                         setFieldValue("cover_image", imagesArray[0]);
                         coverImage.current.style.transform = "scale(1)"
                         coverImage.current.style.boxShadow = "none"
@@ -371,7 +372,7 @@ export default function ProductInfoPage(props) {
                             <input name='cover_image' encType="multipart/form-data" onChange={(e) => { setFieldValue("cover_image", e.target.files[0]) }} type="file" id="filebtn" className='w-0 h-0' />
                         </div>
                         <div className='w-full h-full overflow-hidden rounded-xl' >
-                            <DefaultOrPic mega src={values.cover_image !== '' ? props.product ? process.env.NEXT_PUBLIC_BASE_IMG_URL + values.cover_image : URL.createObjectURL(values.cover_image) : null} />
+                            <DefaultOrPic mega src={values.cover_image} />
                         </div>
                         {errors && errors.cover_image ? <p className='absolute text-red-400 bottom-[-19px] left-[10px] text-[11px]' >{errors.cover_image} </p> : null}
                     </div>

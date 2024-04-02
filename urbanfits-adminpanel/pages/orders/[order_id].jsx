@@ -11,14 +11,6 @@ import mongoose from 'mongoose';
 import toaster from "@/utils/toast_function";
 import { orderProductDetailTableColumns } from "@/mock/tablesdata";
 import { orderStatuses } from "@/uf.config";
-// import { CartLIcon } from "@/public/sidebaricons/CartLIcon";
-// import { ReplaceLIcon } from "@/public/icons/ReplaceLIcon";
-// import { GiftLIcon } from "@/public/icons/GiftLIcon";
-// import { TruckLIcon } from "@/public/icons/TruckLIcon";
-// import { PassengerLIcon } from "@/public/icons/PassengerLIcon";
-// import { DaimondIcon } from "@/public/sidebaricons/DaimondIcon";
-// import { CartIcon } from "@/public/sidebaricons/CartIcon";
-// import { TruckIcon } from "@/public/sidebaricons/TruckIcon";
 
 export default function OrderDetails() {
     const router = useRouter();
@@ -151,7 +143,6 @@ export default function OrderDetails() {
                                 <p className="font-[400]"> {order.price_details.total}د.إ </p>
                             </span>
                         </div></>}
-
                 </div>
             </div>
         </CardAdmin>
