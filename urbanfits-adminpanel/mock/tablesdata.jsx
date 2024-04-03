@@ -141,27 +141,18 @@ export const userTasksTableColumns = [
 ]
 
 export const ordersTableColumns = [
-  // {
-  //   selector: row => row.id,
-  //   name: "ID",
-  //   cell: (row) => <div className="w-full group relative flex justify-start">
-  //     <span className='w-full whitespace-nowrap truncate cursor-default'>
-  //       {row.id}
-  //       <Infotip>{row.id}</Infotip>
-  //     </span>
-  //   </div>,
-  //   width: '10%',
-  //   sortable: true
-  // },
   {
     selector: row => row.item,
     name: "Item(s)",
-    cell: (row) => <div className="flex items-center gap-x-2">
-      <span className={`${row.image?.endsWith("_metal_bg") && row.image} w-11 aspect-square my-2 rounded-lg overflow-hidden`}>
-        {!row.image?.endsWith("_metal_bg") && <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={process.env.NEXT_PUBLIC_BASE_IMG_URL + row.image} />}
-      </span>
-      {row.name}
-    </div>,
+    cell: (row) => {
+      const haveGiftCard = row.gift_cards.some(item => item.is_giftcard);
+      return <div className="flex items-center gap-x-2">
+        <div className="w-14 h-11 my-2 rounded-lg overflow-hidden">
+          {haveGiftCard ? <div style={{ width: "50px", height: "100%", background: "#FF4A60" }} className="flex justify-center items-center text-[10px] text-white">UF-Gift</div> : <Image style={{ width: "50px", height: "100%" }} className='object-cover' width={80} height={80} alt={row.name} src={process.env.NEXT_PUBLIC_BASE_IMG_URL + row.image} />}
+        </div>
+        {haveGiftCard ? `UF E-Giftcard (${row.gift_cards.length})` : row.name}
+      </div>
+    },
     width: '25%',
     sortable: true
   },
@@ -186,9 +177,8 @@ export const ordersTableColumns = [
     selector: row => row.status,
     name: "Group",
     cell: row => {
-      const { status, group } = row.status;
-      console.log("here is the status ", row.status)
-      return <span style={{ background: orderStatuses[status].bg, color: orderStatuses[status].text }} className="text-[10px] px-2 py-0.5 rounded-full">{group}</span>
+      const { status, group } = row.status || { status: "DELIVERED", group: "delivered" };
+      return <span style={{ background: orderStatuses[status || "DELIVERED"].bg, color: orderStatuses[status || "DELIVERED"].text }} className="text-[10px] px-2 py-0.5 rounded-full">{group || "delivered"}</span>
     },
     sortable: true,
   },
@@ -196,7 +186,7 @@ export const ordersTableColumns = [
     selector: row => row.status,
     name: "Status",
     cell: row => {
-      const { status, group } = row.status;
+      const { status, group } = row.status || { status: "DELIVERED", group: "delivered" };
       console.log("here is the status ", row.status)
       return <span style={{ background: orderStatuses[status].bg, color: orderStatuses[status].text }} className="text-[10px] px-2 py-0.5 rounded-full">{status.toLowerCase()}</span>
     },
@@ -389,17 +379,19 @@ export const orderProductDetailTableColumns = [
   {
     selector: row => row.image,
     name: "Image",
-    cell: (row) => <span className='w-11 aspect-square rounded-lg overflow-hidden'>
-      <Image className='w-full h-full object-cover' width={80} height={80} alt={row.name} src={process.env.NEXT_PUBLIC_BASE_IMG_URL + row.image} />
-    </span>,
+    cell: (row) => <div className="w-14 h-11 my-2 rounded-lg overflow-hidden">
+      {row.haveGiftCard ?
+        <div style={{ width: "50px", aspectRatio: "1/1", background: "#FF4A60" }} className="flex justify-center items-center rounded-lg text-[10px] text-white">UF-Gift</div>
+        : <Image style={{ width: "50px", height: "100%" }} className='object-cover' width={80} height={80} alt={row.name} src={process.env.NEXT_PUBLIC_BASE_IMG_URL + row.image} />}
+    </div>,
     width: '9%',
   },
   {
     selector: row => row.name,
     name: "Product",
     cell: (row) => <span className='flex flex-col text-xs text-gray-400'>
-      <p className="text-sm text-black">{row.name}</p>
-      Variant: {row.variant}
+      <p className="text-sm text-black">{row.haveGiftCard ? `UF E-Giftcard (For ${row.buy_for})` : row.name}</p>
+      {!row.haveGiftCard && <span> Variant: {row.variant}</span>}
     </span>,
     width: '30%',
   },
@@ -408,7 +400,7 @@ export const orderProductDetailTableColumns = [
     cell: (row) => <div className="w-full group relative">
       <button onClick={() => navigator.clipboard.writeText(row.sku)} className='w-full whitespace-nowrap text-left truncate'>
         <Infotip>copy</Infotip>
-        {row.sku}
+        {row.haveGiftCard ? "N/A" : row.sku}
       </button>
     </div>,
     name: "SKU",
@@ -421,6 +413,7 @@ export const orderProductDetailTableColumns = [
   },
   {
     selector: row => row.weight,
+    cell: row => row.haveGiftCard ? "N/A" : row.weight,
     name: "Weight (grams)",
     width: '13%',
   },

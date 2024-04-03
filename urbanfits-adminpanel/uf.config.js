@@ -5,7 +5,7 @@ export const orderStatuses = {
     'AT DEPOT': { group: "shipped", bg: "#facc15", text: "#808080" },
     'DELIVERING': { group: "delivering", bg: "#f97316", text: "#ffff" },
     "DELIVERED": { group: "delivered", bg: "#4ade80", text: "#ffff" },
-    "ATTEMPTED": { group: "attempted", bg: "#fef08a", text: "#0000" },
+    "ATTEMPTED": { group: "attempted", bg: "#fef08a", text: "#808080" },
     "CANCELLED": { group: "cancelled", bg: "#dc2626", text: "#ffff" },
     "RTO INITIATED": { group: "cancelled", bg: "#2dd4bf", text: "#ffff" },
     "RTO ASSIGNED": { group: "cancelled", bg: "#2dd4bf", text: "#ffff" },

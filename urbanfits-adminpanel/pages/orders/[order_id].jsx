@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import CardAdmin from "@/components/cards/cardadmin";
 import Link from "next/link";
-import { InputSelect } from "@/components/InputSelect";
 import Loader from "@/components/loaders/loader";
 import useOrder from "@/hooks/useOrder";
 import LinkBtn from "@/components/buttons/link_btn";
@@ -29,11 +28,12 @@ export default function OrderDetails() {
         date = new Date(date);
         let returnExpiry = date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate();
 
-        if (currentDate.getTime() > date.getTime()) return { msg: "Return window closed on: " + returnExpiry, status: true };
-        else return { msg: "Return window close on: " + returnExpiry, status: false };
+        if (currentDate.getTime() > date.getTime()) return { expiry: returnExpiry, status: true };
+        else return { expiry: returnExpiry, status: false };
     })()
-
     const date = new Date(order?.createdAt || 0);
+    const haveGiftCard = order?.gift_cards?.some(item => item.is_giftcard);
+
     return <>
         {orderLoading && <Loader />}
         <div className="flex mt-[15px] justify-between items-end ">
@@ -41,14 +41,14 @@ export default function OrderDetails() {
                 <h2 className="font_futura text-[22px]">Order Details</h2>
                 <div className="flex items-center mt-4 font_futura text-sm gap-x-3">
                     <Link href="/">Home</Link> <i className="fa-solid fa-chevron-right" />
-                    <span >Orders</span> <i className="fa-solid fa-chevron-right" />
+                    <Link href="/orders">Orders</Link> <i className="fa-solid fa-chevron-right" />
                     <span>Order Details</span>
                 </div>
             </div>
             <LinkBtn href="/products/addproduct" my="my-0">Add Order</LinkBtn>
         </div>
 
-        <CardAdmin classes="px-[0px] py-[0px] mt-[20px] ">
+        <CardAdmin classes="px-0 py-0 mt-5">
             <div>
                 <div className="px-[40px] pt-[57px] flex items-center justify-between ">
                     <p className="text-lg">Order Details</p>
@@ -64,7 +64,7 @@ export default function OrderDetails() {
                 </div>
                 <hr className="mt-[17px]" />
                 <section className="px-10 py-5 grid grid-cols-2 gap-[67px] ">
-                    <nav className="min-h-[183px] border-[#DADADA] border-[1px] rounded-[25px] ">
+                    {!haveGiftCard && <nav className="min-h-[183px] border-[#DADADA] border-[1px] rounded-[25px] ">
                         <div className="h-[48.16px] bg-[#F4F4F4] rounded-t-[25px] flex items-center justify-center text-base">
                             <p>Shipping Address:</p>
                         </div>
@@ -76,18 +76,18 @@ export default function OrderDetails() {
                             <p>{order?.shipping_address?.city} {order?.shipping_address?.country}</p>
                             <p>{order?.shipping_address?.phone_prefix} {order?.shipping_address?.phone_number}</p>
                         </div>
-                    </nav>
+                    </nav>}
                     <nav className=" min-h-[183px] border-[#DADADA] border-[1px] rounded-[25px] ">
                         <div className="h-[48.16px] bg-[#F4F4F4] rounded-t-[25px] flex items-center justify-center text-base">
                             <p>Shipping Info:</p>
                         </div>
 
-                        <div className="p-5 text-sm">
-                            <span>Order Reference: </span><span>{order?._id}</span> <br />
-                            <span>Tracking No: </span><span>{order?.tracking_number}</span> <br />
-                            <span>Status Group: </span><span>{order?.order_status?.group}</span> <br />
-                            <span>Order Date: </span><span>{date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear()} | {date.toLocaleString('en-US', { hour: 'numeric', hour12: true }) + " : " + date.getMinutes()}</span> <br />
-                            <span>{returnWindowData.msg}</span> <br />
+                        <div className="p-5 text-sm grid grid-cols-2">
+                            <span>Order Reference: </span><span>{order?._id}</span>
+                            <span>Tracking No: </span>{haveGiftCard ? "Doesn't apply" : <span>{order?.tracking_number}</span>}
+                            <span>Status Group: </span><span>{order?.order_status?.group}</span>
+                            <span>Order Date: </span><span>{date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear()} | {date.toLocaleString('en-US', { hour: 'numeric', hour12: true }) + " : " + date.getMinutes()}</span>
+                            <span>Return window close on: </span> <span>{returnWindowData.expiry}</span>
                         </div>
                     </nav>
                 </section>
@@ -114,33 +114,33 @@ export default function OrderDetails() {
                         highlightOnHover
                         sortIcon={<span>&uarr;&darr;</span>}
                         columns={orderProductDetailTableColumns}
-                        data={order.order_items?.map(item => {
+                        data={(haveGiftCard ? order.gift_cards : order.order_items).map(item => {
                             return {
                                 ...item,
+                                haveGiftCard,
                                 id: item._id,
                             }
-                        })}
-                    />
+                        })} />
                         <div className=" text-[14px] flex items-center gap-[36px] mt-[30px] justify-end " >
                             <span className="flex gap-10px items-center" >
-                                <p className="font-[500] " >Item(s):&nbsp;</p>
-                                <p className="font-[400]"> {order?.order_items?.length} </p>
+                                <p>Item(s):&nbsp;</p>
+                                <p> {haveGiftCard ? order?.gift_cards?.length : order?.order_items?.length} </p>
                             </span>
                             <span className="flex gap-10px items-center" >
-                                <p className="font-[500] " >Shipping Fee:&nbsp;</p>
-                                <p className="font-[400]"> {order.price_details.shipping_fees}د.إ </p>
+                                <p>Shipping Fee:&nbsp;</p>
+                                <p> {order.price_details.shipping_fees}د.إ </p>
                             </span>
                             <span className="flex gap-10px items-center" >
-                                <p className="font-[500] " >Total Discount:&nbsp;</p>
-                                <p className="font-[400]"> {order.price_details.total_discount}د.إ </p>
+                                <p>Total Discount:&nbsp;</p>
+                                <p> {order.price_details.total_discount}د.إ </p>
                             </span>
                             <span className="flex gap-10px items-center" >
-                                <p className="font-[500] " >Subtotal:&nbsp;</p>
-                                <p className="font-[400]"> {order.price_details.sub_total}د.إ </p>
+                                <p>Subtotal:&nbsp;</p>
+                                <p> {order.price_details.sub_total}د.إ </p>
                             </span>
                             <span className="flex gap-10px items-center" >
-                                <p className="font-[500] " >Total Price:&nbsp;</p>
-                                <p className="font-[400]"> {order.price_details.total}د.إ </p>
+                                <p>Total Price:&nbsp;</p>
+                                <p> {order.price_details.total}د.إ </p>
                             </span>
                         </div></>}
                 </div>
