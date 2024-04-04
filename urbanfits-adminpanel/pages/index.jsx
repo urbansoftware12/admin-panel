@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image';
-import Link from "next/link";
 import CardAdmin from '@/components/cards/cardadmin';
 import LineChart from '@/components/charts/LineChart';
 import DoughnutChart from '@/components/charts/DoughnutChart';
+import RecentOrders from '@/components/recent-orders';
 import LineChart2 from '@/components/charts/LineChart2';
 import BarChart from '@/components/charts/BarChart';
-import DownStickArrowIcon from '@/public/icons/DownStickArrowIcon';
 import avatarYellow from '@/public/avatarYellow.png';
 import pinkShoesAvatar from '@/public/pinkShoesAvatar.png';
 import AvatarIconV from '@/public/icons/AvatarIconV';
@@ -17,9 +16,11 @@ import DollarCardIcon from '@/public/icons/DollarCardIcon';
 import { TruckLIcon } from '@/public/icons/TruckLIcon';
 import { RefreshIcon } from '@/public/icons/RefreshIcon';
 import { Dots3Icon } from '@/public/icons/Dots3Icon';
-import { orderStatuses } from '@/uf.config';
 import axios from 'axios';
 import toaster from '@/utils/toast_function';
+// import Link from "next/link";
+// import DownStickArrowIcon from '@/public/icons/DownStickArrowIcon';
+// import { orderStatuses } from '@/uf.config';
 // import { GeoChart } from '@/components/charts/GeoChart'
 // import BarChartHor from '@/components/charts/BarChartHor'
 // import { recentOrdersTableColumns, recentOrdersTableData } from '@/mock/tablesdata'
@@ -42,7 +43,7 @@ export default function Dashboard() {
     const getMetrics = async () => {
         setMetrics(prev => ({ ...prev, metricsLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/metrics`);
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/metrics`, { withCredentials: true });
             setMetrics(data.metrics)
         } catch (e) { console.log(e); toaster("error", "Somethign went wrong getting the meterics data.") }
         finally { setMetrics(prev => ({ ...prev, metricsLoading: false })) }
@@ -155,9 +156,9 @@ export default function Dashboard() {
             <div className='col-span-4' >
                 <CardAdmin>
                     <div className='px-[30px] py-[33.5px]'>
-                        <p className='text-[22px]mb-[34px]'>Sale Report</p>
+                        <p className='text-[22px] mb-[34px]'>Sale Report</p>
                         <LineChart />
-                        <div className='flex gap-[70px] items-centertext-smmt-[30px]'>
+                        <div className='flex gap-[70px] items-center text-sm mt-12'>
                             <span className='flex gap-[10px] items-center'>
                                 <div className='w-[15px] h-[15px] rounded-[50px] bg-[#88B5E2]' />
                                 <p>Via Referral</p>
@@ -175,42 +176,23 @@ export default function Dashboard() {
                 </CardAdmin>
             </div>
             <div className='col-span-2' >
-                <CardAdmin>
-                    <div className='p-8 flex flex-col items-center justify-center'>
-                        <span className='text-[22px] mb-b self-start'>Order Review</span>
-                        <div className='w-52 aspect-square'>
-                            <DoughnutChart />
-                        </div>
-
-                        <button className='pt-8 pb-4 text-sm' >
-                            <i class="fa-solid fa-download text-base mr-3" />
-                            Download Overall Report
-                        </button>
-                        <div className='pt-4 grid grid-cols-2 gap-y-7 gap-x-10 text-xs border-t border-gray-300'>
-                            {Object.keys(orderStatuses).map((status, index) => <Link href={"/orders?status=" + status.toLowerCase()} key={index} className='flex gap-[10px] items-center'>
-                                <div style={{ background: orderStatuses[status].bg }} className='w-4 aspect-square rounded-3xl' />
-                                <span className='capitalize'>{status.toLowerCase()}</span>
-                            </Link>)}
-                        </div>
-                    </div>
-                </CardAdmin>
+                <DoughnutChart />
             </div>
         </section>
 
-        <section className='grid grid-cols-6 gap-[27px] mt-[30px] ' >
+        <section className='grid grid-cols-6 gap-[27px] mt-[30px]'>
             <div className='col-span-4' >
                 <CardAdmin>
-                    <div className='px-[30px] py-[33.5px]'>
-                        <p className='text-[22px]mb-[34px]'>Sale Report</p>
+                    <div className='px-[30px] py-8'>
+                        <p className='text-[22px] mb-8'>User Activity</p>
                         <LineChart2 />
-                        {/* <BarChart/> */}
                     </div>
                 </CardAdmin>
             </div>
             <div className='col-span-2' >
                 <CardAdmin>
                     <div className='px-[30px] py-[33.5px] ' >
-                        <p className='text-[22px]mb-[14px] ' >Current User</p>
+                        <p className='text-[22px] mb-3'>Current User</p>
                         <BarChart />
                     </div>
                 </CardAdmin>
@@ -230,7 +212,7 @@ export default function Dashboard() {
                     </div>
                 </CardAdmin>
             </div> */}
-            <div className='col-span-2' >
+            {/* <div className='col-span-2' >
                 <CardAdmin>
                     <div className='px-[30px] py-[33.5px]'>
                         <div className='flex items-center justify-between mb-2' >
@@ -247,24 +229,11 @@ export default function Dashboard() {
                         </>))}
                     </div>
                 </CardAdmin>
-            </div>
+            </div> */}
         </section>
 
         <section>
-            <CardAdmin classes="mt-[30px] " >
-                <div className='p-[30px]  ' >
-                    <div className='mb-[10px]' >
-                        <p className='text-[22px]mb-[10px] ' >Recent Orders</p>
-                    </div>
-                    <div className='px-[20px] ' >
-                        {/* <GenericTable3
-              data={recentOrdersTableData}
-              columns={recentOrdersTableColumns}
-            /> */}
-                    </div>
-
-                </div>
-            </CardAdmin>
+            <RecentOrders />
         </section>
 
         <section className='grid grid-cols-6 gap-[27px] mt-[30px] ' >
@@ -272,7 +241,7 @@ export default function Dashboard() {
                 <CardAdmin>
                     <div className='px-[30px] py-[33.5px] ' >
                         <div className='flex items-center justify-between  mb-[10px]' >
-                            <p className='text-[22px] ' >New Customers</p>
+                            <p className='text-[22px]'>New Customers</p>
                             <div className=' flex items-center gap-[24px]' > <RefreshIcon /> <Dots3Icon />  </div>
                         </div>
                         {[...Array(10)].map((e, i) => <div className={`flex items-center justify-betweentext-sm ${i == 0 && "mt-5"} my-[15px]`} >

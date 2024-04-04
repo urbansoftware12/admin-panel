@@ -14,10 +14,10 @@ const useOrder = create((set, get) => ({
     setSelectedOrders: (newArray) => set(() => ({ selectedOrders: newArray })),
     setOrderInfo: (info) => set(() => ({ orderInfo: info })),
 
-    getOrders: async (page = 1) => {
+    getOrders: async (page = 1, statusQuery = null, limit = 50) => {
         set(() => ({ orderLoading: true }))
         try {
-            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/orders/get-many?page=${page}`, { withCredentials: true })
+            const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/user/orders/get-many?page=${page}&limit=${limit}${statusQuery ? `&status=${statusQuery}` : ''}`, { withCredentials: true })
             set(() => ({
                 orders: data.orders,
                 totalOrders: data.totalorders,

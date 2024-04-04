@@ -186,8 +186,7 @@ export const ordersTableColumns = [
     selector: row => row.status,
     name: "Status",
     cell: row => {
-      const { status, group } = row.status || { status: "DELIVERED", group: "delivered" };
-      console.log("here is the status ", row.status)
+      const { status } = row.status || { status: "DELIVERED", group: "delivered" };
       return <span style={{ background: orderStatuses[status].bg, color: orderStatuses[status].text }} className="text-[10px] px-2 py-0.5 rounded-full">{status.toLowerCase()}</span>
     },
     sortable: true,

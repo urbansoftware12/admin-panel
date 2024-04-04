@@ -17,6 +17,7 @@ export default function AllOrders() {
     const { orders, getOrders, totalOrders, selectedOrders, setSelectedOrders, orderLoading, deleteOrders } = useOrder()
     const [deleteModal, setDeleteModal] = useState(null)
     const [query, setQuery] = useState('')
+    const [statusQuery, setStatusQuery] = useState(null)
     const [actionsTip, setActionsTip] = useState(false)
     const [selectable, setSelectable] = useState(false)
     const filteredOrders = orders.filter((item) => {
@@ -28,8 +29,13 @@ export default function AllOrders() {
     });
 
     useEffect(() => {
-        if (!orders.length) getOrders()
-    }, [])
+        const { status } = router?.query;
+        if (status) {
+            setStatusQuery(status)
+            getOrders(1, status);
+        }
+        else getOrders();
+    }, [router.isReady])
 
     const CsvHeaders = [
         { label: 'Order Id', key: 'id' },
@@ -116,7 +122,7 @@ export default function AllOrders() {
                         }}
                         classes={selectable ? "shadow-lg shadow-[#c3992c]" : null}
                     >Select Products</Button>
-                    <button title="Refresh Data" disabled={orderLoading} onClick={getOrders} className={`fa-solid fa-arrows-rotate text-sm ${orderLoading ? "fa-spin" : null}`}></button>
+                    <button title="Refresh Data" disabled={orderLoading} onClick={() => getOrders(1, statusQuery)} className={`fa-solid fa-arrows-rotate text-sm ${orderLoading ? "fa-spin" : null}`}></button>
                 </section>
             </div>
             <DataTable
