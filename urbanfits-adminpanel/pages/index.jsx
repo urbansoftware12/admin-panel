@@ -3,8 +3,8 @@ import CardAdmin from '@/components/cards/cardadmin';
 import LineChart from '@/components/charts/LineChart';
 import DoughnutChart from '@/components/charts/DoughnutChart';
 import RecentOrders from '@/components/recent-orders';
-import LineChart2 from '@/components/charts/LineChart2';
-import BarChart from '@/components/charts/BarChart';
+import MonthsActivityChart from '@/components/charts/MonthsActivityChart';
+import Last60minUserActivity from '@/components/charts/Last60minUserActivity';
 import NewCustomersAndTopProducts from '@/components/new-customers';
 import AvatarIconV from '@/public/icons/AvatarIconV';
 import PurseIcon from '@/public/icons/PurseIcon';
@@ -14,13 +14,7 @@ import DollarCardIcon from '@/public/icons/DollarCardIcon';
 import { TruckLIcon } from '@/public/icons/TruckLIcon';
 import axios from 'axios';
 import toaster from '@/utils/toast_function';
-import BarChartHor from '@/components/charts/BarChartHor'
-import { GeoChart } from '@/components/charts/GeoChart'
-// import Link from "next/link";
-// import DownStickArrowIcon from '@/public/icons/DownStickArrowIcon';
-// import { orderStatuses } from '@/uf.config';
-// import { recentOrdersTableColumns, recentOrdersTableData } from '@/mock/tablesdata'
-// import GenericTable3 from '@/components/GenericTables/GenericTable3'
+import { GeoChart } from '@/components/charts/GeoChart';
 
 export default function Dashboard() {
     const [metrics, setMetrics] = useState({
@@ -175,36 +169,11 @@ export default function Dashboard() {
             </div>
         </section>
         <section className='grid grid-cols-6 gap-[27px] mt-[30px]'>
-            <div className='col-span-4' >
-                <CardAdmin>
-                    <div className='px-[30px] py-8'>
-                        <p className='text-[22px] mb-8'>User Activity</p>
-                        <LineChart2 />
-                    </div>
-                </CardAdmin>
-            </div>
-            <div className='col-span-2' >
-                <CardAdmin>
-                    <div className='px-[30px] py-[33.5px] ' >
-                        <p className='text-[22px] mb-3'>Current User</p>
-                        <BarChart />
-                    </div>
-                </CardAdmin>
-            </div>
+            <MonthsActivityChart />
+            <Last60minUserActivity />
         </section>
-        <CardAdmin classes="w-full gap-[27px] mt-[30px]">
-            <div className='px-[30px] py-[33.5px]'>
-                <span className='text-[22px] pb-4'>Purchased By UAE States</span>
-                <GeoChart />
-                <div className='w-full flex justify-between gap-[30px]'>
-                    <BarChartHor country={['Dubai', 'Abu Dhabi', 'Sharjah']} dataArr={[5, 15, 20]} />
-                    <BarChartHor country={['Ajman', 'Umm Al-Quwain', 'Fujairah', 'Ras Al Khaimah']} dataArr={[5, 15, 20, 22]} />
-                </div>
-            </div>
-        </CardAdmin>
-        <section>
-            <RecentOrders />
-        </section>
+        <GeoChart />
+        <RecentOrders />
         <NewCustomersAndTopProducts />
     </>
 }

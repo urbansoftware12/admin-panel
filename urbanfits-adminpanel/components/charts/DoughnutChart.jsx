@@ -28,7 +28,7 @@ const DoughnutChart = () => {
         try {
             const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/metrics/order-status`, { withCredentials: true });
             setOrderMetrics(prev => ({ ...prev, metrics: data.order_status_metrics }))
-        } catch (e) { console.log(e); toaster("error", "Somethign went wrong getting the meterics data.") }
+        } catch (e) { console.log(e); toaster("error", "Something went wrong getting the meterics data.") }
         finally { setOrderMetrics(prev => ({ ...prev, loading: false })) }
     }
 

@@ -15,7 +15,7 @@ export default function RecentOrders() {
         getOrders(1, null, limit);
     }, [])
 
-    return <CardAdmin classes="mt-[30px]">
+    return <CardAdmin classes="w-full mt-[30px]">
         {deleteModal}
         <div className='p-[30px]'>
             <div className='w-full flex justify-between items-center mb-[10px]'>

@@ -122,7 +122,7 @@ export default function SidebarLayout({ children }) {
 
                     <div className="group relative px-2 py-1 bg-white border border-gray-300 rounded-full flex items-center cursor-pointer" tabIndex={3}>
                         {admin?.image ? <span className="inline-block w-9 aspect-square mr-3 border border-gray-400 rounded-full overflow-hidden">
-                            <Image src={admin?.image ? (process.env.NEXT_PUBLIC_BASE_IMG_URL + admin.image + "?timestamp=123") : process.env.NEXT_PUBLIC_DEFAULT_PFP} className="w-full h-full object-cover" alt="user avatar" width={80} height={80} />
+                            <Image src={admin?.image?.includes("googleuser") ? admin.image : process.env.NEXT_PUBLIC_BASE_IMG_URL + userData?.image || process.env.NEXT_PUBLIC_DEFAULT_PFP} className="w-full h-full object-cover" alt="user avatar" width={80} height={80} />
                         </span> : null}
                         <span className="text-sm mr-2">{admin?.firstname || admin?.username}</span>
                         <DownArowSmallIcon />
