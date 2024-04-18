@@ -121,7 +121,7 @@ export default function Dashboard() {
                     <div className='flex flex-col gap-2' >
                         <p className='text-sm'>Daily Revenue</p>
                         <p className='text-[22px]'>{metrics.daily_revenue.toFixed(3)} <span className='text-xs'>AED</span></p>
-                        <p className='text-xs'>Last 24 hours</p>
+                        <p className='text-xs'>Today's</p>
                     </div>
                     <div className=' bg-[#F5F5F5] rounded-[50px] w-[50px] h-[50px]  flex items-center justify-center ' >
                         <DollarCardIcon />
