@@ -10,7 +10,7 @@ const useCategories = create((set, get) => ({
     categLoading: false,
 
     getCategories: async () => {
-        if (!admin) return
+        if (!admin?._id) return console.log("no admin data")
 
         set(() => ({ categLoading: true }))
         try {

@@ -3,6 +3,7 @@ import CardAdmin from "../cards/cardadmin";
 import { Chart } from "react-google-charts";
 import BarChartHor from '@/components/charts/BarChartHor'
 import { UAEStates } from "@/uf.config";
+import toaster from "@/utils/toast_function";
 import axios from "axios";
 
 export function GeoChart() {
