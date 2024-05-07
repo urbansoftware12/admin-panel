@@ -40,8 +40,8 @@ export default function UserProfile() {
         lastname: Yup.string().min(2),
         gender: Yup.string().min(2),
         role: Yup.string().oneOf(['administrator', 'customer'], 'Invalid role. 2 Available roles: administrator, customer').required("Please select a user role."),
-        phone_prefix: Yup.string().required('Phone prefix is required to save'),
-        phone_number: Yup.string().min(6, 'Phone number can be a minimum of 6 digits').max(14, 'Phone number can be a maximum of 14 digits').required('Phone number is required to save')
+        phone_prefix: Yup.string(),
+        phone_number: Yup.string().min(6, 'Phone number can be a minimum of 6 digits').max(14, 'Phone number can be a maximum of 14 digits')
     })
     const pointsSchema = Yup.object({
         user_id: Yup.string(),
@@ -79,10 +79,8 @@ export default function UserProfile() {
                 console.log(values.image)
                 imgUrl = await uploadImage(values.image, `user-profiles${userData._id}`)
             } else delete values.image
-            updateUser(userData._id, { ...values, ...(imgUrl && { image: imgUrl }) }, (updatedUser) => {
-                setUserData(updatedUser)
-                setLoading(false)
-            })
+            updateUser(userData._id, { ...values, ...(imgUrl && { image: imgUrl }) }, (updatedUser) => setUserData(updatedUser))
+            setLoading(false)
         }
     })
 
@@ -236,7 +234,7 @@ export default function UserProfile() {
                 </button>
                 <p className="text-sm mt-[30px] ">UF-Wallet Card number</p>
                 <button onClick={() => navigator.clipboard.writeText(userData.uf_wallet.card_number)} className="group relative text-xs mt-[5px] text-left">
-                    {userData.uf_wallet.card_number.slice(0, 12)}••••••••••&nbsp;&nbsp;<i className="fa-regular fa-copy" />
+                    {userData.uf_wallet?.card_number?.slice(0, 12)}••••••••••&nbsp;&nbsp;<i className="fa-regular fa-copy" />
                     <span className="absolute -top-7 left-1/2 -translate-x-1/2 translate-y-7 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 px-2 py-0.5 rounded-lg text-[10px] bg-gray-700 text-white transition-all duration-300">Copy</span>
                 </button>
                 <div className="w-full p-4 mt-10 border border-red-600 rounded-xl">
