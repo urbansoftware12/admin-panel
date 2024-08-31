@@ -68,28 +68,20 @@ export default function SidebarLayout({ children }) {
                     <p className={`font_futura text-white ${!sidebaropen && "hidden"} size text-[22px] ml-[12px]`}>URBAN FITS</p>
                 </div>
 
-                <div className={`overflow-x-hidden overflow-y-scroll ${sidebaropen ? "h-3/5" : "h-full"} px-[30px]`} >
+                <div className={`overflow-x-hidden overflow-y-scroll ${sidebaropen ? "h-3/5" : "h-full"} px-[30px] pb-4`} >
                     {sidebarItems.map((item, index) => <SideBarItem key={index} item={item} sidebaropen={sidebaropen} />)}
                 </div>
 
                 <div className="w-full h-[27%] pl-[30px] flex flex-col justify-center hide_scrollbar border-t border-gray-300">
-                    <p className="font_futura text-[12px] font-[400] text-black ">
-                        Language: English
-                    </p>
-                    <p className="font_futura text-[12px] font-[400] text-black mt-[10px]">
-                        Shipping to: United Arab Emirates
-                    </p>
+                    <span className="font_futura text-[12px] font-[400] text-black ">Language: English</span>
+                    <span className="font_futura text-[12px] font-[400] text-black mt-[10px]">Shipping to: United Arab Emirates</span>
                     <div className="flex items-center mt-[10px]">
                         &nbsp;<LocationIcon />
-                        <p className="font_futura text-[12px] font-[400] text-black  ml-[15.88px] ">
-                            Urban Fits (UAE)
-                        </p>
+                        <span className="font_futura text-[12px] font-[400] text-black  ml-[15.88px]">Urban Fits (UAE)</span>
                     </div>
                     <div className="flex items-center mt-[10px]">
                         &nbsp;<CallIcon />
-                        <p className="font_futura text-[12px] font-[400] text-black  ml-[15.88px] ">
-                            +971 52 700 1997
-                        </p>
+                        <span className="font_futura text-[12px] font-[400] text-black  ml-[15.88px] ">+971 52 700 1997</span>
                     </div>
                 </div>
             </div>
@@ -166,13 +158,7 @@ export default function SidebarLayout({ children }) {
         </div>
         <div className={`text-center text-xs mb-10 flex justify-center 
       ${sidebaropen ? "w-[120%]" : "w-[105%]"}`} >
-            <p>
-                Urban Fits L.L.C., Company Reg. Number - 2447 LLC 2023, Registered
-                Office Address - 500 4th St NW Suite 102 PMB 1958 Albuquerque, NM
-                87102
-                <br />
-                Urban Fits L.L.C. © 2023-2024 All rights reserved.
-            </p>
+            <p>Urban Fits L.L.C., Company Reg. Number - 2447 LLC 2023, Registered Office Address - 500 4th St NW Suite 102 PMB 1958 Albuquerque, NM 87102<br />Urban Fits L.L.C. © 2023-2024 All rights reserved.</p>
         </div>
     </div>
 }

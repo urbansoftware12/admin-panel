@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component';
 import DeleteAction from '@/components/modals/deleteAction';
 import CardAdmin from "@/components/cards/cardadmin";
@@ -193,7 +193,7 @@ export default function AllProducts() {
                         status: "Active",
                         date: product.createdAt,
                         updatedAt: product.updatedAt,
-                        handleInfo: () => { setProductInfo(product) },
+                        handleInfo: () => { console.log(product); setProductInfo(product) },
                         infoLink: "/products/productinfo",
                         actions: [
                             {

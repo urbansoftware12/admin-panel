@@ -1,10 +1,16 @@
 import * as Yup from "yup";
 
 export const addProductSchema = Yup.object().shape({
-    name: Yup.string().required("Product name is required."),
+    name: Yup.object().shape({
+        en: Yup.string().required("Product name is required."),
+        ar: Yup.string().required("Product name is required.")
+    }),
     slug: Yup.string().required("Product slug is required."),
     categories: Yup.array().of(Yup.mixed().required("Category is required.")).max(3),
-    description: Yup.string().required("Description is required.").nullable(),
+    description: Yup.object().shape({
+        en: Yup.string().required("Description is required.").nullable(),
+        ar: Yup.string().required("Description is required.").nullable()
+    }),
     cover_image: Yup.mixed().required("Cover Image is essential."),
     newTag: Yup.string().trim(),
     tags: Yup.array().of(Yup.string().required('Tag is required')),
@@ -59,8 +65,7 @@ export const inventeryManagementSchema = Yup.object({
     holdstock: Yup.string().min(2).required("Fill this field"),
     notificationrecipients: Yup.string().required("Fill this field"),
     lowstockthreshold: Yup.string().required("Fill this field"),
-    outofstockthreshold: Yup.string().required("Fill this field"),
-
+    outofstockthreshold: Yup.string().required("Fill this field")
 })
 
 export const couponSchema = Yup.object({
@@ -116,4 +121,25 @@ export const couponSchema = Yup.object({
         user_usage_limit: Yup.number()
     }),
     expiration_date: Yup.date(),
-});  
+});
+
+export const homeCarouselSchema = Yup.object({
+    slides: Yup.array().of(
+        Yup.object().shape({
+            title: Yup.string().required("Title is required."),
+            image: Yup.mixed().required("Image is required."),
+            href: Yup.string().url()
+        })
+    )
+})
+
+export const catalogueCarouselSchema = Yup.object({
+    slides: Yup.array().of(
+        Yup.object().shape({
+            title: Yup.string().required("Title is required."),
+            image1: Yup.mixed().required("Image1 is required."),
+            image2: Yup.mixed().required("Image2 is required."),
+            href: Yup.string().url()
+        })
+    )
+})

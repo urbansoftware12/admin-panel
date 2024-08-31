@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import CardAdmin from "@/components/cards/cardadmin";
 import DeleteAction from '@/components/modals/deleteAction';
 import Spinner from '@/components/loaders/spinner';
@@ -47,7 +47,7 @@ export default function RecentOrders() {
                         return {
                             ...order,
                             id: order._id,
-                            name: order?.order_items[0]?.name || order?.gift_cards[0]?.name,
+                            name: order?.order_items[0]?.name.en || order?.gift_cards[0]?.name,
                             image: order?.order_items[0]?.image || order?.gift_cards[0]?.bg,
                             price: order.price_details.total + "د.إ",
                             status: order.order_status,
